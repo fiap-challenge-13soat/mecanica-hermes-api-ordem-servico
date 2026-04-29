@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="NetArchTest.Rules" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Mecanica.Hermes.Api\Mecanica.Hermes.Api.csproj" />
+    <ProjectReference Include="..\..\src\Mecanica.Hermes.Application\Mecanica.Hermes.Application.csproj" />
+    <ProjectReference Include="..\..\src\Mecanica.Hermes.Domain\Mecanica.Hermes.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Mecanica.Hermes.Infrastructure\Mecanica.Hermes.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Using Include="FluentAssertions" />
+  </ItemGroup>
+
+</Project>

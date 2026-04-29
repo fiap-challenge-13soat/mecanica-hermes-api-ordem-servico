@@ -1,0 +1,39 @@
+﻿namespace Mecanica.Hermes.Infrastructure.Settings;
+
+internal static class VariableNames
+{
+    public const string MediatRLicenseKey = "MediatR__LicenseKey";
+    public const string AutoMapperLicenseKey = "AutoMapper__LicenseKey";
+    public const string DefaultConnectionString = "ConnectionStrings__DefaultConnection";
+    public const string AuthAuthority = "AUTH__AUTHORITY";
+    public const string AuthIssuer = "AUTH__ISSUER";
+    public const string AuthClienteScope = "AUTH__CLIENTE_SCOPE";
+    public const string AuthAdminScope = "AUTH__ADMIN_SCOPE";
+    public const string ObservabilityEnabled = "OBSERVABILITY__ENABLED";
+
+    // OpenTelemetry specification — service identification.
+    public const string OtelServiceName = "OTEL_SERVICE_NAME";
+
+    // OpenTelemetry specification — generic OTLP exporter env vars.
+    public const string OtelExporterOtlpEndpoint = "OTEL_EXPORTER_OTLP_ENDPOINT";
+    public const string OtelExporterOtlpHeaders  = "OTEL_EXPORTER_OTLP_HEADERS";
+    public const string OtelExporterOtlpProtocol = "OTEL_EXPORTER_OTLP_PROTOCOL";
+
+    // OpenTelemetry specification — signal-specific overrides for logs.
+    public const string OtelExporterOtlpLogsEndpoint = "OTEL_EXPORTER_OTLP_LOGS_ENDPOINT";
+    public const string OtelExporterOtlpLogsHeaders  = "OTEL_EXPORTER_OTLP_LOGS_HEADERS";
+    public const string OtelExporterOtlpLogsProtocol = "OTEL_EXPORTER_OTLP_LOGS_PROTOCOL";
+    
+    // MassTransit specification
+    public const string MassTransitConnectionString = "MASTTRANSIT__CONNECTION_STRING";
+    public const string MassTransitPrefetchCount = "MASTTRANSIT__PREFETCH_COUNT";
+    public const string MassTransitTransportService = "MASTTRANSIT__TRANSPORT_SERVICE";
+    public const string MassTransitQueueNamePrefix = "MASTTRANSIT__QUEUE_NAME_PREFIX";
+
+    // MongoDB specification — SAGA state persistence
+    public const string MongoDbConnectionString = "MONGODB__CONNECTION_STRING";
+    public const string MongoDbSagaDatabase = "MONGODB__SAGA_DATABASE";
+
+    // Migration control
+    public const string RunMigrationsOnStartup = "RUN_MIGRATIONS_ON_STARTUP";
+}
