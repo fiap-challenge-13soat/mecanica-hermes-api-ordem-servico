@@ -1,6 +1,7 @@
 ﻿using MassTransit;
 using Mecanica.Hermes.Infrastructure.Settings;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using static System.Int32;
 
 namespace Mecanica.Hermes.Infrastructure.MassTransit.Configurations;
@@ -23,10 +24,21 @@ internal static class ServiceCollectionExtensions
             ?? MassTransitOptions.DefaultMongoDbSagaDatabase;
 
         services.AddMassTransit(x =>
+        {
+            // Register the bus health check with "ready" and "messaging" tags so it is
+            // included in /healthz/ready. Degraded (not Unhealthy) because MassTransit
+            // retries the connection — the pod should stay in the pool during brief broker
+            // outages rather than immediately failing the readiness probe.
+            x.ConfigureHealthCheckOptions(options =>
             {
-                x.ConfigureSaga(mongoConnectionString, mongoDatabaseName);
-                x.UsingRabbitMq((context, cfg) => cfg.ConfigureRabbitMq(context));
+                options.MinimalFailureStatus = HealthStatus.Degraded;
+                options.Tags.Add("ready");
+                options.Tags.Add("messaging");
             });
+
+            x.ConfigureSaga(mongoConnectionString, mongoDatabaseName);
+            x.UsingRabbitMq((context, cfg) => cfg.ConfigureRabbitMq(context));
+        });
     }
     
     private static void AddMassTransitOptions(this IServiceCollection services)

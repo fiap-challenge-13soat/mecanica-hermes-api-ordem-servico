@@ -8,4 +8,6 @@ internal static class HealthCheckTags
 {
     public const string Ready = "ready";
     public const string Database = "database";
+    public const string Messaging = "messaging";
+    public const string Saga = "saga";
 }

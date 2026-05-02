@@ -7,6 +7,7 @@ using Mecanica.Hermes.Api.Endpoints.OrdensDeServico.Validators;
 using Mecanica.Hermes.Api.Endpoints.OrdensDeServico;
 using Mecanica.Hermes.Api.Middleware;
 using Mecanica.Hermes.Infrastructure.DependencyInjection;
+using Mecanica.Hermes.Infrastructure.HealthChecks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -118,7 +119,12 @@ builder.Services.AddHealthChecks()
     .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection")!,
         name: "postgres",
         failureStatus: HealthStatus.Unhealthy,
-        tags: [HealthCheckTags.Ready, HealthCheckTags.Database]);
+        tags: [HealthCheckTags.Ready, HealthCheckTags.Database])
+    // MassTransit bus check (RabbitMQ / Amazon SQS) is registered automatically by
+    // AddMassTransit via ConfigureHealthCheckOptions in the Infrastructure setup.
+    .AddSagaStorageHealthCheck(
+        failureStatus: HealthStatus.Degraded,
+        tags: [HealthCheckTags.Ready, HealthCheckTags.Saga]);
 
 builder.Host.ConfigureHostBuilder();
 
