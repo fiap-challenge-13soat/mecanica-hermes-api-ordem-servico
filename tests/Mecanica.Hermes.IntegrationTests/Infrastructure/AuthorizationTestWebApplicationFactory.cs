@@ -30,7 +30,7 @@ public sealed class AuthorizationTestWebApplicationFactory
 
     static AuthorizationTestWebApplicationFactory()
     {
-        Environment.SetEnvironmentVariable("MASTTRANSIT__TRANSPORT_SERVICE", "None");
+        Environment.SetEnvironmentVariable("MASSTRANSIT__TRANSPORT_SERVICE", "None");
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -39,10 +39,15 @@ public sealed class AuthorizationTestWebApplicationFactory
         // (Program.cs only adds it when IsDevelopment() || EnvironmentName == "Testing").
         builder.UseEnvironment("Testing_Auth");
 
-        // Set a non-null connection string to avoid NpgsqlDataSourceBuilder crash at startup.
+        // Ensure a non-null connection string so NpgsqlDataSourceBuilder does not crash at startup.
         // The real DB is replaced by InMemory below via ConfigureServices.
-        Environment.SetEnvironmentVariable(VariableNames.DefaultConnectionString,
-            "Host=localhost;Port=5432;Database=placeholder;Username=test;Password=test");
+        // Only set if not already populated — avoids overwriting the real container URL
+        // that IntegrationTestWebApplicationFactory may have set when running in the same process.
+        if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable(VariableNames.DefaultConnectionString)))
+        {
+            Environment.SetEnvironmentVariable(VariableNames.DefaultConnectionString,
+                "Host=localhost;Port=5432;Database=placeholder;Username=test;Password=test");
+        }
         Environment.SetEnvironmentVariable("AUTH__AUTHORITY", TestIssuer);
         Environment.SetEnvironmentVariable("AUTH__ISSUER", TestIssuer);
         Environment.SetEnvironmentVariable(VariableNames.AuthAdminScope, AdminScope);

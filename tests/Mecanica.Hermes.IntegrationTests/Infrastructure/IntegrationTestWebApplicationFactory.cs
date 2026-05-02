@@ -14,7 +14,7 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
     static IntegrationTestWebApplicationFactory()
     {
         // Disable RabbitMQ for integration tests - use in-memory transport instead
-        Environment.SetEnvironmentVariable("MASTTRANSIT__TRANSPORT_SERVICE", "None");
+        Environment.SetEnvironmentVariable("MASSTRANSIT__TRANSPORT_SERVICE", "None");
     }
 
     public IntegrationTestWebApplicationFactory()
