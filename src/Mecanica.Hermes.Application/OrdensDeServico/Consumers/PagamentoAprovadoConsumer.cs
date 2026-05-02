@@ -17,11 +17,15 @@ public sealed class PagamentoAprovadoConsumer(
 {
     protected override string OperacaoMetricKey => OrdemDeServicoMetricKeys.Operations.PagamentoAprovado;
 
-    protected override Result ValidatePreconditions(OrdemDeServico ordem, ExecutePagamentoAprovado msg) =>
-        ordem.StatusAtual.StatusAtual == OrdemDeServicoStatus.AguardandoPagamento
+    protected override Result ValidatePreconditions(OrdemDeServico ordem, ExecutePagamentoAprovado msg)
+    {
+        return ordem.StatusAtual.StatusAtual == OrdemDeServicoStatus.AguardandoPagamento
             ? Result.Ok()
             : Result.BadRequest("Ordem de serviço precisa estar em aguardando pagamento para confirmar pagamento.");
+    }
 
-    protected override Result Execute(OrdemDeServico ordem, ExecutePagamentoAprovado msg) =>
-        ordem.AvancarEtapa();
+    protected override Result Execute(OrdemDeServico ordem, ExecutePagamentoAprovado msg)
+    {
+        return ordem.AvancarEtapa();
+    }
 }

@@ -6,5 +6,8 @@ namespace Mecanica.Hermes.Application.OrdensDeServico.Commands.AprovarOrdemDeSer
 public sealed record AprovarOrdemDeServicoCommand(Guid OrdemDeServicoId)
     : IAsyncCommand, IOrdemDeServicoCommand
 {
-    public object ToMessage() => new AprovarOrdemDeServicoRequest(OrdemDeServicoId);
+    public object ToMessage()
+    {
+        return new AprovarOrdemDeServicoRequest(OrdemDeServicoId);
+    }
 }

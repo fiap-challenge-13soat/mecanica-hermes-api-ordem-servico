@@ -7,9 +7,6 @@ namespace Mecanica.Hermes.Api.Tests.Presenter;
 [Trait("Category", "Unit")]
 public class PaginationHelperTests
 {
-    private sealed record DomainDto(int Value);
-    private sealed record ApiDto(int Value);
-
     private static HttpRequest BuildRequest(string path = "/api/items", string? query = null)
     {
         var httpContext = new DefaultHttpContext();
@@ -20,14 +17,17 @@ public class PaginationHelperTests
         return httpContext.Request;
     }
 
-    private static ApiDto MapIdentity(DomainDto dto) => new(dto.Value);
+    private static ApiDto MapIdentity(DomainDto dto)
+    {
+        return new ApiDto(dto.Value);
+    }
 
     [Fact]
     public void ToPaginatedResponse_DeveMapearMetadataCorretamente()
     {
         var paged = PagedResult<DomainDto>.Create(
             [new DomainDto(1), new DomainDto(2)],
-            page: 1, pageSize: 2, totalCount: 5);
+            1, 2, 5);
 
         var response = paged.ToPaginatedResponse(MapIdentity, BuildRequest());
 
@@ -43,7 +43,7 @@ public class PaginationHelperTests
     [Fact]
     public void ToPaginatedResponse_DeveGerarLinksCompletos()
     {
-        var paged = PagedResult<DomainDto>.Create([new DomainDto(1)], page: 2, pageSize: 1, totalCount: 3);
+        var paged = PagedResult<DomainDto>.Create([new DomainDto(1)], 2, 1, 3);
 
         var response = paged.ToPaginatedResponse(MapIdentity, BuildRequest());
 
@@ -57,7 +57,7 @@ public class PaginationHelperTests
     [Fact]
     public void ToPaginatedResponse_QuandoVazio_NaoDeveGerarLinkLast()
     {
-        var paged = PagedResult<DomainDto>.Create([], page: 1, pageSize: 10, totalCount: 0);
+        var paged = PagedResult<DomainDto>.Create([], 1, 10, 0);
 
         var response = paged.ToPaginatedResponse(MapIdentity, BuildRequest());
 
@@ -69,7 +69,7 @@ public class PaginationHelperTests
     [Fact]
     public void ToPaginatedResponse_ComQueryStringExistente_DeveLimparAntesDeRecompor()
     {
-        var paged = PagedResult<DomainDto>.Create([new DomainDto(1)], page: 1, pageSize: 10, totalCount: 1);
+        var paged = PagedResult<DomainDto>.Create([new DomainDto(1)], 1, 10, 1);
         var request = BuildRequest("/api/items", "?page=5&pageSize=20");
 
         var response = paged.ToPaginatedResponse(MapIdentity, request);
@@ -78,4 +78,8 @@ public class PaginationHelperTests
             .And.Contain("page=1")
             .And.Contain("pageSize=10");
     }
+
+    private sealed record DomainDto(int Value);
+
+    private sealed record ApiDto(int Value);
 }

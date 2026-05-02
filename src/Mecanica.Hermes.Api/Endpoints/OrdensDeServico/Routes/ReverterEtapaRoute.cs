@@ -1,4 +1,3 @@
-using Mecanica.Hermes.Api.Endpoints;
 using Mecanica.Hermes.Api.Presenter;
 using Mecanica.Hermes.Application.OrdensDeServico.Commands.ReverterEtapa;
 using Mecanica.Hermes.Infrastructure.Settings;
@@ -18,7 +17,9 @@ public static class ReverterEtapaRoute
             .WithName("ReverterEtapa")
             .ProducesAcceptedCommand()
             .RequireAuthorization(AuthPolicies.OnlyAdminScope)
-            .WithDescription("Solicita reversão da ordem de serviço para a etapa anterior (processado de forma assíncrona via SAGA)");
+            .WithDescription(
+                "Solicita reversão da ordem de serviço para a etapa anterior " +
+                "(processado de forma assíncrona via SAGA)");
     }
 
     private static async Task<IResult> ReverterEtapa(

@@ -1,9 +1,8 @@
-﻿namespace Mecanica.Hermes.Infrastructure.Settings;
+namespace Mecanica.Hermes.Infrastructure.Settings;
 
 internal static class VariableNames
 {
     public const string MediatRLicenseKey = "MediatR__LicenseKey";
-    public const string AutoMapperLicenseKey = "AutoMapper__LicenseKey";
     public const string DefaultConnectionString = "ConnectionStrings__DefaultConnection";
     public const string AuthAuthority = "AUTH__AUTHORITY";
     public const string AuthIssuer = "AUTH__ISSUER";
@@ -16,14 +15,14 @@ internal static class VariableNames
 
     // OpenTelemetry specification — generic OTLP exporter env vars.
     public const string OtelExporterOtlpEndpoint = "OTEL_EXPORTER_OTLP_ENDPOINT";
-    public const string OtelExporterOtlpHeaders  = "OTEL_EXPORTER_OTLP_HEADERS";
+    public const string OtelExporterOtlpHeaders = "OTEL_EXPORTER_OTLP_HEADERS";
     public const string OtelExporterOtlpProtocol = "OTEL_EXPORTER_OTLP_PROTOCOL";
 
     // OpenTelemetry specification — signal-specific overrides for logs.
     public const string OtelExporterOtlpLogsEndpoint = "OTEL_EXPORTER_OTLP_LOGS_ENDPOINT";
-    public const string OtelExporterOtlpLogsHeaders  = "OTEL_EXPORTER_OTLP_LOGS_HEADERS";
+    public const string OtelExporterOtlpLogsHeaders = "OTEL_EXPORTER_OTLP_LOGS_HEADERS";
     public const string OtelExporterOtlpLogsProtocol = "OTEL_EXPORTER_OTLP_LOGS_PROTOCOL";
-    
+
     // MassTransit specification
     public const string MassTransitConnectionString = "MASSTRANSIT__CONNECTION_STRING";
     public const string MassTransitPrefetchCount = "MASSTRANSIT__PREFETCH_COUNT";

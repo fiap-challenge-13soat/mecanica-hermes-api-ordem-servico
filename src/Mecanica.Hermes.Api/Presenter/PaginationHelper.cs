@@ -35,10 +35,7 @@ public static class PaginationHelper
         var queryString = request.QueryString.Value ?? string.Empty;
         var uri = request.GetEncodedUrl();
 
-        if (!string.IsNullOrEmpty(queryString))
-        {
-            uri = uri.Replace(queryString, string.Empty);
-        }
+        if (!string.IsNullOrEmpty(queryString)) uri = uri.Replace(queryString, string.Empty);
 
         return uri.TrimEnd('?');
     }
@@ -49,20 +46,16 @@ public static class PaginationHelper
         {
             Self = BuildUrl(baseUrl, pagedResult.Page, pagedResult.PageSize),
             First = BuildUrl(baseUrl, 1, pagedResult.PageSize),
-            Last = pagedResult.TotalPages > 0 
-                ? BuildUrl(baseUrl, pagedResult.TotalPages, pagedResult.PageSize) 
+            Last = pagedResult.TotalPages > 0
+                ? BuildUrl(baseUrl, pagedResult.TotalPages, pagedResult.PageSize)
                 : null
         };
 
         if (pagedResult.HasNextPage)
-        {
             links = links with { Next = BuildUrl(baseUrl, pagedResult.Page + 1, pagedResult.PageSize) };
-        }
 
         if (pagedResult.HasPreviousPage)
-        {
             links = links with { Prev = BuildUrl(baseUrl, pagedResult.Page - 1, pagedResult.PageSize) };
-        }
 
         return links;
     }

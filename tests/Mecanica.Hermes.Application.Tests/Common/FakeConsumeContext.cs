@@ -3,13 +3,12 @@ using MassTransit;
 namespace Mecanica.Hermes.Application.Tests.Common;
 
 /// <summary>
-/// Implementação mínima de <c>ConsumeContext&lt;T&gt;</c> via Moq, suficiente para cobrir
-/// os membros efetivamente usados pelos consumers sob teste: <c>Message</c>,
-/// <c>CancellationToken</c> e <c>Publish(object)</c>.
-///
-/// Use esta classe quando quiser invocar <c>Consume(context)</c> diretamente — sem o custo
-/// de um <c>InMemoryTestHarness</c>. Opcionalmente forneça um callback de publicação para
-/// capturar mensagens publicadas pelo consumer.
+///     Implementação mínima de <c>ConsumeContext&lt;T&gt;</c> via Moq, suficiente para cobrir
+///     os membros efetivamente usados pelos consumers sob teste: <c>Message</c>,
+///     <c>CancellationToken</c> e <c>Publish(object)</c>.
+///     Use esta classe quando quiser invocar <c>Consume(context)</c> diretamente — sem o custo
+///     de um <c>InMemoryTestHarness</c>. Opcionalmente forneça um callback de publicação para
+///     capturar mensagens publicadas pelo consumer.
 /// </summary>
 internal static class FakeConsumeContext
 {

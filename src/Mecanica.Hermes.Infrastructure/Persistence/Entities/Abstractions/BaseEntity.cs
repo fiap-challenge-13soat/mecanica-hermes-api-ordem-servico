@@ -1,4 +1,4 @@
-﻿namespace Mecanica.Hermes.Infrastructure.Persistence.Entities.Abstractions;
+namespace Mecanica.Hermes.Infrastructure.Persistence.Entities.Abstractions;
 
 internal class BaseEntity
 {

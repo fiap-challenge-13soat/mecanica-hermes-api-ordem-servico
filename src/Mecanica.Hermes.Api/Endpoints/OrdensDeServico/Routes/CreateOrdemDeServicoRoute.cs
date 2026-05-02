@@ -1,5 +1,4 @@
 using System.Net;
-using Mecanica.Hermes.Api.Endpoints;
 using Mecanica.Hermes.Api.Endpoints.OrdensDeServico.Contracts;
 using Mecanica.Hermes.Api.Filters;
 using Mecanica.Hermes.Api.Presenter;
@@ -23,7 +22,8 @@ public static class CreateOrdemDeServicoRoute
             .RequireAuthorization(AuthPolicies.OnlyAdminScope)
             .WithDescription(
                 "Solicita a criação de uma nova ordem de serviço (processado de forma assíncrona via SAGA). " +
-                "O Id retornado já pode ser utilizado para consultar o recurso assim que o consumer concluir a persistência.")
+                "O Id retornado já pode ser utilizado para consultar o recurso assim que o consumer " +
+                "concluir a persistência.")
             .AddEndpointFilter<ValidationFilter<CreateOrdemDeServicoRequest>>();
     }
 
@@ -52,7 +52,7 @@ public static class CreateOrdemDeServicoRoute
             return response.Present();
 
         return Results.Accepted(
-            uri: $"/api/ordens-de-servico/{ordemDeServicoId}",
-            value: new CreateOrdemDeServicoAcceptedResponse(ordemDeServicoId));
+            $"/api/ordens-de-servico/{ordemDeServicoId}",
+            new CreateOrdemDeServicoAcceptedResponse(ordemDeServicoId));
     }
 }

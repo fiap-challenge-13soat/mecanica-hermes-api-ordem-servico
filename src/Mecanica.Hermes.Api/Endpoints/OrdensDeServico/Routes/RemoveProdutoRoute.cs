@@ -1,4 +1,3 @@
-using Mecanica.Hermes.Api.Endpoints;
 using Mecanica.Hermes.Api.Presenter;
 using Mecanica.Hermes.Application.OrdensDeServico.Commands.RemoveProduto;
 using Mecanica.Hermes.Infrastructure.Settings;
@@ -18,7 +17,8 @@ public static class RemoveProdutoRoute
             .WithName("RemoveProduto")
             .ProducesAcceptedCommand()
             .RequireAuthorization(AuthPolicies.OnlyAdminScope)
-            .WithDescription("Solicita remoção de um produto da ordem de serviço (processado de forma assíncrona via SAGA)");
+            .WithDescription(
+                "Solicita remoção de um produto da ordem de serviço (processado de forma assíncrona via SAGA)");
     }
 
     private static async Task<IResult> RemoveProduto(

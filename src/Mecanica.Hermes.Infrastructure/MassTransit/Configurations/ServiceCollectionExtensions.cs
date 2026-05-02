@@ -1,4 +1,4 @@
-﻿using MassTransit;
+using MassTransit;
 using Mecanica.Hermes.Infrastructure.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -11,7 +11,8 @@ internal static class ServiceCollectionExtensions
     public static void ConfigureMassTransit(this IServiceCollection services)
     {
         services.AddMassTransitOptions();
-        _ = Enum.TryParse<TransportService>(Environment.GetEnvironmentVariable(VariableNames.MassTransitTransportService), out var transportService);
+        _ = Enum.TryParse<TransportService>(
+            Environment.GetEnvironmentVariable(VariableNames.MassTransitTransportService), out var transportService);
 
         if (transportService == TransportService.RabbitMq)
             services.AddMassTransitWithRabbitMq();
@@ -21,7 +22,7 @@ internal static class ServiceCollectionExtensions
     {
         var mongoConnectionString = Environment.GetEnvironmentVariable(VariableNames.MongoDbConnectionString);
         var mongoDatabaseName = Environment.GetEnvironmentVariable(VariableNames.MongoDbSagaDatabase)
-            ?? MassTransitOptions.DefaultMongoDbSagaDatabase;
+                                ?? MassTransitOptions.DefaultMongoDbSagaDatabase;
 
         services.AddMassTransit(x =>
         {
@@ -40,7 +41,7 @@ internal static class ServiceCollectionExtensions
             x.UsingRabbitMq((context, cfg) => cfg.ConfigureRabbitMq(context));
         });
     }
-    
+
     private static void AddMassTransitOptions(this IServiceCollection services)
     {
         _ = TryParse(Environment.GetEnvironmentVariable(VariableNames.MassTransitPrefetchCount), out var prefetchCount);
@@ -51,11 +52,12 @@ internal static class ServiceCollectionExtensions
 
         var mongoConnectionString = Environment.GetEnvironmentVariable(VariableNames.MongoDbConnectionString);
         var mongoDatabaseName = Environment.GetEnvironmentVariable(VariableNames.MongoDbSagaDatabase)
-            ?? MassTransitOptions.DefaultMongoDbSagaDatabase;
-        
+                                ?? MassTransitOptions.DefaultMongoDbSagaDatabase;
+
         services.Configure<MassTransitOptions>(options =>
         {
-            options.MassTransitConnectionString = Environment.GetEnvironmentVariable(VariableNames.MassTransitConnectionString);
+            options.MassTransitConnectionString =
+                Environment.GetEnvironmentVariable(VariableNames.MassTransitConnectionString);
             options.MassTransitPrefetchCount = prefetchCount;
             options.QueueNamePrefix = queueNamePrefix;
             options.MongoDbConnectionString = mongoConnectionString;

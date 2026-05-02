@@ -1,4 +1,3 @@
-using Mecanica.Hermes.Api.Endpoints;
 using Mecanica.Hermes.Api.Endpoints.OrdensDeServico.Contracts;
 using Mecanica.Hermes.Api.Endpoints.OrdensDeServico.Mappings;
 using Mecanica.Hermes.Api.Presenter;

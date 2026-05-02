@@ -1,7 +1,6 @@
-using Mecanica.Hermes.Api.Endpoints.OrdensDeServico.Contracts;
+using System.Net;
 using Mecanica.Hermes.IntegrationTests.Fixtures;
 using Mecanica.Hermes.IntegrationTests.Infrastructure;
-using Xunit;
 
 namespace Mecanica.Hermes.IntegrationTests.OrdensDeServico;
 
@@ -9,7 +8,7 @@ namespace Mecanica.Hermes.IntegrationTests.OrdensDeServico;
 [Trait("Category", "Integration")]
 public class OrdemDeServicoIntegrationTests : OrdemDeServicoTestFixture
 {
-    public OrdemDeServicoIntegrationTests(IntegrationTestWebApplicationFactory factory) 
+    public OrdemDeServicoIntegrationTests(IntegrationTestWebApplicationFactory factory)
         : base(factory)
     {
     }
@@ -29,8 +28,8 @@ public class OrdemDeServicoIntegrationTests : OrdemDeServicoTestFixture
             "Cliente relatou barulho ao acelerar");
 
         // Assert
-        Assert.Equal(System.Net.HttpStatusCode.Accepted, response.StatusCode);
-        
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
+
         var content = await response.Content.ReadAsStringAsync();
         Assert.NotEmpty(content);
     }
@@ -42,8 +41,8 @@ public class OrdemDeServicoIntegrationTests : OrdemDeServicoTestFixture
         var response = await ListarPorStatusAsync("Recebida");
 
         // Assert
-        Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
-        
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
         var content = await response.Content.ReadAsStringAsync();
         Assert.NotEmpty(content);
     }
@@ -59,7 +58,7 @@ public class OrdemDeServicoIntegrationTests : OrdemDeServicoTestFixture
         var response = await AdicionarProdutoAsync(ordemId, produtoId, 100m, 2);
 
         // Assert
-        Assert.Equal(System.Net.HttpStatusCode.Accepted, response.StatusCode);
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
     }
 
     [Fact]
@@ -73,7 +72,7 @@ public class OrdemDeServicoIntegrationTests : OrdemDeServicoTestFixture
         var response = await AdicionarServicoAsync(ordemId, servicoId, 150m);
 
         // Assert
-        Assert.Equal(System.Net.HttpStatusCode.Accepted, response.StatusCode);
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
     }
 
     [Fact]
@@ -86,7 +85,7 @@ public class OrdemDeServicoIntegrationTests : OrdemDeServicoTestFixture
         var response = await AvancarEtapaAsync(ordemId);
 
         // Assert
-        Assert.Equal(System.Net.HttpStatusCode.Accepted, response.StatusCode);
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
     }
 
     [Fact]
@@ -99,7 +98,7 @@ public class OrdemDeServicoIntegrationTests : OrdemDeServicoTestFixture
         var response = await CancelarOrdemAsync(ordemId);
 
         // Assert
-        Assert.Equal(System.Net.HttpStatusCode.Accepted, response.StatusCode);
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
     }
 
     [Fact]
@@ -113,7 +112,7 @@ public class OrdemDeServicoIntegrationTests : OrdemDeServicoTestFixture
         var response = await RemoverProdutoAsync(ordemId, produtoId);
 
         // Assert
-        Assert.Equal(System.Net.HttpStatusCode.Accepted, response.StatusCode);
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
     }
 
     [Fact]
@@ -127,7 +126,7 @@ public class OrdemDeServicoIntegrationTests : OrdemDeServicoTestFixture
         var response = await RemoverServicoAsync(ordemId, servicoId);
 
         // Assert
-        Assert.Equal(System.Net.HttpStatusCode.Accepted, response.StatusCode);
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
     }
 
     [Fact]
@@ -140,6 +139,6 @@ public class OrdemDeServicoIntegrationTests : OrdemDeServicoTestFixture
         var response = await PagamentoAprovadoAsync(ordemId);
 
         // Assert
-        Assert.Equal(System.Net.HttpStatusCode.Accepted, response.StatusCode);
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
     }
 }

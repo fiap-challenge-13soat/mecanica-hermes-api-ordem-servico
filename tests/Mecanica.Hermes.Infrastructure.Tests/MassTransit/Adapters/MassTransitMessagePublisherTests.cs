@@ -7,8 +7,6 @@ namespace Mecanica.Hermes.Infrastructure.Tests.MassTransit.Adapters;
 [Trait("Category", "Unit")]
 public class MassTransitMessagePublisherTests
 {
-    public sealed record TestMessage(Guid Id);
-
     [Fact]
     public async Task Publish_DeveDelegarParaIPublishEndpoint()
     {
@@ -44,4 +42,6 @@ public class MassTransitMessagePublisherTests
 
         await act.Should().ThrowAsync<BrokerUnavailableException>();
     }
+
+    public sealed record TestMessage(Guid Id);
 }

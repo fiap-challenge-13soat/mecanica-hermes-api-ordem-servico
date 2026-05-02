@@ -1,4 +1,4 @@
-﻿using Autofac;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Mecanica.Hermes.Infrastructure.Autofac;
 using Microsoft.AspNetCore.Builder;

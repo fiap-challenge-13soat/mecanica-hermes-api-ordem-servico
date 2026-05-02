@@ -7,29 +7,32 @@ using Microsoft.Extensions.Options;
 
 namespace Mecanica.Hermes.Infrastructure.MassTransit.Configurations;
 
-[ExcludeFromCodeCoverage(Justification = "Configuração de retry/redelivery do MassTransit — exercitada pelo broker em produção/integração.")]
+[ExcludeFromCodeCoverage(Justification =
+    "Configuração de retry/redelivery do MassTransit — exercitada pelo broker em produção/integração.")]
 internal static class BusFactoryConfiguratorExtensions
 {
     /// <summary>
-    /// Política de retry imediato para erros transientes (timeouts em I/O, conexão com broker etc).
-    /// Mantém as tentativas curtas: 3x com 2s de intervalo. Erros de regra de domínio NÃO são
-    /// jogados como exception nos consumers — eles são publicados como
-    /// <c>OrdemDeServicoOperationFailed</c>, então não devem ser captados aqui.
+    ///     Política de retry imediato para erros transientes (timeouts em I/O, conexão com broker etc).
+    ///     Mantém as tentativas curtas: 3x com 2s de intervalo. Erros de regra de domínio NÃO são
+    ///     jogados como exception nos consumers — eles são publicados como
+    ///     <c>OrdemDeServicoOperationFailed</c>, então não devem ser captados aqui.
     /// </summary>
     private const int ImmediateRetryCount = 3;
-    private static readonly TimeSpan ImmediateRetryInterval = TimeSpan.FromSeconds(2);
 
     /// <summary>
-    /// Redelivery (volta a mensagem para o broker com delay) é mantido apenas para falhas
-    /// de infraestrutura mais persistentes. Limite curto para evitar loop de mensagens
-    /// "envenenadas".
+    ///     Redelivery (volta a mensagem para o broker com delay) é mantido apenas para falhas
+    ///     de infraestrutura mais persistentes. Limite curto para evitar loop de mensagens
+    ///     "envenenadas".
     /// </summary>
     private const int DelayedRetryLimit = 3;
+
+    private static readonly TimeSpan ImmediateRetryInterval = TimeSpan.FromSeconds(2);
     private static readonly TimeSpan DelayedMinInterval = TimeSpan.FromSeconds(15);
     private static readonly TimeSpan DelayedMaxInterval = TimeSpan.FromMinutes(2);
     private static readonly TimeSpan DelayedIntervalDelta = TimeSpan.FromSeconds(15);
 
-    public static void ConfigureCommonFactory(this IBusFactoryConfigurator configurator, IBusRegistrationContext registration)
+    public static void ConfigureCommonFactory(this IBusFactoryConfigurator configurator,
+        IBusRegistrationContext registration)
     {
         var options = registration.GetRequiredService<IOptions<MassTransitOptions>>().Value;
 
@@ -55,10 +58,10 @@ internal static class BusFactoryConfiguratorExtensions
             r.Handle<TimeoutException>();
             r.Handle<HttpRequestException>();
             r.Exponential(
-                retryLimit: DelayedRetryLimit,
-                minInterval: DelayedMinInterval,
-                maxInterval: DelayedMaxInterval,
-                intervalDelta: DelayedIntervalDelta);
+                DelayedRetryLimit,
+                DelayedMinInterval,
+                DelayedMaxInterval,
+                DelayedIntervalDelta);
         });
 
         // Outbox em memória — garante "tudo ou nada" entre publish + commit no consumer.

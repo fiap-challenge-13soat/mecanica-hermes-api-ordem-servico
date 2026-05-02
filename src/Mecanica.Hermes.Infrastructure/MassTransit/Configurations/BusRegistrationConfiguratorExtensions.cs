@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using MassTransit;
 using Mecanica.Hermes.Application;
 using Mecanica.Hermes.Infrastructure.MassTransit.Saga;
@@ -16,18 +16,14 @@ internal static class BusRegistrationConfiguratorExtensions
         var saga = configurator.AddSagaStateMachine<OrdemDeServicoStateMachine, OrdemDeServicoState>();
 
         if (!string.IsNullOrWhiteSpace(mongoConnectionString))
-        {
             saga.MongoDbRepository(r =>
             {
                 r.Connection = mongoConnectionString;
                 r.DatabaseName = mongoDatabaseName;
                 r.CollectionName = "ordem-de-servico-saga-state";
             });
-        }
         else
-        {
             saga.InMemoryRepository();
-        }
 
         // Registra todos os consumers definidos na camada de Application (um por operação Execute*).
         configurator.AddConsumers(typeof(IApplicationAssemblyMarker).Assembly);

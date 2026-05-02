@@ -4,13 +4,12 @@ using Mecanica.Hermes.Domain.OrdensDeServico;
 namespace Mecanica.Hermes.TestUtils.Builders;
 
 /// <summary>
-/// Test Data Builder para <see cref="OrdemDeServico"/>.
-/// Usa <c>Bogus</c> para gerar dados realistas; permite override fluente de campos
-/// específicos por teste. Padrão recomendado em xUnit + DDD para evitar
-/// <c>Guid.NewGuid()</c> espalhado.
-///
-/// Exemplo:
-/// <code>
+///     Test Data Builder para <see cref="OrdemDeServico" />.
+///     Usa <c>Bogus</c> para gerar dados realistas; permite override fluente de campos
+///     específicos por teste. Padrão recomendado em xUnit + DDD para evitar
+///     <c>Guid.NewGuid()</c> espalhado.
+///     Exemplo:
+///     <code>
 /// var ordem = new OrdemDeServicoBuilder()
 ///     .ComProblemaRelatado("Motor")
 ///     .ComProduto(produtoId: id, valor: 100m, quantidade: 2)
@@ -20,16 +19,16 @@ namespace Mecanica.Hermes.TestUtils.Builders;
 public sealed class OrdemDeServicoBuilder
 {
     private static readonly Faker Faker = new("pt_BR");
-
-    private Guid _id = Guid.NewGuid();
-    private Guid _clienteId = Guid.NewGuid();
-    private Guid _veiculoId = Guid.NewGuid();
-    private string? _problemaRelatado = Faker.Lorem.Sentence();
-    private string? _observacoes = Faker.Lorem.Sentence();
     private readonly List<(Guid produtoId, decimal valor, int quantidade)> _produtos = [];
     private readonly List<(Guid servicoId, decimal valor)> _servicos = [];
     private int _avancarVezes;
     private bool _cancelar;
+    private Guid _clienteId = Guid.NewGuid();
+
+    private Guid _id = Guid.NewGuid();
+    private string? _observacoes = Faker.Lorem.Sentence();
+    private string? _problemaRelatado = Faker.Lorem.Sentence();
+    private Guid _veiculoId = Guid.NewGuid();
 
     public OrdemDeServicoBuilder ComId(Guid id)
     {
@@ -74,8 +73,8 @@ public sealed class OrdemDeServicoBuilder
     }
 
     /// <summary>
-    /// Avança o status N vezes a partir de <c>Recebida</c>. Atalho para preparar a OS
-    /// em um estado específico do ciclo de vida.
+    ///     Avança o status N vezes a partir de <c>Recebida</c>. Atalho para preparar a OS
+    ///     em um estado específico do ciclo de vida.
     /// </summary>
     public OrdemDeServicoBuilder ComStatusAvancadoEm(int vezes)
     {

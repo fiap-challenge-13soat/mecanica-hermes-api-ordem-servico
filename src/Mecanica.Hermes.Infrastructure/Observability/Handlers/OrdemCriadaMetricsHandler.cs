@@ -8,7 +8,8 @@ namespace Mecanica.Hermes.Infrastructure.Observability.Handlers;
 internal sealed class OrdemCriadaMetricsHandler(IOrdemDeServicoMetrics metrics)
     : INotificationHandler<DomainEventNotification<OrdemDeServicoCriadoEvent>>
 {
-    public Task Handle(DomainEventNotification<OrdemDeServicoCriadoEvent> notification, CancellationToken cancellationToken)
+    public Task Handle(DomainEventNotification<OrdemDeServicoCriadoEvent> notification,
+        CancellationToken cancellationToken)
     {
         metrics.OrdemCriada();
         return Task.CompletedTask;

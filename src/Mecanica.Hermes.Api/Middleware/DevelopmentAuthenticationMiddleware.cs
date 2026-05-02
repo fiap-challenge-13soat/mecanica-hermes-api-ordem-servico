@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Mecanica.Hermes.Domain.Common;
 using Mecanica.Hermes.Infrastructure.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -8,19 +9,17 @@ namespace Mecanica.Hermes.Api.Middleware;
 
 public class DevelopmentAuthenticationMiddleware
 {
-    private readonly RequestDelegate _next;
     private readonly IHostEnvironment _environment;
+    private readonly RequestDelegate _next;
 
     public DevelopmentAuthenticationMiddleware(RequestDelegate next, IHostEnvironment environment)
     {
         // Guard de segurança defensivo: impede execução em ambientes != Development/Testing
         // mesmo se algum operador encadear o middleware por engano em Production.
-        if (!environment.IsDevelopment() && environment.EnvironmentName != Mecanica.Hermes.Domain.Common.EnvironmentNames.Testing)
-        {
+        if (!environment.IsDevelopment() && environment.EnvironmentName != EnvironmentNames.Testing)
             throw new InvalidOperationException(
                 $"DevelopmentAuthenticationMiddleware foi instanciado em ambiente '{environment.EnvironmentName}'. " +
                 "Este middleware concede acesso irrestrito e NUNCA deve ser usado em produção.");
-        }
 
         _next = next;
         _environment = environment;
@@ -28,7 +27,7 @@ public class DevelopmentAuthenticationMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        if ((_environment.IsDevelopment() || _environment.EnvironmentName == Mecanica.Hermes.Domain.Common.EnvironmentNames.Testing) &&
+        if ((_environment.IsDevelopment() || _environment.EnvironmentName == EnvironmentNames.Testing) &&
             context.User.Identity?.IsAuthenticated != true)
         {
             const string FallbackAdminScope = "mechermes-admin/admin";

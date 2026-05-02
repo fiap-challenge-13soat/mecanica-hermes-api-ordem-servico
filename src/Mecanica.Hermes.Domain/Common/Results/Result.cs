@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 
 #pragma warning disable CA1000 // Static factory methods on generic Result<T> are intentional API design
 

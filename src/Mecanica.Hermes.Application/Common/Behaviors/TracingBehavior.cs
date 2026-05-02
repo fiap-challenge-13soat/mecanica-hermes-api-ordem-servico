@@ -8,9 +8,9 @@ using MediatR;
 namespace Mecanica.Hermes.Application.Common.Behaviors;
 
 /// <summary>
-/// Pipeline behavior que cria um <see cref="Activity"/> OpenTelemetry para cada request
-/// MediatR, propagando o nome do request e o <c>OrdemDeServicoId</c> quando disponível.
-/// Move a criação de Activity para fora dos handlers individuais.
+///     Pipeline behavior que cria um <see cref="Activity" /> OpenTelemetry para cada request
+///     MediatR, propagando o nome do request e o <c>OrdemDeServicoId</c> quando disponível.
+///     Move a criação de Activity para fora dos handlers individuais.
 /// </summary>
 public sealed class TracingBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
@@ -28,7 +28,7 @@ public sealed class TracingBehavior<TRequest, TResponse>
     {
         var requestName = typeof(TRequest).Name;
 
-        using var activity = Source.StartActivity(requestName, ActivityKind.Internal);
+        using var activity = Source.StartActivity(requestName);
 
         activity?.SetTag("mediator.request", requestName);
 

@@ -1,4 +1,4 @@
-﻿using Mecanica.Hermes.Domain.Common.Abstractions;
+using Mecanica.Hermes.Domain.Common.Abstractions;
 using Mecanica.Hermes.Domain.Common.Results;
 using Mecanica.Hermes.Domain.OrdensDeServico.Abstractions;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
@@ -15,6 +15,7 @@ public class OrdemDeServicoRecebida : OrdemDeServicoStatusBase
 
     public override Result<OrdemDeServicoStatusBase> ReverterEtapa(Action<IDomainEvent> addDomainEvent)
     {
-        return Result<OrdemDeServicoStatusBase>.BadRequest("Ordem de serviço recebida, não pode reverter para a etapa anterior.");
+        return Result<OrdemDeServicoStatusBase>.BadRequest(
+            "Ordem de serviço recebida, não pode reverter para a etapa anterior.");
     }
 }

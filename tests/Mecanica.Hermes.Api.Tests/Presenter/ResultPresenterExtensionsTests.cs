@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Http.HttpResults;
 namespace Mecanica.Hermes.Api.Tests.Presenter;
 
 /// <summary>
-/// Cobre as 3 sobrecargas de <c>Present()</c> e todos os ramos de mapeamento
-/// <see cref="Result"/> → <see cref="IResult"/> HTTP.
+///     Cobre as 3 sobrecargas de <c>Present()</c> e todos os ramos de mapeamento
+///     <see cref="Result" /> → <see cref="IResult" /> HTTP.
 /// </summary>
 [Trait("Category", "Unit")]
 public class ResultPresenterExtensionsTests
@@ -82,11 +82,6 @@ public class ResultPresenterExtensionsTests
         present.Should().BeOfType<ProblemHttpResult>();
     }
 
-    // --- Result<T> com conversão manual ---
-
-    private sealed record SrcDto(string Data);
-    private sealed record ApiDto(string Data);
-
     [Fact]
     public void PresentGenericComConversaoManual_Ok_DeveRetornarOkComApiModel()
     {
@@ -104,7 +99,7 @@ public class ResultPresenterExtensionsTests
         var result = Result<SrcDto>.Ok(new SrcDto("x"));
         var callbackCalled = false;
 
-        result.Present(src => new ApiDto(src.Data), success: _ =>
+        result.Present(src => new ApiDto(src.Data), _ =>
         {
             callbackCalled = true;
             return Results.Created("/res/1", _);
@@ -112,4 +107,10 @@ public class ResultPresenterExtensionsTests
 
         callbackCalled.Should().BeTrue();
     }
+
+    // --- Result<T> com conversão manual ---
+
+    private sealed record SrcDto(string Data);
+
+    private sealed record ApiDto(string Data);
 }

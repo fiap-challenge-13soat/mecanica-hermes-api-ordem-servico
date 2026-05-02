@@ -1,4 +1,4 @@
-﻿using Mecanica.Hermes.Domain.Common.Results;
+using Mecanica.Hermes.Domain.Common.Results;
 
 namespace Mecanica.Hermes.Domain.OrdensDeServico.ValueObjects;
 

@@ -10,21 +10,20 @@ using Mecanica.Hermes.TestUtils.Builders;
 namespace Mecanica.Hermes.Application.Tests.OrdensDeServico.Consumers;
 
 /// <summary>
-/// Testes focados no comportamento <strong>específico</strong> de cada consumer concreto:
-/// - override correto de <c>OperacaoMetricKey</c>;
-/// - chamada do método de domínio esperado;
-/// - aplicação de <c>ValidatePreconditions</c> quando relevante.
-///
-/// Os caminhos genéricos do pipeline são cobertos por <c>OrdemDeServicoConsumerBaseTests</c>.
-/// Cada consumer é invocado diretamente via <see cref="FakeConsumeContext"/>, evitando o
-/// overhead do harness MassTransit em cada cenário.
+///     Testes focados no comportamento <strong>específico</strong> de cada consumer concreto:
+///     - override correto de <c>OperacaoMetricKey</c>;
+///     - chamada do método de domínio esperado;
+///     - aplicação de <c>ValidatePreconditions</c> quando relevante.
+///     Os caminhos genéricos do pipeline são cobertos por <c>OrdemDeServicoConsumerBaseTests</c>.
+///     Cada consumer é invocado diretamente via <see cref="FakeConsumeContext" />, evitando o
+///     overhead do harness MassTransit em cada cenário.
 /// </summary>
 [Trait("Category", "Unit")]
 public class ConsumerSpecificBehaviorTests
 {
+    private readonly Mock<IOrdemDeServicoMetrics> _metrics = new();
     private readonly Mock<IOrdemDeServicoRepository> _repository = new();
     private readonly Mock<IUnitOfWork> _uow = new();
-    private readonly Mock<IOrdemDeServicoMetrics> _metrics = new();
 
     [Fact]
     public async Task AddProduto_DeveChamarAdicionarProdutoNoDominio()

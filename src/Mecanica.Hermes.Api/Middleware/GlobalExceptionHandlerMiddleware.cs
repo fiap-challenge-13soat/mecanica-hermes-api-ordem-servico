@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using Mecanica.Hermes.Api.Presenter;
+using Mecanica.Hermes.Domain.Common;
 using Mecanica.Hermes.Infrastructure.MassTransit.Adapters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -33,12 +34,14 @@ public sealed class GlobalExceptionHandlerMiddleware(
         }
     }
 
-    private static async Task HandleExceptionAsync(HttpContext context, Exception exception, IHostEnvironment environment)
+    private static async Task HandleExceptionAsync(HttpContext context, Exception exception,
+        IHostEnvironment environment)
     {
         context.Response.ContentType = "application/problem+json";
 
         // Show detailed errors in Development and Testing environments
-        var isDevelopmentOrTesting = environment.IsDevelopment() || environment.EnvironmentName == Mecanica.Hermes.Domain.Common.EnvironmentNames.Testing;
+        var isDevelopmentOrTesting =
+            environment.IsDevelopment() || environment.EnvironmentName == EnvironmentNames.Testing;
 
         var problemDetails = exception switch
         {
@@ -51,7 +54,9 @@ public sealed class GlobalExceptionHandlerMiddleware(
             DbUpdateException dbEx => CreateProblemDetails(
                 HttpStatusCode.InternalServerError,
                 "Erro de Persistência",
-                isDevelopmentOrTesting ? $"{dbEx.Message}\n\nInner Exception: {dbEx.InnerException?.Message}" : "Ocorreu um erro ao salvar os dados no banco de dados.",
+                isDevelopmentOrTesting
+                    ? $"{dbEx.Message}\n\nInner Exception: {dbEx.InnerException?.Message}"
+                    : "Ocorreu um erro ao salvar os dados no banco de dados.",
                 isDevelopmentOrTesting
                     ? [dbEx.Message, dbEx.InnerException?.Message ?? string.Empty, dbEx.StackTrace ?? string.Empty]
                     : ["Erro ao persistir dados. Tente novamente."]),
@@ -59,7 +64,9 @@ public sealed class GlobalExceptionHandlerMiddleware(
             ArgumentException argEx => CreateProblemDetails(
                 HttpStatusCode.BadRequest,
                 "Argumento Inválido",
-                isDevelopmentOrTesting ? $"{argEx.Message}\n\nStack Trace: {argEx.StackTrace}" : "Um ou mais argumentos fornecidos são inválidos.",
+                isDevelopmentOrTesting
+                    ? $"{argEx.Message}\n\nStack Trace: {argEx.StackTrace}"
+                    : "Um ou mais argumentos fornecidos são inválidos.",
                 [argEx.Message]),
 
             UnauthorizedAccessException => CreateProblemDetails(
@@ -71,9 +78,15 @@ public sealed class GlobalExceptionHandlerMiddleware(
             _ => CreateProblemDetails(
                 HttpStatusCode.InternalServerError,
                 isDevelopmentOrTesting ? $"{exception.GetType().Name}" : "Erro Interno",
-                isDevelopmentOrTesting ? $"{exception.Message}\n\nStack Trace:\n{exception.StackTrace}" : "Ocorreu um erro inesperado no servidor.",
                 isDevelopmentOrTesting
-                    ? [$"Exception Type: {exception.GetType().FullName}", exception.Message, exception.InnerException?.Message ?? string.Empty]
+                    ? $"{exception.Message}\n\nStack Trace:\n{exception.StackTrace}"
+                    : "Ocorreu um erro inesperado no servidor.",
+                isDevelopmentOrTesting
+                    ?
+                    [
+                        $"Exception Type: {exception.GetType().FullName}", exception.Message,
+                        exception.InnerException?.Message ?? string.Empty
+                    ]
                     : ["Erro inesperado. Entre em contato com o suporte."])
         };
 

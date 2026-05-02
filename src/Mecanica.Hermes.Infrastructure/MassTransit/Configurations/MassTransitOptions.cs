@@ -1,4 +1,4 @@
-﻿namespace Mecanica.Hermes.Infrastructure.MassTransit.Configurations;
+namespace Mecanica.Hermes.Infrastructure.MassTransit.Configurations;
 
 internal class MassTransitOptions
 {

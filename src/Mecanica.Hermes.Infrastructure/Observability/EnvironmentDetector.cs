@@ -1,4 +1,4 @@
-﻿using Mecanica.Hermes.Infrastructure.Settings;
+using Mecanica.Hermes.Infrastructure.Settings;
 
 namespace Mecanica.Hermes.Infrastructure.Observability;
 

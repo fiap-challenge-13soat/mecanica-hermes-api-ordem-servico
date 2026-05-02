@@ -1,4 +1,4 @@
-﻿using Mecanica.Hermes.Domain.OrdensDeServico.ValueObjects;
+using Mecanica.Hermes.Domain.OrdensDeServico.ValueObjects;
 
 namespace Mecanica.Hermes.Infrastructure.Persistence.Configurations.Helpers;
 

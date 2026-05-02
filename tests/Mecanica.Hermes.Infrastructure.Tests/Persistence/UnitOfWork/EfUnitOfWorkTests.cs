@@ -1,5 +1,7 @@
+using System.Reflection;
 using Mecanica.Hermes.Domain.Common.Abstractions;
 using Mecanica.Hermes.Infrastructure.Persistence;
+using Mecanica.Hermes.Infrastructure.Persistence.Outbox;
 using Mecanica.Hermes.Infrastructure.Persistence.UnitOfWork;
 using Mecanica.Hermes.TestUtils.Builders;
 using Microsoft.EntityFrameworkCore;
@@ -8,17 +10,20 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace Mecanica.Hermes.Infrastructure.Tests.Persistence.UnitOfWork;
 
 /// <summary>
-/// Cobertura do <see cref="EfUnitOfWork"/> com Outbox transacional. Usa <c>AppDbContext</c>
-/// com provider InMemory para validar que <c>CommitAsync</c> grava as mensagens Outbox
-/// na mesma transação do <c>SaveChangesAsync</c>.
+///     Cobertura do <see cref="EfUnitOfWork" /> com Outbox transacional. Usa <c>AppDbContext</c>
+///     com provider InMemory para validar que <c>CommitAsync</c> grava as mensagens Outbox
+///     na mesma transação do <c>SaveChangesAsync</c>.
 /// </summary>
 [Trait("Category", "Unit")]
 public class EfUnitOfWorkTests
 {
-    private static AppDbContext NewDb() => new(
-        new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options);
+    private static AppDbContext NewDb()
+    {
+        return new AppDbContext(
+            new DbContextOptionsBuilder<AppDbContext>()
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
+                .Options);
+    }
 
     [Fact]
     public void CollectEventsFrom_DeveCopiarELimparEventosDoAgregado()
@@ -62,7 +67,7 @@ public class EfUnitOfWorkTests
         messages.Should().NotBeEmpty();
         messages.Should().AllSatisfy(m =>
         {
-            m.Status.Should().Be(Mecanica.Hermes.Infrastructure.Persistence.Outbox.OutboxMessageStatus.Pending,
+            m.Status.Should().Be(OutboxMessageStatus.Pending,
                 "processor é assíncrono e roda separadamente");
             m.ProcessedOn.Should().BeNull();
             m.RetryCount.Should().Be(0);
@@ -101,7 +106,7 @@ public class EfUnitOfWorkTests
         // Injeta um evento problemático via reflexão para acessar o campo privado _pendingEvents.
         var problemEvent = new UnserializableEvent();
         var pendingField = typeof(EfUnitOfWork)
-            .GetField("_pendingEvents", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
+            .GetField("_pendingEvents", BindingFlags.NonPublic | BindingFlags.Instance)!;
         var pending = (List<IDomainEvent>)pendingField.GetValue(sut)!;
         pending.Add(problemEvent);
 

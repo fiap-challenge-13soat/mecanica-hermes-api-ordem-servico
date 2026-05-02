@@ -6,8 +6,8 @@ using Mecanica.Hermes.TestUtils.Builders;
 namespace Mecanica.Hermes.Domain.Tests.OrdensDeServico;
 
 /// <summary>
-/// Testes do agregado raiz <see cref="OrdemDeServico"/>. Organizados por feature
-/// (criar, produtos, serviços, ciclo de vida) seguindo AAA (Arrange-Act-Assert).
+///     Testes do agregado raiz <see cref="OrdemDeServico" />. Organizados por feature
+///     (criar, produtos, serviços, ciclo de vida) seguindo AAA (Arrange-Act-Assert).
 /// </summary>
 [Trait("Category", "Unit")]
 public class OrdemDeServicoTests
@@ -73,7 +73,7 @@ public class OrdemDeServicoTests
     public void AdicionarProduto_DeveRetornarErro_QuandoProdutoJaAdicionado()
     {
         var produtoId = Guid.NewGuid();
-        var ordem = new OrdemDeServicoBuilder().ComProduto(produtoId, 50m, 1).Build();
+        var ordem = new OrdemDeServicoBuilder().ComProduto(produtoId, 50m).Build();
 
         var result = ordem.AdicionarProduto(produtoId, 50m, 1);
 
@@ -208,8 +208,8 @@ public class OrdemDeServicoTests
     public void ValorTotal_DeveSomarProdutosEServicos()
     {
         var ordem = new OrdemDeServicoBuilder()
-            .ComProduto(valor: 50m, quantidade: 3)   // 150
-            .ComServico(valor: 100m)                 // 100
+            .ComProduto(valor: 50m, quantidade: 3) // 150
+            .ComServico(valor: 100m) // 100
             .Build();
 
         ordem.ValorTotal.Should().Be(250m);

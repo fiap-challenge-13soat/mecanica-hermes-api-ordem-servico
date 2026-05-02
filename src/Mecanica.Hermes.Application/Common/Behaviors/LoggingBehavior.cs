@@ -9,8 +9,8 @@ using Microsoft.Extensions.Logging;
 namespace Mecanica.Hermes.Application.Common.Behaviors;
 
 /// <summary>
-/// Pipeline behavior que registra o início e o término de cada request MediatR,
-/// incluindo duração e status (sucesso/falha). Substitui o logging manual nos handlers.
+///     Pipeline behavior que registra o início e o término de cada request MediatR,
+///     incluindo duração e status (sucesso/falha). Substitui o logging manual nos handlers.
 /// </summary>
 public sealed class LoggingBehavior<TRequest, TResponse>(
     ILogger<LoggingBehavior<TRequest, TResponse>> logger)

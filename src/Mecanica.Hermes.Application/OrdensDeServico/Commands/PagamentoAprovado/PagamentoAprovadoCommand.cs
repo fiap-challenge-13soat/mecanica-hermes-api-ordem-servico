@@ -6,5 +6,8 @@ namespace Mecanica.Hermes.Application.OrdensDeServico.Commands.PagamentoAprovado
 public sealed record PagamentoAprovadoCommand(Guid OrdemDeServicoId)
     : IAsyncCommand, IOrdemDeServicoCommand
 {
-    public object ToMessage() => new PagamentoAprovadoRequest(OrdemDeServicoId);
+    public object ToMessage()
+    {
+        return new PagamentoAprovadoRequest(OrdemDeServicoId);
+    }
 }

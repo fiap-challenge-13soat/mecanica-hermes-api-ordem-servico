@@ -10,6 +10,8 @@ namespace Mecanica.Hermes.Application.OrdensDeServico.Consumers;
 public sealed class RemoveProdutoConsumer(IOrdemDeServicoRepository repository, IUnitOfWork uow)
     : OrdemDeServicoMutateConsumerBase<ExecuteRemoveProduto>(repository, uow)
 {
-    protected override Result Execute(OrdemDeServico ordem, ExecuteRemoveProduto msg) =>
-        ordem.RemoverProduto(msg.ProdutoId);
+    protected override Result Execute(OrdemDeServico ordem, ExecuteRemoveProduto msg)
+    {
+        return ordem.RemoverProduto(msg.ProdutoId);
+    }
 }

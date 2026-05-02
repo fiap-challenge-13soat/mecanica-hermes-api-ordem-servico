@@ -1,7 +1,6 @@
+#pragma warning disable CA1873 // Log arguments are simple property accesses — not expensive
 using System.Diagnostics;
 using System.Text.Json;
-
-#pragma warning disable CA1873 // Log arguments are simple property accesses — not expensive
 using Mecanica.Hermes.Domain.Common.Abstractions;
 using Mecanica.Hermes.Infrastructure.Observability;
 using Microsoft.EntityFrameworkCore;
@@ -13,18 +12,25 @@ using Microsoft.Extensions.Options;
 namespace Mecanica.Hermes.Infrastructure.Persistence.Outbox;
 
 /// <summary>
-/// Background service que processa mensagens pendentes da tabela <c>OutboxMessages</c>.
-///
-/// <list type="bullet">
-///   <item><b>Concorrência:</b> usa <c>FOR UPDATE SKIP LOCKED</c> (PostgreSQL) para que múltiplas
-///   réplicas do serviço não processem o mesmo lote simultaneamente.</item>
-///   <item><b>DLQ:</b> após <see cref="OutboxOptions.MaxRetries"/> falhas consecutivas, a mensagem
-///   é marcada como <see cref="OutboxMessageStatus.DeadLettered"/> e não reprocessada.</item>
-///   <item><b>Tracing:</b> cada ciclo abre um <see cref="Activity"/> filho propagando o
-///   <c>TraceContext</c> original do evento.</item>
-///   <item><b>Métricas:</b> emite <c>outbox.dispatched</c>, <c>outbox.failed</c> e
-///   <c>outbox.dead_lettered</c> via <see cref="OutboxHealthMetrics"/>.</item>
-/// </list>
+///     Background service que processa mensagens pendentes da tabela <c>OutboxMessages</c>.
+///     <list type="bullet">
+///         <item>
+///             <b>Concorrência:</b> usa <c>FOR UPDATE SKIP LOCKED</c> (PostgreSQL) para que múltiplas
+///             réplicas do serviço não processem o mesmo lote simultaneamente.
+///         </item>
+///         <item>
+///             <b>DLQ:</b> após <see cref="OutboxOptions.MaxRetries" /> falhas consecutivas, a mensagem
+///             é marcada como <see cref="OutboxMessageStatus.DeadLettered" /> e não reprocessada.
+///         </item>
+///         <item>
+///             <b>Tracing:</b> cada ciclo abre um <see cref="Activity" /> filho propagando o
+///             <c>TraceContext</c> original do evento.
+///         </item>
+///         <item>
+///             <b>Métricas:</b> emite <c>outbox.dispatched</c>, <c>outbox.failed</c> e
+///             <c>outbox.dead_lettered</c> via <see cref="OutboxHealthMetrics" />.
+///         </item>
+///     </list>
 /// </summary>
 internal sealed class OutboxProcessor(
     IServiceScopeFactory scopeFactory,
@@ -48,14 +54,18 @@ internal sealed class OutboxProcessor(
             }
             catch (Exception ex) when (!stoppingToken.IsCancellationRequested)
             {
-                logger.LogError(ex, "Falha ao processar lote do Outbox. Próxima tentativa em {Interval}.", _options.PollInterval);
+                logger.LogError(ex, "Falha ao processar lote do Outbox. Próxima tentativa em {Interval}.",
+                    _options.PollInterval);
             }
 
             try
             {
                 await Task.Delay(_options.PollInterval, stoppingToken);
             }
-            catch (TaskCanceledException) { /* shutdown */ }
+            catch (TaskCanceledException)
+            {
+                /* shutdown */
+            }
         }
 
         logger.LogInformation("OutboxProcessor parado.");
@@ -92,13 +102,11 @@ internal sealed class OutboxProcessor(
             // ATENÇÃO: sem FOR UPDATE SKIP LOCKED, múltiplas instâncias podem processar o mesmo lote.
             // Use OUTBOX__ALLOW_NON_LOCKING_FALLBACK=true apenas em ambientes de teste.
             if (!_options.AllowNonLockingFallback)
-            {
                 logger.LogCritical(
                     "OutboxProcessor: o provider de banco não suporta FOR UPDATE SKIP LOCKED. " +
                     "O fallback LINQ está sendo usado sem AllowNonLockingFallback=true. " +
                     "Em múltiplas instâncias, isso pode causar double-delivery de eventos. " +
                     "Defina OUTBOX__ALLOW_NON_LOCKING_FALLBACK=true para suprimir este aviso em testes.");
-            }
 
             pending = await db.OutboxMessages
                 .Where(m => m.Status == OutboxMessageStatus.Pending)
@@ -166,7 +174,8 @@ internal sealed class OutboxProcessor(
         {
             metrics.MessageDeadLettered();
             logger.LogCritical(
-                "OutboxMessage {Id} ({Type}) atingiu o limite de {MaxRetries} tentativas e foi movida para Dead Letter.",
+                "OutboxMessage {Id} ({Type}) atingiu o limite de {MaxRetries} tentativas e foi movida " +
+                "para Dead Letter.",
                 message.Id, message.Type, _options.MaxRetries);
         }
         else
@@ -176,27 +185,33 @@ internal sealed class OutboxProcessor(
     }
 
     /// <summary>
-    /// Resolve o <see cref="Type"/> concreto a partir do discriminador persistido.
-    /// Suporta tanto nomes estáveis (<c>DomainEventNameAttribute</c>) quanto
-    /// <c>AssemblyQualifiedName</c> legados.
+    ///     Resolve o <see cref="Type" /> concreto a partir do discriminador persistido.
+    ///     Suporta tanto nomes estáveis (<c>DomainEventNameAttribute</c>) quanto
+    ///     <c>AssemblyQualifiedName</c> legados.
     /// </summary>
     private static Type? ResolveEventType(string typeName)
     {
         // Tentativa 1: AssemblyQualifiedName ou FullName (legado)
-        var resolved = Type.GetType(typeName, throwOnError: false);
+        var resolved = Type.GetType(typeName, false);
         if (resolved is not null) return resolved;
 
         // Tentativa 2: varredura por DomainEventNameAttribute no assembly do domínio
         return AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(a =>
             {
-                try { return a.GetTypes(); }
-                catch { return []; }
+                try
+                {
+                    return a.GetTypes();
+                }
+                catch
+                {
+                    return [];
+                }
             })
             .FirstOrDefault(t =>
             {
-                var attr = t.GetCustomAttributes(typeof(Domain.Common.Abstractions.DomainEventNameAttribute), false)
-                    .OfType<Domain.Common.Abstractions.DomainEventNameAttribute>()
+                var attr = t.GetCustomAttributes(typeof(DomainEventNameAttribute), false)
+                    .OfType<DomainEventNameAttribute>()
                     .FirstOrDefault();
                 return attr?.Name == typeName;
             });

@@ -2,14 +2,13 @@ using System.Text.Json;
 using Mecanica.Hermes.Api.Middleware;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Mecanica.Hermes.Api.Tests.Middleware;
 
 /// <summary>
-/// Valida o mapeamento exceção → <c>ApiProblemDetails</c>/HTTP status no middleware global.
+///     Valida o mapeamento exceção → <c>ApiProblemDetails</c>/HTTP status no middleware global.
 /// </summary>
 [Trait("Category", "Unit")]
 public class GlobalExceptionHandlerMiddlewareTests

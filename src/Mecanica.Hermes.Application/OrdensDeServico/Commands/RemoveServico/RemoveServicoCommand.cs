@@ -7,5 +7,8 @@ public sealed record RemoveServicoCommand(
     Guid OrdemDeServicoId,
     Guid ServicoId) : IAsyncCommand, IOrdemDeServicoCommand
 {
-    public object ToMessage() => new RemoveServicoRequest(OrdemDeServicoId, ServicoId);
+    public object ToMessage()
+    {
+        return new RemoveServicoRequest(OrdemDeServicoId, ServicoId);
+    }
 }

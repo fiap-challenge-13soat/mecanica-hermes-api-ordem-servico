@@ -9,5 +9,8 @@ public sealed record AddProdutoCommand(
     decimal ValorVenda,
     int Quantidade) : IAsyncCommand, IOrdemDeServicoCommand
 {
-    public object ToMessage() => new AddProdutoRequest(OrdemDeServicoId, ProdutoId, ValorVenda, Quantidade);
+    public object ToMessage()
+    {
+        return new AddProdutoRequest(OrdemDeServicoId, ProdutoId, ValorVenda, Quantidade);
+    }
 }

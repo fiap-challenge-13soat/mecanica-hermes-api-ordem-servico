@@ -3,14 +3,15 @@ using MassTransit.Testing;
 using Mecanica.Hermes.Application.OrdensDeServico.Messages.Commands;
 using Mecanica.Hermes.Infrastructure.MassTransit.Filters;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Mecanica.Hermes.Infrastructure.Tests.MassTransit.Filters;
 
 /// <summary>
-/// Testes do <see cref="OrdemDeServicoCommandValidationFilter{T}"/> usando consumer stub.
-/// Verifica que mensagens com <c>OrdemDeServicoId == Guid.Empty</c> são descartadas antes
-/// de chegar ao consumer concreto, e que mensagens válidas atravessam normalmente.
+///     Testes do <see cref="OrdemDeServicoCommandValidationFilter{T}" /> usando consumer stub.
+///     Verifica que mensagens com <c>OrdemDeServicoId == Guid.Empty</c> são descartadas antes
+///     de chegar ao consumer concreto, e que mensagens válidas atravessam normalmente.
 /// </summary>
 [Trait("Category", "Unit")]
 public class OrdemDeServicoCommandValidationFilterTests
@@ -18,7 +19,7 @@ public class OrdemDeServicoCommandValidationFilterTests
     private static async Task<(ITestHarness harness, ServiceProvider provider)> StartHarnessAsync()
     {
         var provider = new ServiceCollection()
-            .AddSingleton(typeof(Microsoft.Extensions.Logging.ILogger<>), typeof(NullLogger<>))
+            .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>))
             .AddMassTransitTestHarness(cfg =>
             {
                 cfg.AddConsumer<StubExecuteCommandConsumer>();
@@ -72,6 +73,9 @@ public class OrdemDeServicoCommandValidationFilterTests
 
     private class StubExecuteCommandConsumer : IConsumer<StubExecuteCommand>
     {
-        public Task Consume(ConsumeContext<StubExecuteCommand> context) => Task.CompletedTask;
+        public Task Consume(ConsumeContext<StubExecuteCommand> context)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

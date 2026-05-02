@@ -1,7 +1,7 @@
+using Mecanica.Hermes.Application.Common.Pagination;
 using Mecanica.Hermes.Application.OrdensDeServico.Dtos;
 using Mecanica.Hermes.Application.OrdensDeServico.Mappings;
 using Mecanica.Hermes.Application.OrdensDeServico.Ports;
-using Mecanica.Hermes.Application.Common.Pagination;
 using Mecanica.Hermes.Domain.Common.Results;
 using MediatR;
 
@@ -15,11 +15,11 @@ internal sealed class ListAllOrdensDeServicoQueryHandler(IOrdemDeServicoReader r
         CancellationToken cancellationToken)
     {
         var paginationParams = new PaginationParams { Page = request.Page, PageSize = request.PageSize };
-        
+
         var pagedOrdensDeServico = await repository.ListAllAsync(paginationParams);
-        
+
         var ordemDeServicoDtos = pagedOrdensDeServico.Items.Select(o => o.ToDto()).ToList();
-        
+
         var pagedResult = PagedResult<OrdemDeServicoDto>.Create(
             ordemDeServicoDtos,
             pagedOrdensDeServico.Page,

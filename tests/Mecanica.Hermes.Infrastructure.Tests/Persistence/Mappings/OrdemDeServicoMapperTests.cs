@@ -5,8 +5,8 @@ using Mecanica.Hermes.TestUtils.Builders;
 namespace Mecanica.Hermes.Infrastructure.Tests.Persistence.Mappings;
 
 /// <summary>
-/// Testes do mapper de persistência. Validam o round-trip Domain ↔ Entity preservando
-/// os invariantes do agregado (Id, timestamps, status atual, coleções).
+///     Testes do mapper de persistência. Validam o round-trip Domain ↔ Entity preservando
+///     os invariantes do agregado (Id, timestamps, status atual, coleções).
 /// </summary>
 [Trait("Category", "Unit")]
 public class OrdemDeServicoMapperTests
@@ -20,7 +20,7 @@ public class OrdemDeServicoMapperTests
             .ComProblemaRelatado("Motor")
             .ComObservacoes("Obs")
             .ComProduto(produtoId, 100m, 2)
-            .ComServico(servicoId, 150m)
+            .ComServico(servicoId)
             .Build();
 
         var entity = ordem.ToEntity();

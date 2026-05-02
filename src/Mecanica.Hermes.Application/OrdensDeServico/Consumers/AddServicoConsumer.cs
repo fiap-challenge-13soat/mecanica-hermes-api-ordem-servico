@@ -10,6 +10,8 @@ namespace Mecanica.Hermes.Application.OrdensDeServico.Consumers;
 public sealed class AddServicoConsumer(IOrdemDeServicoRepository repository, IUnitOfWork uow)
     : OrdemDeServicoMutateConsumerBase<ExecuteAddServico>(repository, uow)
 {
-    protected override Result Execute(OrdemDeServico ordem, ExecuteAddServico msg) =>
-        ordem.AdicionarServico(msg.ServicoId, msg.ValorVenda);
+    protected override Result Execute(OrdemDeServico ordem, ExecuteAddServico msg)
+    {
+        return ordem.AdicionarServico(msg.ServicoId, msg.ValorVenda);
+    }
 }

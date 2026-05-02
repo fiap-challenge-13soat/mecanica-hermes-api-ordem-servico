@@ -9,15 +9,17 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Mecanica.Hermes.Infrastructure.Tests.MassTransit.Saga;
 
 /// <summary>
-/// Testes da <see cref="OrdemDeServicoStateMachine"/> usando <see cref="ITestHarness"/>
-/// + <see cref="ISagaStateMachineTestHarness{TStateMachine,TInstance}"/>. Cobrem as
-/// transições críticas: Initial → Processing → Initial e a propriedade de "no máximo
-/// uma operação por agregado" (segunda Request em Processing é ignorada).
+///     Testes da <see cref="OrdemDeServicoStateMachine" /> usando <see cref="ITestHarness" />
+///     + <see cref="ISagaStateMachineTestHarness{TStateMachine,TInstance}" />. Cobrem as
+///     transições críticas: Initial → Processing → Initial e a propriedade de "no máximo
+///     uma operação por agregado" (segunda Request em Processing é ignorada).
 /// </summary>
 [Trait("Category", "Unit")]
 public class OrdemDeServicoStateMachineTests
 {
-    private static async Task<(ITestHarness harness, ISagaStateMachineTestHarness<OrdemDeServicoStateMachine, OrdemDeServicoState> saga, ServiceProvider provider)>
+    private static async Task<(ITestHarness harness,
+            ISagaStateMachineTestHarness<OrdemDeServicoStateMachine, OrdemDeServicoState> saga, ServiceProvider provider
+            )>
         StartHarnessAsync()
     {
         var provider = new ServiceCollection()

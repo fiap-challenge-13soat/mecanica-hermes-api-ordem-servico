@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Mecanica.Hermes.Api;
 using Mecanica.Hermes.Api.Middleware;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
@@ -8,13 +7,16 @@ using Microsoft.Extensions.Hosting.Internal;
 namespace Mecanica.Hermes.Api.Tests.Middleware;
 
 /// <summary>
-/// Cobre o middleware que injeta um <c>ClaimsPrincipal</c> em DEV/Testing,
-/// incluindo o guard hard-fail em Production.
+///     Cobre o middleware que injeta um <c>ClaimsPrincipal</c> em DEV/Testing,
+///     incluindo o guard hard-fail em Production.
 /// </summary>
 [Trait("Category", "Unit")]
 public class DevelopmentAuthenticationMiddlewareTests
 {
-    private static IHostEnvironment Env(string name) => new HostingEnvironment { EnvironmentName = name };
+    private static IHostEnvironment Env(string name)
+    {
+        return new HostingEnvironment { EnvironmentName = name };
+    }
 
     [Theory]
     [InlineData("Development")]
@@ -34,7 +36,8 @@ public class DevelopmentAuthenticationMiddlewareTests
     [Fact]
     public async Task InvokeAsync_QuandoUsuarioJaAutenticado_NaoSobrescreve()
     {
-        var middleware = new DevelopmentAuthenticationMiddleware(_ => Task.CompletedTask, Env(Environments.Development));
+        var middleware =
+            new DevelopmentAuthenticationMiddleware(_ => Task.CompletedTask, Env(Environments.Development));
         var ctx = new DefaultHttpContext();
         var existing = new ClaimsPrincipal(new ClaimsIdentity(
             [new Claim(ClaimTypes.Name, "Real")], "RealAuth"));
@@ -59,7 +62,11 @@ public class DevelopmentAuthenticationMiddlewareTests
     {
         var called = false;
         var middleware = new DevelopmentAuthenticationMiddleware(
-            _ => { called = true; return Task.CompletedTask; },
+            _ =>
+            {
+                called = true;
+                return Task.CompletedTask;
+            },
             Env(Environments.Development));
 
         await middleware.InvokeAsync(new DefaultHttpContext());

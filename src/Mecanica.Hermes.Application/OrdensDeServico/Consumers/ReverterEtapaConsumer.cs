@@ -16,6 +16,8 @@ public sealed class ReverterEtapaConsumer(
 {
     protected override string OperacaoMetricKey => OrdemDeServicoMetricKeys.Operations.ReverterEtapa;
 
-    protected override Result Execute(OrdemDeServico ordem, ExecuteReverterEtapa msg) =>
-        ordem.ReverterEtapa();
+    protected override Result Execute(OrdemDeServico ordem, ExecuteReverterEtapa msg)
+    {
+        return ordem.ReverterEtapa();
+    }
 }

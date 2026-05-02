@@ -10,20 +10,22 @@ using Microsoft.Extensions.Logging;
 namespace Mecanica.Hermes.Infrastructure.Persistence.UnitOfWork;
 
 /// <summary>
-/// Unit of Work baseado em EF Core com <b>Outbox transacional</b>.
-///
-/// Estratégia (Outbox Pattern):
-/// <list type="number">
-///   <item>Domain Events são coletados pelo agregado via <see cref="CollectEventsFrom"/>.</item>
-///   <item>No <see cref="CommitAsync"/>, cada evento é serializado em JSON e adicionado como
-///   <see cref="OutboxMessageEntity"/> na <em>mesma</em> transação do <c>SaveChangesAsync</c>.
-///   Isso garante atomicidade: ou o estado e os eventos são gravados, ou nada é.</item>
-///   <item>Um <see cref="OutboxProcessor"/> em background lê mensagens não processadas e
-///   despacha via <see cref="IDomainEventDispatcher"/>.</item>
-/// </list>
-///
-/// Esta abordagem substitui o despacho síncrono pós-commit (que perdia eventos em falha
-/// de dispatch). Agora a entrega é eventualmente consistente e at-least-once.
+///     Unit of Work baseado em EF Core com <b>Outbox transacional</b>.
+///     Estratégia (Outbox Pattern):
+///     <list type="number">
+///         <item>Domain Events são coletados pelo agregado via <see cref="CollectEventsFrom" />.</item>
+///         <item>
+///             No <see cref="CommitAsync" />, cada evento é serializado em JSON e adicionado como
+///             <see cref="OutboxMessageEntity" /> na <em>mesma</em> transação do <c>SaveChangesAsync</c>.
+///             Isso garante atomicidade: ou o estado e os eventos são gravados, ou nada é.
+///         </item>
+///         <item>
+///             Um <see cref="OutboxProcessor" /> em background lê mensagens não processadas e
+///             despacha via <see cref="IDomainEventDispatcher" />.
+///         </item>
+///     </list>
+///     Esta abordagem substitui o despacho síncrono pós-commit (que perdia eventos em falha
+///     de dispatch). Agora a entrega é eventualmente consistente e at-least-once.
 /// </summary>
 internal sealed class EfUnitOfWork(
     AppDbContext db,
@@ -49,20 +51,21 @@ internal sealed class EfUnitOfWork(
             _pendingEvents.Clear();
 
             foreach (var evt in snapshot)
-            {
                 try
                 {
                     var payload = JsonSerializer.Serialize(evt, evt.GetType(), SerializerOptions);
                     var evtType = evt.GetType();
-                    var nameAttr = (DomainEventNameAttribute?)Attribute.GetCustomAttribute(evtType, typeof(DomainEventNameAttribute));
+                    var nameAttr =
+                        (DomainEventNameAttribute?)Attribute.GetCustomAttribute(evtType,
+                            typeof(DomainEventNameAttribute));
                     var typeName = nameAttr?.Name ?? evtType.AssemblyQualifiedName ?? evtType.FullName!;
                     var traceContext = Activity.Current?.Id;
                     db.OutboxMessages.Add(new OutboxMessageEntity(
-                        id: Guid.NewGuid(),
-                        type: typeName,
-                        payload: payload,
-                        occurredOn: now,
-                        traceContext: traceContext));
+                        Guid.NewGuid(),
+                        typeName,
+                        payload,
+                        now,
+                        traceContext));
                 }
                 catch (Exception ex)
                 {
@@ -73,7 +76,6 @@ internal sealed class EfUnitOfWork(
                         "Falha ao serializar Domain Event {EventType} para Outbox. Evento NÃO será despachado.",
                         evt.GetType().Name);
                 }
-            }
         }
 
         try

@@ -1,7 +1,9 @@
-﻿namespace Mecanica.Hermes.Domain.Common.Abstractions;
+namespace Mecanica.Hermes.Domain.Common.Abstractions;
 
 public abstract class AggregateRoot : BaseDomain
 {
+    private readonly List<IDomainEvent> _domainEvents = [];
+
     protected AggregateRoot()
     {
     }
@@ -10,10 +12,15 @@ public abstract class AggregateRoot : BaseDomain
     {
     }
 
-    private readonly List<IDomainEvent> _domainEvents = [];
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents;
 
-    protected void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+    protected void AddDomainEvent(IDomainEvent domainEvent)
+    {
+        _domainEvents.Add(domainEvent);
+    }
 
-    public void ClearDomainEvents() => _domainEvents.Clear();
+    public void ClearDomainEvents()
+    {
+        _domainEvents.Clear();
+    }
 }

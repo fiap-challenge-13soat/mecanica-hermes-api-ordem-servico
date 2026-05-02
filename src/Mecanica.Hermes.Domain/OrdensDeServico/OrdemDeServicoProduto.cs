@@ -1,4 +1,4 @@
-﻿using Mecanica.Hermes.Domain.Common.Abstractions;
+using Mecanica.Hermes.Domain.Common.Abstractions;
 using Mecanica.Hermes.Domain.Common.Results;
 using Mecanica.Hermes.Domain.OrdensDeServico.ValueObjects;
 
@@ -14,8 +14,8 @@ public class OrdemDeServicoProduto : BaseDomain
     }
 
     public Guid ProdutoId { get; private set; }
-    public ValorVendaVo ValorVenda { get; private set; }
-    public QuantidadeVo Quantidade { get; private set; }
+    public ValorVendaVo ValorVenda { get; }
+    public QuantidadeVo Quantidade { get; }
     public decimal ValorTotal => ValorVenda.Valor * Quantidade.Valor;
 
     internal static Result<OrdemDeServicoProduto> Criar(Guid produtoId, decimal valorVenda, int quantidade)

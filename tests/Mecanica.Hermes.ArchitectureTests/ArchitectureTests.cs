@@ -1,5 +1,6 @@
 using Mecanica.Hermes.Application;
 using Mecanica.Hermes.Domain;
+using MediatR;
 using NetArchTest.Rules;
 
 #pragma warning disable CA1707 // Underscores in test method names are standard xUnit convention
@@ -8,16 +9,15 @@ using NetArchTest.Rules;
 namespace Mecanica.Hermes.ArchitectureTests;
 
 /// <summary>
-/// Garante que as regras de dependência da Clean Architecture não sejam quebradas
-/// por acidente. Cada teste falha com uma mensagem explicativa se a regra for violada.
-///
-/// Regras:
-/// 1. Domain não pode referenciar Application, Infrastructure ou Api.
-/// 2. Application não pode referenciar Infrastructure ou Api.
-/// 3. Application não pode referenciar EntityFrameworkCore diretamente.
-/// 4. Todos os AggregateRoot concretos devem ter construtores não-públicos (fábricas enforçadas).
-/// 5. IRequestHandler (MediatR) handlers devem ser sealed.
-/// 6. Consumers (MassTransit) devem ser sealed.
+///     Garante que as regras de dependência da Clean Architecture não sejam quebradas
+///     por acidente. Cada teste falha com uma mensagem explicativa se a regra for violada.
+///     Regras:
+///     1. Domain não pode referenciar Application, Infrastructure ou Api.
+///     2. Application não pode referenciar Infrastructure ou Api.
+///     3. Application não pode referenciar EntityFrameworkCore diretamente.
+///     4. Todos os AggregateRoot concretos devem ter construtores não-públicos (fábricas enforçadas).
+///     5. IRequestHandler (MediatR) handlers devem ser sealed.
+///     6. Consumers (MassTransit) devem ser sealed.
 /// </summary>
 [Trait("Category", "Unit")]
 public class ArchitectureTests
@@ -110,7 +110,7 @@ public class ArchitectureTests
     public void MediatRHandlers_DevemSerSealed()
     {
         var result = FromApplication
-            .That().ImplementInterface(typeof(MediatR.IRequestHandler<,>))
+            .That().ImplementInterface(typeof(IRequestHandler<,>))
             .Should().BeSealed()
             .GetResult();
 

@@ -6,5 +6,8 @@ namespace Mecanica.Hermes.Application.OrdensDeServico.Commands.ReverterEtapa;
 public sealed record ReverterEtapaCommand(Guid OrdemDeServicoId)
     : IAsyncCommand, IOrdemDeServicoCommand
 {
-    public object ToMessage() => new ReverterEtapaRequest(OrdemDeServicoId);
+    public object ToMessage()
+    {
+        return new ReverterEtapaRequest(OrdemDeServicoId);
+    }
 }

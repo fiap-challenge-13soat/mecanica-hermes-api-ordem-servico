@@ -1,35 +1,32 @@
 using System.Net;
 using System.Net.Http.Headers;
 using Mecanica.Hermes.IntegrationTests.Infrastructure;
-using Xunit;
 
 #pragma warning disable CA1001 // IAsyncLifetime.DisposeAsync handles disposal; IDisposable not needed
 
 namespace Mecanica.Hermes.IntegrationTests.OrdensDeServico;
 
 /// <summary>
-/// Testes de autorização: verificam que as políticas <c>OnlyAdminScope</c> e
-/// <c>AllowClienteScope</c> estão corretamente aplicadas nos endpoints.
-///
-/// Usam <see cref="AuthorizationTestWebApplicationFactory"/> que:
-///  - NÃO injeta claims de desenvolvimento (ambiente "Testing_Auth")
-///  - Valida JWTs reais com chave simétrica de teste (sem JWKS externo)
-///
-/// Não dependem do Testcontainers PostgreSQL — usam InMemory DB se disponível
-/// (endpoints de escrita retornam 202 sem persistir).
+///     Testes de autorização: verificam que as políticas <c>OnlyAdminScope</c> e
+///     <c>AllowClienteScope</c> estão corretamente aplicadas nos endpoints.
+///     Usam <see cref="AuthorizationTestWebApplicationFactory" /> que:
+///     - NÃO injeta claims de desenvolvimento (ambiente "Testing_Auth")
+///     - Valida JWTs reais com chave simétrica de teste (sem JWKS externo)
+///     Não dependem do Testcontainers PostgreSQL — usam InMemory DB se disponível
+///     (endpoints de escrita retornam 202 sem persistir).
 /// </summary>
 [Trait("Category", "Integration")]
 public sealed class AuthorizationTests : IAsyncLifetime
 {
-    private readonly AuthorizationTestWebApplicationFactory _factory = new();
-    private HttpClient _client = null!;
-
     private static readonly object CreateBody = new
     {
         ClienteId = Guid.NewGuid(),
         VeiculoId = Guid.NewGuid(),
         ProblemaRelatado = "Teste"
     };
+
+    private readonly AuthorizationTestWebApplicationFactory _factory = new();
+    private HttpClient _client = null!;
 
     public async Task InitializeAsync()
     {
@@ -64,7 +61,9 @@ public sealed class AuthorizationTests : IAsyncLifetime
     [Fact]
     public async Task CriarOrdemDeServico_ComScopeClienteApenas_DeveRetornar403()
     {
-        var token = AuthorizationTestWebApplicationFactory.GenerateToken([AuthorizationTestWebApplicationFactory.ClientScope]);
+        var token = AuthorizationTestWebApplicationFactory.GenerateToken([
+            AuthorizationTestWebApplicationFactory.ClientScope
+        ]);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var response = await _client.PostAsJsonAsync("/api/ordens-de-servico", CreateBody);
@@ -75,7 +74,9 @@ public sealed class AuthorizationTests : IAsyncLifetime
     [Fact]
     public async Task ListarTodas_ComScopeClienteApenas_DeveRetornar403()
     {
-        var token = AuthorizationTestWebApplicationFactory.GenerateToken([AuthorizationTestWebApplicationFactory.ClientScope]);
+        var token = AuthorizationTestWebApplicationFactory.GenerateToken([
+            AuthorizationTestWebApplicationFactory.ClientScope
+        ]);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var response = await _client.GetAsync("/api/ordens-de-servico");
@@ -88,7 +89,9 @@ public sealed class AuthorizationTests : IAsyncLifetime
     [Fact]
     public async Task CriarOrdemDeServico_ComScopeAdmin_DeveRetornar202()
     {
-        var token = AuthorizationTestWebApplicationFactory.GenerateToken([AuthorizationTestWebApplicationFactory.AdminScope]);
+        var token = AuthorizationTestWebApplicationFactory.GenerateToken([
+            AuthorizationTestWebApplicationFactory.AdminScope
+        ]);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var response = await _client.PostAsJsonAsync("/api/ordens-de-servico", CreateBody);
@@ -107,7 +110,9 @@ public sealed class AuthorizationTests : IAsyncLifetime
     [Fact]
     public async Task GetOrdemDeServico_ComScopeCliente_DevePassarAutorizacao()
     {
-        var token = AuthorizationTestWebApplicationFactory.GenerateToken([AuthorizationTestWebApplicationFactory.ClientScope]);
+        var token = AuthorizationTestWebApplicationFactory.GenerateToken([
+            AuthorizationTestWebApplicationFactory.ClientScope
+        ]);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var response = await _client.GetAsync($"/api/ordens-de-servico/{Guid.NewGuid()}");

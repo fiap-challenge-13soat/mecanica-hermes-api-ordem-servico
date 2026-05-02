@@ -1,8 +1,8 @@
 namespace Mecanica.Hermes.Application.OrdensDeServico.Constants;
 
 /// <summary>
-/// Chaves usadas em métricas de OpenTelemetry para operações sobre o agregado OrdemDeServico.
-/// Centralizadas para evitar drift entre Consumers e dashboards.
+///     Chaves usadas em métricas de OpenTelemetry para operações sobre o agregado OrdemDeServico.
+///     Centralizadas para evitar drift entre Consumers e dashboards.
 /// </summary>
 public static class OrdemDeServicoMetricKeys
 {

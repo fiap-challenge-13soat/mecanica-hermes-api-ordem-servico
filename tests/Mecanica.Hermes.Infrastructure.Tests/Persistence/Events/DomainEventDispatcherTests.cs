@@ -10,11 +10,10 @@ public class DomainEventDispatcherTests
 {
     private readonly Mock<IPublisher> _publisher = new();
 
-    private sealed record EventA(Guid Id) : IDomainEvent;
-    private sealed record EventB(Guid Id) : IDomainEvent;
-
-    private DomainEventDispatcher CreateDispatcher() =>
-        new(_publisher.Object, NullLogger<DomainEventDispatcher>.Instance);
+    private DomainEventDispatcher CreateDispatcher()
+    {
+        return new DomainEventDispatcher(_publisher.Object, NullLogger<DomainEventDispatcher>.Instance);
+    }
 
     [Fact]
     public async Task DispatchAsync_DeveEnvolverEventosEmDomainEventNotificationEPublicarCadaUm()
@@ -68,4 +67,8 @@ public class DomainEventDispatcherTests
 
         _publisher.Verify(p => p.Publish(It.IsAny<INotification>(), It.IsAny<CancellationToken>()), Times.Never);
     }
+
+    private sealed record EventA(Guid Id) : IDomainEvent;
+
+    private sealed record EventB(Guid Id) : IDomainEvent;
 }

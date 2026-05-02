@@ -17,11 +17,15 @@ public sealed class RejeitarOrdemDeServicoConsumer(
 {
     protected override string OperacaoMetricKey => OrdemDeServicoMetricKeys.Operations.Rejeitar;
 
-    protected override Result ValidatePreconditions(OrdemDeServico ordem, ExecuteRejeitarOrdemDeServico msg) =>
-        ordem.StatusAtual.StatusAtual == OrdemDeServicoStatus.AguardandoAprovacao
+    protected override Result ValidatePreconditions(OrdemDeServico ordem, ExecuteRejeitarOrdemDeServico msg)
+    {
+        return ordem.StatusAtual.StatusAtual == OrdemDeServicoStatus.AguardandoAprovacao
             ? Result.Ok()
             : Result.BadRequest("Ordem de serviço precisa estar em aguardando aprovação para ser rejeitada.");
+    }
 
-    protected override Result Execute(OrdemDeServico ordem, ExecuteRejeitarOrdemDeServico msg) =>
-        ordem.Cancelar();
+    protected override Result Execute(OrdemDeServico ordem, ExecuteRejeitarOrdemDeServico msg)
+    {
+        return ordem.Cancelar();
+    }
 }

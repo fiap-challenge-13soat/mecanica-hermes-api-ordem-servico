@@ -9,10 +9,11 @@ namespace Mecanica.Hermes.Application.OrdensDeServico.Queries.GetOrdemDeServicoB
 internal sealed class GetOrdemDeServicoByIdQueryHandler(IOrdemDeServicoReader repository)
     : IRequestHandler<GetOrdemDeServicoByIdQuery, Result<OrdemDeServicoDto>>
 {
-    public async Task<Result<OrdemDeServicoDto>> Handle(GetOrdemDeServicoByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<OrdemDeServicoDto>> Handle(GetOrdemDeServicoByIdQuery request,
+        CancellationToken cancellationToken)
     {
         var ordemDeServico = await repository.GetByIdAsync(request.Id);
-        
+
         if (ordemDeServico is null)
             return Result<OrdemDeServicoDto>.NotFound();
 

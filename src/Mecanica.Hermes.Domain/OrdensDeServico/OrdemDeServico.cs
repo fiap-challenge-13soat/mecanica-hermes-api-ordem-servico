@@ -1,4 +1,4 @@
-﻿using Mecanica.Hermes.Domain.Common.Abstractions;
+using Mecanica.Hermes.Domain.Common.Abstractions;
 using Mecanica.Hermes.Domain.Common.Results;
 using Mecanica.Hermes.Domain.OrdensDeServico.Abstractions;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
@@ -101,7 +101,8 @@ public class OrdemDeServico : AggregateRoot
     public Result<OrdemDeServicoProduto> AdicionarProduto(Guid produtoId, decimal valorVenda, int quantidade)
     {
         if (!StatusAtual.PermiteEditarProdutos)
-            return Result<OrdemDeServicoProduto>.BadRequest("O status atual da ordem de serviço não permite edição de produtos.");
+            return Result<OrdemDeServicoProduto>.BadRequest(
+                "O status atual da ordem de serviço não permite edição de produtos.");
 
         if (produtoId == Guid.Empty)
             return Result<OrdemDeServicoProduto>.BadRequest("O produtoId deve ser informado.");
@@ -126,7 +127,8 @@ public class OrdemDeServico : AggregateRoot
     public Result<OrdemDeServicoProduto> RemoverProduto(Guid produtoId)
     {
         if (!StatusAtual.PermiteEditarProdutos)
-            return Result<OrdemDeServicoProduto>.BadRequest("O status atual da ordem de serviço não permite edição de produtos.");
+            return Result<OrdemDeServicoProduto>.BadRequest(
+                "O status atual da ordem de serviço não permite edição de produtos.");
 
         var produto = Produtos.FirstOrDefault(p => p.ProdutoId == produtoId);
         if (produto == null)
@@ -142,7 +144,8 @@ public class OrdemDeServico : AggregateRoot
     public Result<OrdemDeServicoServico> AdicionarServico(Guid servicoId, decimal valorVenda)
     {
         if (!StatusAtual.PermiteEditarProdutos)
-            return Result<OrdemDeServicoServico>.BadRequest("O status atual da ordem de serviço não permite edição de serviços.");
+            return Result<OrdemDeServicoServico>.BadRequest(
+                "O status atual da ordem de serviço não permite edição de serviços.");
 
         if (Servicos.Any(s => s.ServicoId == servicoId))
             return Result<OrdemDeServicoServico>.BadRequest("O serviço já foi adicionado à ordem de serviço.");
@@ -161,7 +164,8 @@ public class OrdemDeServico : AggregateRoot
     public Result<OrdemDeServicoServico> RemoverServico(Guid servicoId)
     {
         if (!StatusAtual.PermiteEditarProdutos)
-            return Result<OrdemDeServicoServico>.BadRequest("O status atual da ordem de serviço não permite edição de serviços.");
+            return Result<OrdemDeServicoServico>.BadRequest(
+                "O status atual da ordem de serviço não permite edição de serviços.");
 
         var servico = Servicos.FirstOrDefault(s => s.ServicoId == servicoId);
 
@@ -183,14 +187,16 @@ public class OrdemDeServico : AggregateRoot
             return Result.BadRequest(novoStatus.Errors);
 
         StatusAtual = novoStatus.Data!;
-        _historicosStatus.Add(new OrdemDeServicoHistoricoStatus(statusAnterior, ResolverStatusAnteriorParaHistorico(statusAnterior)));
+        _historicosStatus.Add(new OrdemDeServicoHistoricoStatus(statusAnterior,
+            ResolverStatusAnteriorParaHistorico(statusAnterior)));
         var duracaoEtapa = statusAnterior.DataFinalizacao.HasValue
             ? (statusAnterior.DataFinalizacao.Value - statusAnterior.DataInicio).TotalMinutes
             : (double?)null;
-        AddDomainEvent(new OrdemDeServicoEtapaAvancadaEvent(Id, statusAnterior.StatusAtual, novoStatus.Data!.StatusAtual, duracaoEtapa));
-        
+        AddDomainEvent(new OrdemDeServicoEtapaAvancadaEvent(Id, statusAnterior.StatusAtual,
+            novoStatus.Data!.StatusAtual, duracaoEtapa));
+
         MarkAsUpdated();
-        
+
         return Result.Ok();
     }
 
@@ -202,12 +208,14 @@ public class OrdemDeServico : AggregateRoot
             return Result.BadRequest(novoStatus.Errors);
 
         StatusAtual = novoStatus.Data!;
-        _historicosStatus.Add(new OrdemDeServicoHistoricoStatus(statusAnterior, ResolverStatusAnteriorParaHistorico(statusAnterior)));
+        _historicosStatus.Add(new OrdemDeServicoHistoricoStatus(statusAnterior,
+            ResolverStatusAnteriorParaHistorico(statusAnterior)));
         var duracaoEtapa = statusAnterior.DataFinalizacao.HasValue
             ? (statusAnterior.DataFinalizacao.Value - statusAnterior.DataInicio).TotalMinutes
             : (double?)null;
-        AddDomainEvent(new OrdemDeServicoEtapaRevertidaEvent(Id, statusAnterior.StatusAtual, novoStatus.Data!.StatusAtual, duracaoEtapa));
-        
+        AddDomainEvent(new OrdemDeServicoEtapaRevertidaEvent(Id, statusAnterior.StatusAtual,
+            novoStatus.Data!.StatusAtual, duracaoEtapa));
+
         MarkAsUpdated();
 
         return Result.Ok();
@@ -221,19 +229,20 @@ public class OrdemDeServico : AggregateRoot
             return Result.BadRequest(novoStatus.Errors);
 
         StatusAtual = novoStatus.Data!;
-        _historicosStatus.Add(new OrdemDeServicoHistoricoStatus(statusAnterior, ResolverStatusAnteriorParaHistorico(statusAnterior)));
+        _historicosStatus.Add(new OrdemDeServicoHistoricoStatus(statusAnterior,
+            ResolverStatusAnteriorParaHistorico(statusAnterior)));
         AddDomainEvent(new OrdemDeServicoCanceladaEvent(Id, statusAnterior.StatusAtual));
-        
+
         MarkAsUpdated();
 
         return Result.Ok();
     }
 
     /// <summary>
-    /// Calcula o <c>StatusAnterior</c> a ser persistido no item de histórico que está
-    /// sendo arquivado, olhando o histórico já existente. Para o primeiro item registrado
-    /// (ainda não há histórico), retorna o próprio status sob transição — semântica de
-    /// "sem predecessor".
+    ///     Calcula o <c>StatusAnterior</c> a ser persistido no item de histórico que está
+    ///     sendo arquivado, olhando o histórico já existente. Para o primeiro item registrado
+    ///     (ainda não há histórico), retorna o próprio status sob transição — semântica de
+    ///     "sem predecessor".
     /// </summary>
     private OrdemDeServicoStatus ResolverStatusAnteriorParaHistorico(OrdemDeServicoStatusBase statusSendoArquivado)
     {

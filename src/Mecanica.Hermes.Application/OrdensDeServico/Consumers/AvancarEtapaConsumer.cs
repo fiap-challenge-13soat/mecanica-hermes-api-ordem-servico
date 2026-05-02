@@ -16,6 +16,8 @@ public sealed class AvancarEtapaConsumer(
 {
     protected override string OperacaoMetricKey => OrdemDeServicoMetricKeys.Operations.AvancarEtapa;
 
-    protected override Result Execute(OrdemDeServico ordem, ExecuteAvancarEtapa msg) =>
-        ordem.AvancarEtapa();
+    protected override Result Execute(OrdemDeServico ordem, ExecuteAvancarEtapa msg)
+    {
+        return ordem.AvancarEtapa();
+    }
 }

@@ -44,7 +44,7 @@ public class ResultTests
         var result = Result.BadRequest(["E1", "E2"]);
 
         result.IsFailure.Should().BeTrue();
-        result.Errors.Should().BeEquivalentTo(["E1", "E2"]);
+        result.Errors.Should().BeEquivalentTo("E1", "E2");
     }
 
     [Fact]

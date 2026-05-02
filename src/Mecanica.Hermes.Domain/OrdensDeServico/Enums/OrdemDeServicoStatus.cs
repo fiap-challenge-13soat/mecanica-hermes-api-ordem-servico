@@ -1,4 +1,4 @@
-﻿namespace Mecanica.Hermes.Domain.OrdensDeServico.Enums;
+namespace Mecanica.Hermes.Domain.OrdensDeServico.Enums;
 
 public enum OrdemDeServicoStatus
 {

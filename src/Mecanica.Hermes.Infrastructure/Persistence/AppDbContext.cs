@@ -9,7 +9,10 @@ internal sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbC
 {
     public DbSet<OrdemDeServicoEntity> OrdensDeServico => Set<OrdemDeServicoEntity>();
     public DbSet<OrdemDeServicoStatusEntity> OrdemDeServicoStatus => Set<OrdemDeServicoStatusEntity>();
-    public DbSet<OrdemDeServicoHistoricoStatusEntity> OrdemDeServicoHistoricoStatus => Set<OrdemDeServicoHistoricoStatusEntity>();
+
+    public DbSet<OrdemDeServicoHistoricoStatusEntity> OrdemDeServicoHistoricoStatus =>
+        Set<OrdemDeServicoHistoricoStatusEntity>();
+
     public DbSet<OrdemDeServicoProdutoEntity> OrdemDeServicoProdutos => Set<OrdemDeServicoProdutoEntity>();
     public DbSet<OrdemDeServicoServicoEntity> OrdemDeServicoServicos => Set<OrdemDeServicoServicoEntity>();
     public DbSet<OutboxMessageEntity> OutboxMessages => Set<OutboxMessageEntity>();

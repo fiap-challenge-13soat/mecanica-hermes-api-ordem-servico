@@ -1,9 +1,8 @@
+using Mecanica.Hermes.Application.Common.Pagination;
 using Mecanica.Hermes.Application.Common.Persistence;
 using Mecanica.Hermes.Application.OrdensDeServico.Ports;
-using Mecanica.Hermes.Application.Common.Pagination;
 using Mecanica.Hermes.Domain.OrdensDeServico;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
-using Mecanica.Hermes.Infrastructure.Persistence.Entities;
 using Mecanica.Hermes.Infrastructure.Persistence.Mappings;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,7 +23,8 @@ internal class OrdemDeServicoRepository(AppDbContext db, IUnitOfWork uow) : IOrd
         return entity?.ToDomain();
     }
 
-    public async Task<PagedResult<OrdemDeServico>> ListByStatusAsync(OrdemDeServicoStatus status, PaginationParams paginationParams)
+    public async Task<PagedResult<OrdemDeServico>> ListByStatusAsync(OrdemDeServicoStatus status,
+        PaginationParams paginationParams)
     {
         var totalCount = await db.OrdensDeServico
             .Where(o => o.StatusAtual.StatusAtual == status)

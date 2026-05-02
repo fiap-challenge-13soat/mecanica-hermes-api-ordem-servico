@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Mecanica.Hermes.Infrastructure.Settings;
 using Serilog.Sinks.OpenTelemetry;
 
@@ -7,8 +8,12 @@ namespace Mecanica.Hermes.Infrastructure.Observability;
 ///     Resolves the OTLP exporter configuration following the OpenTelemetry
 ///     specification's environment variable contract. See
 ///     <see href="https://opentelemetry.io/docs/specs/otel/protocol/exporter/">OTLP Exporter Configuration</see>
-///     and <see href="https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/">SDK Environment Variables</see>.
-///
+///     and
+///     <see href="https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/">
+///         SDK Environment
+///         Variables
+///     </see>
+///     .
 ///     Precedence (highest first):
 ///     <list type="number">
 ///         <item>Signal-specific env var (e.g. <c>OTEL_EXPORTER_OTLP_LOGS_*</c>).</item>
@@ -61,7 +66,7 @@ internal static class OtlpEnvironment
 
     /// <summary>
     ///     Resolves the OTLP transport protocol for logs.
-    ///     Defaults to <see cref="OtlpProtocol.HttpProtobuf"/> because that is the only
+    ///     Defaults to <see cref="OtlpProtocol.HttpProtobuf" /> because that is the only
     ///     protocol the New Relic OTLP HTTP endpoint accepts on port 4318.
     /// </summary>
     public static OtlpProtocol ResolveLogsProtocol()
@@ -73,13 +78,13 @@ internal static class OtlpEnvironment
         {
             "http/protobuf" => OtlpProtocol.HttpProtobuf,
             "grpc" => OtlpProtocol.Grpc,
-            _ => OtlpProtocol.HttpProtobuf,
+            _ => OtlpProtocol.HttpProtobuf
         };
     }
 
     /// <summary>
     ///     Resolves the service name from <c>OTEL_SERVICE_NAME</c>, falling back
-    ///     to <paramref name="defaultName"/> when the env var is unset.
+    ///     to <paramref name="defaultName" /> when the env var is unset.
     ///     This mirrors the auto-detection behaviour of the OpenTelemetry .NET SDK
     ///     so that traces, metrics and logs share the same <c>service.name</c>.
     /// </summary>
@@ -89,8 +94,11 @@ internal static class OtlpEnvironment
         return string.IsNullOrWhiteSpace(fromEnv) ? defaultName : fromEnv.Trim();
     }
 
-    private static bool IsValidPercentEncoding(string value) =>
-        !System.Text.RegularExpressions.Regex.IsMatch(value, @"%(?![0-9A-Fa-f]{2})", System.Text.RegularExpressions.RegexOptions.None, TimeSpan.FromSeconds(1));
+    private static bool IsValidPercentEncoding(string value)
+    {
+        return !Regex.IsMatch(value, @"%(?![0-9A-Fa-f]{2})",
+            RegexOptions.None, TimeSpan.FromSeconds(1));
+    }
 
     /// <summary>
     ///     Parses an OTLP headers string formatted as <c>key1=value1,key2=value2</c>,

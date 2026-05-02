@@ -1,4 +1,3 @@
-﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Mecanica.Hermes.Application.Common.Persistence;
 using Mecanica.Hermes.Domain.Common.Abstractions;
@@ -27,11 +26,13 @@ internal static partial class ServiceCollectionExtensions
                 opts.BatchSize = batch;
             if (int.TryParse(Environment.GetEnvironmentVariable("OUTBOX__MAX_RETRIES"), out var retries) && retries > 0)
                 opts.MaxRetries = retries;
-            if (int.TryParse(Environment.GetEnvironmentVariable("OUTBOX__POLL_INTERVAL_SECONDS"), out var poll) && poll > 0)
+            if (int.TryParse(Environment.GetEnvironmentVariable("OUTBOX__POLL_INTERVAL_SECONDS"), out var poll) &&
+                poll > 0)
                 opts.PollInterval = TimeSpan.FromSeconds(poll);
             if (int.TryParse(Environment.GetEnvironmentVariable("OUTBOX__RETENTION_DAYS"), out var days) && days > 0)
                 opts.ProcessedRetention = TimeSpan.FromDays(days);
-            if (bool.TryParse(Environment.GetEnvironmentVariable("OUTBOX__ALLOW_NON_LOCKING_FALLBACK"), out var fallback))
+            if (bool.TryParse(Environment.GetEnvironmentVariable("OUTBOX__ALLOW_NON_LOCKING_FALLBACK"),
+                    out var fallback))
                 opts.AllowNonLockingFallback = fallback;
         });
 

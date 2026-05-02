@@ -1,4 +1,4 @@
-﻿using Mecanica.Hermes.Domain.OrdensDeServico.Abstractions;
+using Mecanica.Hermes.Domain.OrdensDeServico.Abstractions;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
 
 namespace Mecanica.Hermes.Domain.OrdensDeServico.Status;

@@ -9,9 +9,9 @@ using Mecanica.Hermes.Domain.OrdensDeServico;
 namespace Mecanica.Hermes.Application.OrdensDeServico.Consumers;
 
 /// <summary>
-/// Consumer que cria uma nova <see cref="OrdemDeServico"/> via <c>AddAsync</c>.
-/// O pipeline (validação → persistência → publicação) é fornecido pela
-/// <see cref="OrdemDeServicoCreateConsumerBase{TCommand}"/>.
+///     Consumer que cria uma nova <see cref="OrdemDeServico" /> via <c>AddAsync</c>.
+///     O pipeline (validação → persistência → publicação) é fornecido pela
+///     <see cref="OrdemDeServicoCreateConsumerBase{TCommand}" />.
 /// </summary>
 public sealed class CreateOrdemDeServicoConsumer
     : OrdemDeServicoCreateConsumerBase<ExecuteCreateOrdemDeServico>
@@ -26,11 +26,13 @@ public sealed class CreateOrdemDeServicoConsumer
 
     protected override string OperacaoMetricKey => OrdemDeServicoMetricKeys.Operations.Criar;
 
-    protected override Result<OrdemDeServico> CreateAggregate(ExecuteCreateOrdemDeServico msg) =>
-        OrdemDeServico.Criar(
+    protected override Result<OrdemDeServico> CreateAggregate(ExecuteCreateOrdemDeServico msg)
+    {
+        return OrdemDeServico.Criar(
             msg.OrdemDeServicoId,
             msg.ClienteId,
             msg.VeiculoId,
             msg.ProblemaRelatado,
             msg.Observacoes);
+    }
 }

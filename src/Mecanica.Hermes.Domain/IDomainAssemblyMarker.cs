@@ -1,7 +1,9 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Mecanica.Hermes.Infrastructure")]
 
 namespace Mecanica.Hermes.Domain;
 
-public interface IDomainAssemblyMarker { }
+public interface IDomainAssemblyMarker
+{
+}

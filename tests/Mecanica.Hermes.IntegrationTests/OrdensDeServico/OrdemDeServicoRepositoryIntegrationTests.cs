@@ -1,20 +1,18 @@
-using Mecanica.Hermes.Application.OrdensDeServico.Ports;
 using Mecanica.Hermes.Application.Common.Pagination;
+using Mecanica.Hermes.Application.Common.Persistence;
+using Mecanica.Hermes.Application.OrdensDeServico.Ports;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
 using Mecanica.Hermes.IntegrationTests.Infrastructure;
 using Mecanica.Hermes.TestUtils.Builders;
-using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 
 namespace Mecanica.Hermes.IntegrationTests.OrdensDeServico;
 
 /// <summary>
-/// Integração real do <c>OrdemDeServicoRepository</c> + <c>AppDbContext</c> + mapper contra
-/// o Postgres real (Testcontainers). Valida que o ciclo <c>AddAsync → CommitAsync → GetByIdAsync</c>
-/// preserva o agregado e que a listagem paginada funciona com filtro por status.
-///
-/// Diferencia-se dos smoke tests (apenas HTTP 202) por exercitar a camada de persistência
-/// end-to-end, garantindo cobertura do Repository + Mapper + Migrations.
+///     Integração real do <c>OrdemDeServicoRepository</c> + <c>AppDbContext</c> + mapper contra
+///     o Postgres real (Testcontainers). Valida que o ciclo <c>AddAsync → CommitAsync → GetByIdAsync</c>
+///     preserva o agregado e que a listagem paginada funciona com filtro por status.
+///     Diferencia-se dos smoke tests (apenas HTTP 202) por exercitar a camada de persistência
+///     end-to-end, garantindo cobertura do Repository + Mapper + Migrations.
 /// </summary>
 [Collection(IntegrationTestCollection.Name)]
 [Trait("Category", "Integration")]
@@ -25,7 +23,7 @@ public class OrdemDeServicoRepositoryIntegrationTests(IntegrationTestWebApplicat
     {
         using var scope = factory.Services.CreateScope();
         var repository = scope.ServiceProvider.GetRequiredService<IOrdemDeServicoRepository>();
-        var uow = scope.ServiceProvider.GetRequiredService<Application.Common.Persistence.IUnitOfWork>();
+        var uow = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
         var ordem = new OrdemDeServicoBuilder()
             .ComProblemaRelatado("Motor")
@@ -57,7 +55,7 @@ public class OrdemDeServicoRepositoryIntegrationTests(IntegrationTestWebApplicat
         using (var scope = factory.Services.CreateScope())
         {
             var repo = scope.ServiceProvider.GetRequiredService<IOrdemDeServicoRepository>();
-            var uow = scope.ServiceProvider.GetRequiredService<Application.Common.Persistence.IUnitOfWork>();
+            var uow = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             var ordem = new OrdemDeServicoBuilder().Build();
             id = ordem.Id;
             await repo.AddAsync(ordem);
@@ -68,7 +66,7 @@ public class OrdemDeServicoRepositoryIntegrationTests(IntegrationTestWebApplicat
         using (var scope = factory.Services.CreateScope())
         {
             var repo = scope.ServiceProvider.GetRequiredService<IOrdemDeServicoRepository>();
-            var uow = scope.ServiceProvider.GetRequiredService<Application.Common.Persistence.IUnitOfWork>();
+            var uow = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             var loaded = await repo.GetByIdAsync(id);
             Assert.NotNull(loaded);
             loaded!.AvancarEtapa();
@@ -93,7 +91,7 @@ public class OrdemDeServicoRepositoryIntegrationTests(IntegrationTestWebApplicat
     {
         using var scope = factory.Services.CreateScope();
         var repository = scope.ServiceProvider.GetRequiredService<IOrdemDeServicoRepository>();
-        var uow = scope.ServiceProvider.GetRequiredService<Application.Common.Persistence.IUnitOfWork>();
+        var uow = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
         var recebida = new OrdemDeServicoBuilder().Build();
         var emDiagnostico = new OrdemDeServicoBuilder().ComStatusAvancadoEm(1).Build();

@@ -11,19 +11,15 @@ using Mecanica.Hermes.Domain.OrdensDeServico;
 namespace Mecanica.Hermes.Application.Common.Messaging;
 
 /// <summary>
-/// Base abstrata que centraliza a publicação de eventos de saída
-/// (<see cref="OrdemDeServicoOperationCompleted"/>/<see cref="OrdemDeServicoOperationFailed"/>),
-/// o registro de métricas de erro e o nome canônico da operação. Compartilhada entre os
-/// consumers que mutam (<see cref="OrdemDeServicoMutateConsumerBase{TCommand}"/>) e os que
-/// criam (<see cref="OrdemDeServicoCreateConsumerBase{TCommand}"/>) o agregado.
+///     Base abstrata que centraliza a publicação de eventos de saída
+///     (<see cref="OrdemDeServicoOperationCompleted" />/<see cref="OrdemDeServicoOperationFailed" />),
+///     o registro de métricas de erro e o nome canônico da operação. Compartilhada entre os
+///     consumers que mutam (<see cref="OrdemDeServicoMutateConsumerBase{TCommand}" />) e os que
+///     criam (<see cref="OrdemDeServicoCreateConsumerBase{TCommand}" />) o agregado.
 /// </summary>
 public abstract class OrdemDeServicoConsumerBase<TCommand> : IConsumer<TCommand>
     where TCommand : class, IOrdemDeServicoExecuteCommand
 {
-    protected IOrdemDeServicoRepository Repository { get; }
-    protected IUnitOfWork UnitOfWork { get; }
-    protected IOrdemDeServicoMetrics? Metrics { get; }
-
     protected OrdemDeServicoConsumerBase(
         IOrdemDeServicoRepository repository,
         IUnitOfWork uow,
@@ -34,49 +30,60 @@ public abstract class OrdemDeServicoConsumerBase<TCommand> : IConsumer<TCommand>
         Metrics = metrics;
     }
 
+    protected IOrdemDeServicoRepository Repository { get; }
+    protected IUnitOfWork UnitOfWork { get; }
+    protected IOrdemDeServicoMetrics? Metrics { get; }
+
     /// <summary>
-    /// Nome da operação publicado no evento <see cref="OrdemDeServicoOperationCompleted"/>/
-    /// <see cref="OrdemDeServicoOperationFailed"/>. Faz parte do contrato com a SAGA.
+    ///     Nome da operação publicado no evento <see cref="OrdemDeServicoOperationCompleted" />/
+    ///     <see cref="OrdemDeServicoOperationFailed" />. Faz parte do contrato com a SAGA.
     /// </summary>
     protected string OperacaoName { get; } = typeof(TCommand).Name;
 
     /// <summary>
-    /// Chave de operação usada nas métricas. Override quando quiser uma chave em snake_case
-    /// distinta do nome do tipo (ex.: <c>"avancar_etapa"</c> em vez de <c>"ExecuteAvancarEtapa"</c>).
+    ///     Chave de operação usada nas métricas. Override quando quiser uma chave em snake_case
+    ///     distinta do nome do tipo (ex.: <c>"avancar_etapa"</c> em vez de <c>"ExecuteAvancarEtapa"</c>).
     /// </summary>
     protected virtual string OperacaoMetricKey => OperacaoName;
 
     public abstract Task Consume(ConsumeContext<TCommand> context);
 
-    protected Task PublishCompleted(ConsumeContext<TCommand> context) =>
-        context.Publish(new OrdemDeServicoOperationCompleted(context.Message.OrdemDeServicoId, OperacaoName));
+    protected Task PublishCompleted(ConsumeContext<TCommand> context)
+    {
+        return context.Publish(new OrdemDeServicoOperationCompleted(context.Message.OrdemDeServicoId, OperacaoName));
+    }
 
-    protected Task PublishFailed(ConsumeContext<TCommand> context, IEnumerable<string> erros) =>
-        context.Publish(new OrdemDeServicoOperationFailed(
+    protected Task PublishFailed(ConsumeContext<TCommand> context, IEnumerable<string> erros)
+    {
+        return context.Publish(new OrdemDeServicoOperationFailed(
             context.Message.OrdemDeServicoId,
             OperacaoName,
             string.Join("; ", erros)));
+    }
 
-    protected Task PublishFailed(ConsumeContext<TCommand> context, string motivo) =>
-        context.Publish(new OrdemDeServicoOperationFailed(
+    protected Task PublishFailed(ConsumeContext<TCommand> context, string motivo)
+    {
+        return context.Publish(new OrdemDeServicoOperationFailed(
             context.Message.OrdemDeServicoId,
             OperacaoName,
             motivo));
+    }
 }
 
 /// <summary>
-/// Pipeline (Template Method) para consumers que aplicam mutações a uma
-/// <see cref="OrdemDeServico"/> existente.
-///
-/// Etapas:
-/// <list type="number">
-///   <item>Carrega o agregado por <c>OrdemDeServicoId</c>; se inexistente, registra métrica
-///   <c>nao_encontrada</c> e publica <see cref="OrdemDeServicoOperationFailed"/>.</item>
-///   <item>Valida pré-condições específicas via <see cref="ValidatePreconditions"/>.</item>
-///   <item>Aplica a mutação delegando para <see cref="Execute"/>.</item>
-///   <item>Persiste via <c>UpdateAsync</c> e comita o <c>UnitOfWork</c>.</item>
-///   <item>Publica <see cref="OrdemDeServicoOperationCompleted"/>.</item>
-/// </list>
+///     Pipeline (Template Method) para consumers que aplicam mutações a uma
+///     <see cref="OrdemDeServico" /> existente.
+///     Etapas:
+///     <list type="number">
+///         <item>
+///             Carrega o agregado por <c>OrdemDeServicoId</c>; se inexistente, registra métrica
+///             <c>nao_encontrada</c> e publica <see cref="OrdemDeServicoOperationFailed" />.
+///         </item>
+///         <item>Valida pré-condições específicas via <see cref="ValidatePreconditions" />.</item>
+///         <item>Aplica a mutação delegando para <see cref="Execute" />.</item>
+///         <item>Persiste via <c>UpdateAsync</c> e comita o <c>UnitOfWork</c>.</item>
+///         <item>Publica <see cref="OrdemDeServicoOperationCompleted" />.</item>
+///     </list>
 /// </summary>
 public abstract class OrdemDeServicoMutateConsumerBase<TCommand> : OrdemDeServicoConsumerBase<TCommand>
     where TCommand : class, IOrdemDeServicoExecuteCommand
@@ -93,7 +100,10 @@ public abstract class OrdemDeServicoMutateConsumerBase<TCommand> : OrdemDeServic
     protected abstract Result Execute(OrdemDeServico ordem, TCommand msg);
 
     /// <summary>Hook opcional para validar pré-condições além do "agregado existe".</summary>
-    protected virtual Result ValidatePreconditions(OrdemDeServico ordem, TCommand msg) => Result.Ok();
+    protected virtual Result ValidatePreconditions(OrdemDeServico ordem, TCommand msg)
+    {
+        return Result.Ok();
+    }
 
     public override async Task Consume(ConsumeContext<TCommand> context)
     {
@@ -143,15 +153,16 @@ public abstract class OrdemDeServicoMutateConsumerBase<TCommand> : OrdemDeServic
 }
 
 /// <summary>
-/// Pipeline (Template Method) para consumers que criam o agregado <see cref="OrdemDeServico"/>.
-///
-/// Etapas:
-/// <list type="number">
-///   <item>Constrói o agregado via <see cref="CreateAggregate"/>; em falha registra métrica
-///   <c>validation_error</c> e publica <see cref="OrdemDeServicoOperationFailed"/>.</item>
-///   <item>Persiste via <c>AddAsync</c> e comita o <c>UnitOfWork</c>.</item>
-///   <item>Publica <see cref="OrdemDeServicoOperationCompleted"/>.</item>
-/// </list>
+///     Pipeline (Template Method) para consumers que criam o agregado <see cref="OrdemDeServico" />.
+///     Etapas:
+///     <list type="number">
+///         <item>
+///             Constrói o agregado via <see cref="CreateAggregate" />; em falha registra métrica
+///             <c>validation_error</c> e publica <see cref="OrdemDeServicoOperationFailed" />.
+///         </item>
+///         <item>Persiste via <c>AddAsync</c> e comita o <c>UnitOfWork</c>.</item>
+///         <item>Publica <see cref="OrdemDeServicoOperationCompleted" />.</item>
+///     </list>
 /// </summary>
 public abstract class OrdemDeServicoCreateConsumerBase<TCommand> : OrdemDeServicoConsumerBase<TCommand>
     where TCommand : class, IOrdemDeServicoExecuteCommand

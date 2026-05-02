@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Http;
 namespace Mecanica.Hermes.Api.Filters;
 
 /// <summary>
-/// Endpoint filter genérico que executa FluentValidation antes de invocar o handler.
-/// Retorna RFC 7807 400 Bad Request com os erros de validação quando inválido.
+///     Endpoint filter genérico que executa FluentValidation antes de invocar o handler.
+///     Retorna RFC 7807 400 Bad Request com os erros de validação quando inválido.
 /// </summary>
 public sealed class ValidationFilter<T>(IValidator<T> validator) : IEndpointFilter
 {

@@ -6,14 +6,14 @@ namespace Mecanica.Hermes.IntegrationTests.Fixtures;
 
 public class OrdemDeServicoTestFixture
 {
-    protected readonly HttpClient Client;
-    protected readonly IntegrationTestWebApplicationFactory Factory;
-
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true,
         Converters = { new JsonStringEnumConverter() }
     };
+
+    protected readonly HttpClient Client;
+    protected readonly IntegrationTestWebApplicationFactory Factory;
 
     public OrdemDeServicoTestFixture(IntegrationTestWebApplicationFactory factory)
     {
@@ -34,7 +34,7 @@ public class OrdemDeServicoTestFixture
             ProblemaRelatado = problemaRelatado ?? "Problema padrão",
             Observacoes = observacoes
         };
-        
+
         return await Client.PostAsJsonAsync("/api/ordens-de-servico", request);
     }
 

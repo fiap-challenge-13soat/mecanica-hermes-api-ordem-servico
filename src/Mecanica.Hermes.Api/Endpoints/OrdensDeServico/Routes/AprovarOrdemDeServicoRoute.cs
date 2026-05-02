@@ -1,4 +1,3 @@
-using Mecanica.Hermes.Api.Endpoints;
 using Mecanica.Hermes.Api.Presenter;
 using Mecanica.Hermes.Application.OrdensDeServico.Commands.AprovarOrdemDeServico;
 using Mecanica.Hermes.Infrastructure.Settings;

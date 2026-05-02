@@ -8,7 +8,8 @@ namespace Mecanica.Hermes.Infrastructure.Observability.Handlers;
 internal sealed class EtapaAvancadaMetricsHandler(IOrdemDeServicoMetrics metrics)
     : INotificationHandler<DomainEventNotification<OrdemDeServicoEtapaAvancadaEvent>>
 {
-    public Task Handle(DomainEventNotification<OrdemDeServicoEtapaAvancadaEvent> notification, CancellationToken cancellationToken)
+    public Task Handle(DomainEventNotification<OrdemDeServicoEtapaAvancadaEvent> notification,
+        CancellationToken cancellationToken)
     {
         var e = notification.Event;
         metrics.EtapaAvancada(e.StatusAnterior.ToString(), e.StatusAtual.ToString());

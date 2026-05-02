@@ -5,16 +5,16 @@ namespace Mecanica.Hermes.Domain.Common.Abstractions;
 public abstract class BaseDomain
 {
     /// <summary>
-    /// Construtor padrão usado pelo EF Core e por entidades cuja Id será atribuída pela
-    /// camada de persistência (geração no Insert) ou via <see cref="RestaurarBase"/>.
+    ///     Construtor padrão usado pelo EF Core e por entidades cuja Id será atribuída pela
+    ///     camada de persistência (geração no Insert) ou via <see cref="RestaurarBase" />.
     /// </summary>
     protected BaseDomain()
     {
     }
 
     /// <summary>
-    /// Construtor explícito para casos onde o Id é fornecido pela camada chamadora
-    /// (ex.: idempotência por Id externo na criação da Ordem de Serviço).
+    ///     Construtor explícito para casos onde o Id é fornecido pela camada chamadora
+    ///     (ex.: idempotência por Id externo na criação da Ordem de Serviço).
     /// </summary>
     protected BaseDomain(Guid id)
     {

@@ -1,3 +1,5 @@
-﻿namespace Mecanica.Hermes.Api;
+namespace Mecanica.Hermes.Api;
 
-public interface IApiAssemblyMarker { }
+public interface IApiAssemblyMarker
+{
+}

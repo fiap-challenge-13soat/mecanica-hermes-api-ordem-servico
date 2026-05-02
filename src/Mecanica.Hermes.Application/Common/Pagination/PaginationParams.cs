@@ -5,14 +5,14 @@ public sealed class PaginationParams
     private const int MaxPageSize = 100;
     private const int DefaultPageSize = 10;
 
-    private int _page = 1;
+    private readonly int _page = 1;
+    private readonly int _pageSize = DefaultPageSize;
 
     public int Page
     {
         get => _page;
         init => _page = value < 1 ? 1 : value;
     }
-    private int _pageSize = DefaultPageSize;
 
     public int PageSize
     {
@@ -20,17 +20,11 @@ public sealed class PaginationParams
         init
         {
             if (value > MaxPageSize)
-            {
                 _pageSize = MaxPageSize;
-            }
             else if (value < 1)
-            {
                 _pageSize = DefaultPageSize;
-            }
             else
-            {
                 _pageSize = value;
-            }
         }
     }
 

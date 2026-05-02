@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Builder;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using OpenTelemetry;
@@ -9,7 +8,8 @@ using OpenTelemetry.Trace;
 
 namespace Mecanica.Hermes.Infrastructure.Observability;
 
-[ExcludeFromCodeCoverage(Justification = "Composition root de OpenTelemetry — configuração testada em integração e em runtime.")]
+[ExcludeFromCodeCoverage(Justification =
+    "Composition root de OpenTelemetry — configuração testada em integração e em runtime.")]
 internal static class ObservabilityConfiguration
 {
     public static void AddObservability(this IServiceCollection services)
@@ -36,7 +36,7 @@ internal static class ObservabilityConfiguration
                         ["k8s.node.name"] = EnvironmentDetector.NodeName,
                         ["k8s.cluster.name"] = EnvironmentDetector.ClusterName,
                         ["k8s.deployment.name"] = "mecanica-hermes-api",
-                        ["host.name"] = Environment.MachineName,
+                        ["host.name"] = Environment.MachineName
                     });
             })
             .WithTracing(tracing =>

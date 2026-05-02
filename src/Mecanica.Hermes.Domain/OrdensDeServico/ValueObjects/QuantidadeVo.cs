@@ -1,4 +1,5 @@
-﻿using Mecanica.Hermes.Domain.Common.Results;
+using System.Globalization;
+using Mecanica.Hermes.Domain.Common.Results;
 
 namespace Mecanica.Hermes.Domain.OrdensDeServico.ValueObjects;
 
@@ -14,8 +15,12 @@ public sealed class QuantidadeVo
         Valor = valor;
     }
 
-    public int Valor { get; private set; }
-    public override string ToString() => Valor.ToString(System.Globalization.CultureInfo.InvariantCulture);
+    public int Valor { get; }
+
+    public override string ToString()
+    {
+        return Valor.ToString(CultureInfo.InvariantCulture);
+    }
 
     public static Result<QuantidadeVo> Criar(int valor)
     {

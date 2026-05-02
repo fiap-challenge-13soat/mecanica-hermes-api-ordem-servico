@@ -7,14 +7,13 @@ using Polly.Retry;
 namespace Mecanica.Hermes.Infrastructure.MassTransit.Adapters;
 
 /// <summary>
-/// Adapter que implementa o port <see cref="IAsyncMessagePublisher"/> sobre o
-/// <see cref="IPublishEndpoint"/> do MassTransit com retry Polly para falhas
-/// transitórias do broker. Retorna 503 (via <c>ServiceUnavailableException</c>)
-/// após esgotar todas as tentativas, permitindo ao caller retornar HTTP 503.
-///
-/// Retry policy: 3 tentativas, backoff exponencial (200ms → 400ms → 800ms).
-/// Captura apenas <see cref="Exception"/> genérico para cobertura de falhas de
-/// conexão RabbitMQ, timeouts e afins.
+///     Adapter que implementa o port <see cref="IAsyncMessagePublisher" /> sobre o
+///     <see cref="IPublishEndpoint" /> do MassTransit com retry Polly para falhas
+///     transitórias do broker. Retorna 503 (via <c>ServiceUnavailableException</c>)
+///     após esgotar todas as tentativas, permitindo ao caller retornar HTTP 503.
+///     Retry policy: 3 tentativas, backoff exponencial (200ms → 400ms → 800ms).
+///     Captura apenas <see cref="Exception" /> genérico para cobertura de falhas de
+///     conexão RabbitMQ, timeouts e afins.
 /// </summary>
 internal sealed class MassTransitMessagePublisher(
     IPublishEndpoint publishEndpoint,
@@ -52,8 +51,8 @@ internal sealed class MassTransitMessagePublisher(
 }
 
 /// <summary>
-/// Lançada quando o broker de mensagens está indisponível após todas as tentativas de retry.
-/// Mapeada para HTTP 503 pelo GlobalExceptionHandlerMiddleware.
+///     Lançada quando o broker de mensagens está indisponível após todas as tentativas de retry.
+///     Mapeada para HTTP 503 pelo GlobalExceptionHandlerMiddleware.
 /// </summary>
 public sealed class BrokerUnavailableException(string message, Exception? inner = null)
     : Exception(message, inner);

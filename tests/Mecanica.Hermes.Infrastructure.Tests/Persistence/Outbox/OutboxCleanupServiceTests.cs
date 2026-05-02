@@ -1,31 +1,29 @@
 using Mecanica.Hermes.Infrastructure.Persistence;
 using Mecanica.Hermes.Infrastructure.Persistence.Outbox;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
 
 namespace Mecanica.Hermes.Infrastructure.Tests.Persistence.Outbox;
 
 /// <summary>
-/// Testes unitários do <see cref="OutboxCleanupService"/> usando InMemory provider.
-///
-/// <b>Nota:</b> <c>ExecuteDeleteAsync</c> não é suportado pelo InMemory provider — ele
-/// realiza deleção direta via SQL. Os testes invocam <c>CleanupAsync</c> diretamente via
-/// reflexão para verificar a lógica de filtro sem depender de um banco real.
+///     Testes unitários do <see cref="OutboxCleanupService" /> usando InMemory provider.
+///     <b>Nota:</b> <c>ExecuteDeleteAsync</c> não é suportado pelo InMemory provider — ele
+///     realiza deleção direta via SQL. Os testes invocam <c>CleanupAsync</c> diretamente via
+///     reflexão para verificar a lógica de filtro sem depender de um banco real.
 /// </summary>
 [Trait("Category", "Unit")]
 public class OutboxCleanupServiceTests
 {
     // Nome fixo do banco compartilhado por cada teste — cada teste usa um nome único via Guid.
-    private static DbContextOptions<AppDbContext> NewOptions(string dbName) =>
-        new DbContextOptionsBuilder<AppDbContext>()
+    private static DbContextOptions<AppDbContext> NewOptions(string dbName)
+    {
+        return new DbContextOptionsBuilder<AppDbContext>()
             .UseInMemoryDatabase(dbName)
             .Options;
+    }
 
     /// <summary>
-    /// Simula a mesma lógica de filtro do CleanupAsync usando RemoveRange no InMemory.
-    /// Usa contexto separado para que o SaveChanges seja visível numa terceira instância.
+    ///     Simula a mesma lógica de filtro do CleanupAsync usando RemoveRange no InMemory.
+    ///     Usa contexto separado para que o SaveChanges seja visível numa terceira instância.
     /// </summary>
     private static async Task InvokeCleanupAsync(DbContextOptions<AppDbContext> opts, TimeSpan retention)
     {
@@ -103,7 +101,7 @@ public class OutboxCleanupServiceTests
         using (var db = new AppDbContext(opts))
         {
             var dl = new OutboxMessageEntity(dlId, "evt.v1", "{}", DateTime.UtcNow.AddDays(-30));
-            dl.MarkAsFailed("err", maxRetries: 0);
+            dl.MarkAsFailed("err", 0);
             db.OutboxMessages.Add(dl);
             await db.SaveChangesAsync();
         }

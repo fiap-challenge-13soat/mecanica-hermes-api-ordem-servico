@@ -4,7 +4,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Mecanica.Hermes.Infrastructure.Persistence.Configurations;
 
-internal class OrdemDeServicoHistoricoStatusConfiguration : IEntityTypeConfiguration<OrdemDeServicoHistoricoStatusEntity>
+internal class
+    OrdemDeServicoHistoricoStatusConfiguration : IEntityTypeConfiguration<OrdemDeServicoHistoricoStatusEntity>
 {
     public void Configure(EntityTypeBuilder<OrdemDeServicoHistoricoStatusEntity> builder)
     {

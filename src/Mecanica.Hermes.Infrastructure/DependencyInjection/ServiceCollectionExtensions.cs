@@ -1,11 +1,9 @@
-﻿using System.Reflection;
-using MassTransit;
+using System.Reflection;
 using Mecanica.Hermes.Application;
 using Mecanica.Hermes.Application.Common.Behaviors;
 using Mecanica.Hermes.Application.Common.Messaging;
 using Mecanica.Hermes.Application.OrdensDeServico.Ports;
 using Mecanica.Hermes.Domain;
-using Mecanica.Hermes.Infrastructure.MassTransit;
 using Mecanica.Hermes.Infrastructure.MassTransit.Adapters;
 using Mecanica.Hermes.Infrastructure.MassTransit.Configurations;
 using Mecanica.Hermes.Infrastructure.Observability;

@@ -4,12 +4,11 @@ using Mecanica.Hermes.TestUtils.Builders;
 namespace Mecanica.Hermes.Domain.Tests.OrdensDeServico.Status;
 
 /// <summary>
-/// Testes do ciclo de vida completo percorrendo todos os estados concretos:
-/// Recebida → EmDiagnostico → AguardandoAprovacao → EmExecucao → ManutencaoFinalizada
-/// → AguardandoPagamento → PagamentoConfirmado → Entregue.
-///
-/// Cobre as implementações dos estados individuais sem depender de testes triviais
-/// (cada estado é testado implicitamente ao avançar).
+///     Testes do ciclo de vida completo percorrendo todos os estados concretos:
+///     Recebida → EmDiagnostico → AguardandoAprovacao → EmExecucao → ManutencaoFinalizada
+///     → AguardandoPagamento → PagamentoConfirmado → Entregue.
+///     Cobre as implementações dos estados individuais sem depender de testes triviais
+///     (cada estado é testado implicitamente ao avançar).
 /// </summary>
 [Trait("Category", "Unit")]
 public class OrdemDeServicoStatusLifecycleTests
@@ -98,8 +97,8 @@ public class OrdemDeServicoStatusLifecycleTests
     }
 
     /// <summary>
-    /// Regressão do bug onde <c>OrdemDeServicoHistoricoStatus.StatusAnterior</c> nunca era setado,
-    /// gerando histórico inconsistente para auditoria.
+    ///     Regressão do bug onde <c>OrdemDeServicoHistoricoStatus.StatusAnterior</c> nunca era setado,
+    ///     gerando histórico inconsistente para auditoria.
     /// </summary>
     [Fact]
     public void HistoricoStatus_PrimeiroItem_DeveTerStatusAnteriorIgualAoPropio()

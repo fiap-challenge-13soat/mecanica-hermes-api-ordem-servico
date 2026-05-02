@@ -1,4 +1,4 @@
-﻿using Mecanica.Hermes.Domain.Common.Abstractions;
+using Mecanica.Hermes.Domain.Common.Abstractions;
 using Mecanica.Hermes.Domain.Common.Results;
 using Mecanica.Hermes.Domain.OrdensDeServico.Abstractions;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;

@@ -1,29 +1,31 @@
+using System.Text.Json;
 using Mecanica.Hermes.Domain.Common.Abstractions;
-using Mecanica.Hermes.Domain.OrdensDeServico.Events;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
+using Mecanica.Hermes.Domain.OrdensDeServico.Events;
 using Mecanica.Hermes.Infrastructure.Persistence;
 using Mecanica.Hermes.Infrastructure.Persistence.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using Moq;
-using System.Text.Json;
 
 namespace Mecanica.Hermes.Infrastructure.Tests.Persistence.Outbox;
 
 /// <summary>
-/// Testes unitários do <see cref="OutboxProcessor"/> usando InMemory provider.
-/// Exercita o caminho de fallback (sem FOR UPDATE SKIP LOCKED) para cobrir o
-/// processamento de lotes, DLQ e caminhos de erro.
+///     Testes unitários do <see cref="OutboxProcessor" /> usando InMemory provider.
+///     Exercita o caminho de fallback (sem FOR UPDATE SKIP LOCKED) para cobrir o
+///     processamento de lotes, DLQ e caminhos de erro.
 /// </summary>
 [Trait("Category", "Unit")]
 public class OutboxProcessorTests
 {
-    private static AppDbContext NewDb() => new(
-        new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options);
+    private static AppDbContext NewDb()
+    {
+        return new AppDbContext(
+            new DbContextOptionsBuilder<AppDbContext>()
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
+                .Options);
+    }
 
     private static (OutboxProcessor sut, Mock<IDomainEventDispatcher> dispatcherMock, AppDbContext db) BuildSut(
         int maxRetries = 3)
@@ -47,7 +49,7 @@ public class OutboxProcessorTests
             BatchSize = 10,
             MaxRetries = maxRetries,
             PollInterval = TimeSpan.FromMilliseconds(50),
-            AllowNonLockingFallback = true  // InMemory provider — locking SQL não suportado
+            AllowNonLockingFallback = true // InMemory provider — locking SQL não suportado
         });
 
         var metrics = new OutboxHealthMetrics();
@@ -62,8 +64,10 @@ public class OutboxProcessorTests
         return (sut, dispatcherMock, db);
     }
 
-    private static OutboxMessageEntity PendingMessage(string type = "test.event.v1", string payload = "{}") =>
-        new(Guid.NewGuid(), type, payload, DateTime.UtcNow);
+    private static OutboxMessageEntity PendingMessage(string type = "test.event.v1", string payload = "{}")
+    {
+        return new OutboxMessageEntity(Guid.NewGuid(), type, payload, DateTime.UtcNow);
+    }
 
     [Fact]
     public async Task ExecuteAsync_QuandoNaoHaMensagens_NaoChamamDispatcher()
@@ -83,9 +87,9 @@ public class OutboxProcessorTests
     [Fact]
     public async Task ProcessBatch_QuandoTipoNaoResolve_DeveMarcarFalha()
     {
-        var (sut, _, db) = BuildSut(maxRetries: 2);
+        var (sut, _, db) = BuildSut(2);
 
-        var msg = PendingMessage(type: "tipo.inexistente.v99");
+        var msg = PendingMessage("tipo.inexistente.v99");
         db.OutboxMessages.Add(msg);
         await db.SaveChangesAsync();
 
@@ -103,9 +107,9 @@ public class OutboxProcessorTests
     [Fact]
     public async Task ProcessBatch_QuandoTipoNaoResolveEExcedeLimite_DeveDeadLetter()
     {
-        var (sut, _, db) = BuildSut(maxRetries: 1);
+        var (sut, _, db) = BuildSut(1);
 
-        var msg = PendingMessage(type: "tipo.inexistente.v99");
+        var msg = PendingMessage("tipo.inexistente.v99");
         db.OutboxMessages.Add(msg);
         await db.SaveChangesAsync();
 
@@ -123,7 +127,7 @@ public class OutboxProcessorTests
     {
         var msg = PendingMessage();
 
-        msg.MarkAsFailed("erro simulado", maxRetries: 5);
+        msg.MarkAsFailed("erro simulado", 5);
 
         msg.RetryCount.Should().Be(1);
         msg.LastError.Should().Be("erro simulado");
@@ -135,7 +139,7 @@ public class OutboxProcessorTests
     {
         var msg = PendingMessage();
 
-        msg.MarkAsFailed("err", maxRetries: 1);
+        msg.MarkAsFailed("err", 1);
 
         msg.Status.Should().Be(OutboxMessageStatus.DeadLettered);
         msg.RetryCount.Should().Be(1);
@@ -163,7 +167,7 @@ public class OutboxProcessorTests
             Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(),
             "problema", OrdemDeServicoStatus.Recebida);
 
-        var (sut, dispatcherMock, db) = BuildSut(maxRetries: 3);
+        var (sut, dispatcherMock, db) = BuildSut(3);
 
         dispatcherMock
             .Setup(d => d.DispatchAsync(It.IsAny<IEnumerable<IDomainEvent>>(), It.IsAny<CancellationToken>()))

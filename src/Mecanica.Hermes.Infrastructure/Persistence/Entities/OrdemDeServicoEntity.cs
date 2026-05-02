@@ -44,7 +44,13 @@ internal class OrdemDeServicoEntity : BaseEntity
 
     // Referencias EF
     public virtual OrdemDeServicoStatusEntity StatusAtual { get; private set; } = null!;
-    public virtual ICollection<OrdemDeServicoHistoricoStatusEntity> HistoricosStatus { get; private set; } = new List<OrdemDeServicoHistoricoStatusEntity>();
-    public virtual ICollection<OrdemDeServicoProdutoEntity> Produtos { get; private set; } = new List<OrdemDeServicoProdutoEntity>();
-    public virtual ICollection<OrdemDeServicoServicoEntity> Servicos { get; private set; } = new List<OrdemDeServicoServicoEntity>();
+
+    public virtual ICollection<OrdemDeServicoHistoricoStatusEntity> HistoricosStatus { get; private set; } =
+        new List<OrdemDeServicoHistoricoStatusEntity>();
+
+    public virtual ICollection<OrdemDeServicoProdutoEntity> Produtos { get; private set; } =
+        new List<OrdemDeServicoProdutoEntity>();
+
+    public virtual ICollection<OrdemDeServicoServicoEntity> Servicos { get; private set; } =
+        new List<OrdemDeServicoServicoEntity>();
 }

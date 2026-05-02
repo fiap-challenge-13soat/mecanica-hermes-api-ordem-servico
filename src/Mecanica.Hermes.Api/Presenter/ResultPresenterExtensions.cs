@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Mecanica.Hermes.Domain.Common.Results;
 using Microsoft.AspNetCore.Http;
 
@@ -7,9 +7,9 @@ namespace Mecanica.Hermes.Api.Presenter;
 public static class ResultPresenterExtensions
 {
     /// <summary>
-    /// Maps a successful <see cref="Result{TApp}"/> to its API contract using the provided
-    /// converter function, returning OK or a custom success result. Uses manual mapping instead
-    /// of AutoMapper to eliminate the library dependency.
+    ///     Maps a successful <see cref="Result{TApp}" /> to its API contract using the provided
+    ///     converter function, returning OK or a custom success result. Uses manual mapping instead
+    ///     of AutoMapper to eliminate the library dependency.
     /// </summary>
     public static IResult Present<TApp, TApi>(
         this Result<TApp> result,

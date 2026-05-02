@@ -1,28 +1,30 @@
+using System.Net;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using FluentValidation;
 using Mecanica.Hermes.Api;
+using Mecanica.Hermes.Api.Endpoints.OrdensDeServico;
 using Mecanica.Hermes.Api.Endpoints.OrdensDeServico.Contracts;
 using Mecanica.Hermes.Api.Endpoints.OrdensDeServico.Validators;
-using Mecanica.Hermes.Api.Endpoints.OrdensDeServico;
 using Mecanica.Hermes.Api.Middleware;
+using Mecanica.Hermes.Domain.Common;
 using Mecanica.Hermes.Infrastructure.DependencyInjection;
 using Mecanica.Hermes.Infrastructure.HealthChecks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Scalar.AspNetCore;
+using IPNetwork = System.Net.IPNetwork;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 
-if (builder.Environment.EnvironmentName != Mecanica.Hermes.Domain.Common.EnvironmentNames.Testing)
+if (builder.Environment.EnvironmentName != EnvironmentNames.Testing)
     builder.AddSerilogConfiguration();
 
 builder.Services.ConfigureInfrastructureServices(typeof(IApiAssemblyMarker).Assembly);
@@ -45,7 +47,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("default", policy =>
     {
         if (builder.Environment.IsDevelopment() ||
-            builder.Environment.EnvironmentName == Mecanica.Hermes.Domain.Common.EnvironmentNames.Testing)
+            builder.Environment.EnvironmentName == EnvironmentNames.Testing)
         {
             policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
             return;
@@ -53,10 +55,7 @@ builder.Services.AddCors(options =>
 
         var origins = (Environment.GetEnvironmentVariable("CORS_ALLOWED_ORIGINS") ?? string.Empty)
             .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        if (origins.Length > 0)
-        {
-            policy.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod();
-        }
+        if (origins.Length > 0) policy.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod();
     });
 });
 
@@ -73,7 +72,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
         .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
     if (builder.Environment.IsDevelopment() ||
-        builder.Environment.EnvironmentName == Mecanica.Hermes.Domain.Common.EnvironmentNames.Testing ||
+        builder.Environment.EnvironmentName == EnvironmentNames.Testing ||
         knownProxies.Length == 0)
     {
         // Aceita X-Forwarded-For de qualquer origem — adequado para DEV/Testing
@@ -84,20 +83,18 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     else
     {
         foreach (var entry in knownProxies)
-        {
             if (entry.Contains('/') &&
-                System.Net.IPNetwork.TryParse(entry, out var network))
+                IPNetwork.TryParse(entry, out var network))
                 options.KnownIPNetworks.Add(network);
-            else if (System.Net.IPAddress.TryParse(entry, out var ip))
+            else if (IPAddress.TryParse(entry, out var ip))
                 options.KnownProxies.Add(ip);
-        }
     }
 });
 
 // Rate limiting: protege endpoints de mutação. Limite por IP usando fixed window
 // (60 requests/min). Usa X-Forwarded-For via UseForwardedHeaders para IP real atrás de proxy.
 // Em Testing o limite é int.MaxValue para evitar flakiness em testes de integração.
-var isTesting = builder.Environment.EnvironmentName == Mecanica.Hermes.Domain.Common.EnvironmentNames.Testing;
+var isTesting = builder.Environment.EnvironmentName == EnvironmentNames.Testing;
 var rlFromEnv = int.TryParse(Environment.GetEnvironmentVariable("RATE_LIMIT_PERMIT_PER_MINUTE"), out var p) ? p : 60;
 var rlPermit = isTesting ? int.MaxValue : rlFromEnv;
 builder.Services.AddRateLimiter(options =>
@@ -105,8 +102,8 @@ builder.Services.AddRateLimiter(options =>
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
         RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
-            factory: _ => new FixedWindowRateLimiterOptions
+            httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
             {
                 PermitLimit = rlPermit,
                 Window = TimeSpan.FromMinutes(1),
@@ -123,14 +120,14 @@ builder.Services.AddHealthChecks()
     // MassTransit bus check (RabbitMQ / Amazon SQS) is registered automatically by
     // AddMassTransit via ConfigureHealthCheckOptions in the Infrastructure setup.
     .AddSagaStorageHealthCheck(
-        failureStatus: HealthStatus.Degraded,
-        tags: [HealthCheckTags.Ready, HealthCheckTags.Saga]);
+        HealthStatus.Degraded,
+        [HealthCheckTags.Ready, HealthCheckTags.Saga]);
 
 builder.Host.ConfigureHostBuilder();
 
 var app = builder.Build();
 
-if (builder.Environment.EnvironmentName != Mecanica.Hermes.Domain.Common.EnvironmentNames.Testing)
+if (builder.Environment.EnvironmentName != EnvironmentNames.Testing)
     app.UseSerilogConfiguration();
 
 // Deve ser o primeiro middleware do pipeline para que o RemoteIpAddress
@@ -143,7 +140,7 @@ app.UseCors("default");
 app.UseRateLimiter();
 app.MapOpenApi();
 app.MapScalarApiReference();
-if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == Mecanica.Hermes.Domain.Common.EnvironmentNames.Testing)
+if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == EnvironmentNames.Testing)
 {
     app.UseDevelopmentAuthentication();
     app.Logger.LogWarning(
@@ -158,15 +155,15 @@ app.UseAuthorization();
 
 app.MapHealthChecks("/healthz/live", new HealthCheckOptions
 {
-    Predicate = _ => false, // only the always-healthy "self" check
+    Predicate = _ => false // only the always-healthy "self" check
 });
 app.MapHealthChecks("/healthz/ready", new HealthCheckOptions
 {
-    Predicate = hc => hc.Tags.Contains(HealthCheckTags.Ready),
+    Predicate = hc => hc.Tags.Contains(HealthCheckTags.Ready)
 });
 app.MapHealthChecks("/health", new HealthCheckOptions
 {
-    Predicate = hc => hc.Tags.Contains(HealthCheckTags.Ready),
+    Predicate = hc => hc.Tags.Contains(HealthCheckTags.Ready)
 });
 
 app.MapOrdensDeServicoEndpoints();

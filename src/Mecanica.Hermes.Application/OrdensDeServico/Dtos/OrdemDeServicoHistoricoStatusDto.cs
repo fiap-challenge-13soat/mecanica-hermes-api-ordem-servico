@@ -1,4 +1,4 @@
-﻿using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
+using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
 
 namespace Mecanica.Hermes.Application.OrdensDeServico.Dtos;
 

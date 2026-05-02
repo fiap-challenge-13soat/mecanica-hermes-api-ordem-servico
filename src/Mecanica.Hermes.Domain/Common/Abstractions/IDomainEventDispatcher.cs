@@ -1,4 +1,4 @@
-﻿namespace Mecanica.Hermes.Domain.Common.Abstractions;
+namespace Mecanica.Hermes.Domain.Common.Abstractions;
 
 public interface IDomainEventDispatcher
 {

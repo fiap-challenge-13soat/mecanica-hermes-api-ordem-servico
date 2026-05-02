@@ -7,5 +7,8 @@ public sealed record RemoveProdutoCommand(
     Guid OrdemDeServicoId,
     Guid ProdutoId) : IAsyncCommand, IOrdemDeServicoCommand
 {
-    public object ToMessage() => new RemoveProdutoRequest(OrdemDeServicoId, ProdutoId);
+    public object ToMessage()
+    {
+        return new RemoveProdutoRequest(OrdemDeServicoId, ProdutoId);
+    }
 }

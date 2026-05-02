@@ -1,7 +1,7 @@
+using Mecanica.Hermes.Application.Common.Pagination;
 using Mecanica.Hermes.Application.OrdensDeServico.Dtos;
 using Mecanica.Hermes.Application.OrdensDeServico.Mappings;
 using Mecanica.Hermes.Application.OrdensDeServico.Ports;
-using Mecanica.Hermes.Application.Common.Pagination;
 using Mecanica.Hermes.Domain.Common.Results;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
 using MediatR;
@@ -19,11 +19,11 @@ internal sealed class ListOrdemDeServicoByStatusQueryHandler(IOrdemDeServicoRead
             return Result<PagedResult<OrdemDeServicoDto>>.BadRequest("Status inválido.");
 
         var paginationParams = new PaginationParams { Page = request.Page, PageSize = request.PageSize };
-        
+
         var pagedOrdensDeServico = await repository.ListByStatusAsync(status, paginationParams);
-        
+
         var ordemDeServicoDtos = pagedOrdensDeServico.Items.Select(o => o.ToDto()).ToList();
-        
+
         var pagedResult = PagedResult<OrdemDeServicoDto>.Create(
             ordemDeServicoDtos,
             pagedOrdensDeServico.Page,

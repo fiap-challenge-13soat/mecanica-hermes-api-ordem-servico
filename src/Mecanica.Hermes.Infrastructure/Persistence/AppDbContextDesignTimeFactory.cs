@@ -13,7 +13,7 @@ internal sealed class AppDbContextDesignTimeFactory : IDesignTimeDbContextFactor
             .UseNpgsql(
                 "Host=localhost;Database=mecanica_hermes_design_time;Username=postgres;Password=teste123A!",
                 b => b.MigrationsAssembly(typeof(IInfrastructureAssemblyMarker).Assembly.GetName().Name)
-                      .MigrationsHistoryTable("__EFMigrationsHistory", "public"))
+                    .MigrationsHistoryTable("__EFMigrationsHistory", "public"))
             .Options;
 
         return new AppDbContext(options);

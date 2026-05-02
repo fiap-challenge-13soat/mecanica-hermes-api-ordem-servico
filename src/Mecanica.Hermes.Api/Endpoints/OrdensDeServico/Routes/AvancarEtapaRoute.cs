@@ -1,4 +1,3 @@
-using Mecanica.Hermes.Api.Endpoints;
 using Mecanica.Hermes.Api.Presenter;
 using Mecanica.Hermes.Application.OrdensDeServico.Commands.AvancarEtapa;
 using Mecanica.Hermes.Infrastructure.Settings;
@@ -18,7 +17,8 @@ public static class AvancarEtapaRoute
             .WithName("AvancarEtapa")
             .ProducesAcceptedCommand()
             .RequireAuthorization(AuthPolicies.OnlyAdminScope)
-            .WithDescription("Solicita avanço da ordem de serviço para a próxima etapa (processado de forma assíncrona via SAGA)");
+            .WithDescription(
+                "Solicita avanço da ordem de serviço para a próxima etapa (processado de forma assíncrona via SAGA)");
     }
 
     private static async Task<IResult> AvancarEtapa(

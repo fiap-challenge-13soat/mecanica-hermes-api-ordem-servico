@@ -1,4 +1,3 @@
-using Mecanica.Hermes.Api.Endpoints;
 using Mecanica.Hermes.Api.Endpoints.OrdensDeServico.Contracts;
 using Mecanica.Hermes.Api.Filters;
 using Mecanica.Hermes.Api.Presenter;
@@ -20,7 +19,8 @@ public static class AddServicoRoute
             .WithName("AddServicoToOrdemDeServico")
             .ProducesAcceptedCommand()
             .RequireAuthorization(AuthPolicies.OnlyAdminScope)
-            .WithDescription("Solicita adição de um serviço à ordem de serviço (processado de forma assíncrona via SAGA)")
+            .WithDescription(
+                "Solicita adição de um serviço à ordem de serviço (processado de forma assíncrona via SAGA)")
             .AddEndpointFilter<ValidationFilter<AddOrdemDeServicoServicoRequest>>();
     }
 

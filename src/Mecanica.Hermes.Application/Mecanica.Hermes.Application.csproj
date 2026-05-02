@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <ItemGroup>
-        <PackageReference Include="MassTransit.Abstractions" />
-        <PackageReference Include="MediatR" />
+        <PackageReference Include="MassTransit.Abstractions"/>
+        <PackageReference Include="MediatR"/>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Mecanica.Hermes.Domain\Mecanica.Hermes.Domain.csproj" />
+        <ProjectReference Include="..\Mecanica.Hermes.Domain\Mecanica.Hermes.Domain.csproj"/>
     </ItemGroup>
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">

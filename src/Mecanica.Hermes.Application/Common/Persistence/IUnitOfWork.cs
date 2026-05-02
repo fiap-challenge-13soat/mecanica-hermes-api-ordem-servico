@@ -1,4 +1,4 @@
-﻿using Mecanica.Hermes.Domain.Common.Abstractions;
+using Mecanica.Hermes.Domain.Common.Abstractions;
 
 namespace Mecanica.Hermes.Application.Common.Persistence;
 

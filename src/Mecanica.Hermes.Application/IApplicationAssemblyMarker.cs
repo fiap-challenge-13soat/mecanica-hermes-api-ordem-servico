@@ -1,3 +1,5 @@
-﻿namespace Mecanica.Hermes.Application;
+namespace Mecanica.Hermes.Application;
 
-public interface IApplicationAssemblyMarker { }
+public interface IApplicationAssemblyMarker
+{
+}

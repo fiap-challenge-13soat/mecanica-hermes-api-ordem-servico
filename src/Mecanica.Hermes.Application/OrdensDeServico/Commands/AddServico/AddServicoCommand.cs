@@ -8,5 +8,8 @@ public sealed record AddServicoCommand(
     Guid ServicoId,
     decimal ValorVenda) : IAsyncCommand, IOrdemDeServicoCommand
 {
-    public object ToMessage() => new AddServicoRequest(OrdemDeServicoId, ServicoId, ValorVenda);
+    public object ToMessage()
+    {
+        return new AddServicoRequest(OrdemDeServicoId, ServicoId, ValorVenda);
+    }
 }

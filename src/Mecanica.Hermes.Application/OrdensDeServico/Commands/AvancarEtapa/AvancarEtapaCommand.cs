@@ -6,5 +6,8 @@ namespace Mecanica.Hermes.Application.OrdensDeServico.Commands.AvancarEtapa;
 public sealed record AvancarEtapaCommand(Guid OrdemDeServicoId)
     : IAsyncCommand, IOrdemDeServicoCommand
 {
-    public object ToMessage() => new AvancarEtapaRequest(OrdemDeServicoId);
+    public object ToMessage()
+    {
+        return new AvancarEtapaRequest(OrdemDeServicoId);
+    }
 }

@@ -1,4 +1,4 @@
-﻿using Mecanica.Hermes.Domain.Common.Abstractions;
+using Mecanica.Hermes.Domain.Common.Abstractions;
 using Mecanica.Hermes.Domain.OrdensDeServico.Abstractions;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
 
@@ -12,12 +12,12 @@ public class OrdemDeServicoHistoricoStatus : BaseDomain, IOrdemDeServicoStatus
     }
 
     /// <summary>
-    /// Cria um item de histórico arquivando o status sob transição.
+    ///     Cria um item de histórico arquivando o status sob transição.
     /// </summary>
     /// <param name="status">Status que está sendo arquivado (período encerrando).</param>
     /// <param name="statusAnterior">
-    /// Status que precedeu este na linha do tempo da OS. Para o primeiro item do histórico,
-    /// passe o próprio <c>status.StatusAtual</c> indicando a ausência de predecessor.
+    ///     Status que precedeu este na linha do tempo da OS. Para o primeiro item do histórico,
+    ///     passe o próprio <c>status.StatusAtual</c> indicando a ausência de predecessor.
     /// </param>
     internal OrdemDeServicoHistoricoStatus(IOrdemDeServicoStatus status, OrdemDeServicoStatus statusAnterior)
     {

@@ -6,9 +6,9 @@ using MongoDB.Driver;
 namespace Mecanica.Hermes.Infrastructure.HealthChecks;
 
 /// <summary>
-/// Pings the MongoDB instance used for SAGA state persistence.
-/// Caches one <see cref="MongoClient"/> per connection string because MongoClient
-/// is thread-safe and intended to be a long-lived singleton.
+///     Pings the MongoDB instance used for SAGA state persistence.
+///     Caches one <see cref="MongoClient" /> per connection string because MongoClient
+///     is thread-safe and intended to be a long-lived singleton.
 /// </summary>
 internal sealed class MongoDbSagaHealthCheck(string connectionString) : IHealthCheck
 {

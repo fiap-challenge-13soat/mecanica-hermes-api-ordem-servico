@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -8,7 +8,8 @@ namespace Mecanica.Hermes.Infrastructure.MassTransit.Configurations;
 [ExcludeFromCodeCoverage(Justification = "Configuração de broker RabbitMQ — exercitada em ambiente real.")]
 internal static class RabbitMqBusFactoryConfiguratorExtensions
 {
-    public static void ConfigureRabbitMq(this IRabbitMqBusFactoryConfigurator configurator, IBusRegistrationContext registration)
+    public static void ConfigureRabbitMq(this IRabbitMqBusFactoryConfigurator configurator,
+        IBusRegistrationContext registration)
     {
         var options = registration.GetRequiredService<IOptions<MassTransitOptions>>().Value;
 

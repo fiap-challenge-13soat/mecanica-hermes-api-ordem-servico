@@ -10,6 +10,8 @@ namespace Mecanica.Hermes.Application.OrdensDeServico.Consumers;
 public sealed class CancelarOrdemDeServicoConsumer(IOrdemDeServicoRepository repository, IUnitOfWork uow)
     : OrdemDeServicoMutateConsumerBase<ExecuteCancelarOrdemDeServico>(repository, uow)
 {
-    protected override Result Execute(OrdemDeServico ordem, ExecuteCancelarOrdemDeServico msg) =>
-        ordem.Cancelar();
+    protected override Result Execute(OrdemDeServico ordem, ExecuteCancelarOrdemDeServico msg)
+    {
+        return ordem.Cancelar();
+    }
 }

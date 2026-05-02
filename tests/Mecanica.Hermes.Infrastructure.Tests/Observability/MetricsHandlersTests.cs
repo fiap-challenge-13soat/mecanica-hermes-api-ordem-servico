@@ -7,7 +7,7 @@ using Mecanica.Hermes.Infrastructure.Persistence.Events;
 namespace Mecanica.Hermes.Infrastructure.Tests.Observability;
 
 /// <summary>
-/// Testes dos handlers de métricas: validam que cada Domain Event dispara a métrica correta.
+///     Testes dos handlers de métricas: validam que cada Domain Event dispara a métrica correta.
 /// </summary>
 [Trait("Category", "Unit")]
 public class MetricsHandlersTests
@@ -19,7 +19,8 @@ public class MetricsHandlersTests
     {
         var handler = new OrdemCriadaMetricsHandler(_metrics.Object);
         var notification = new DomainEventNotification<OrdemDeServicoCriadoEvent>(
-            new OrdemDeServicoCriadoEvent(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "x", OrdemDeServicoStatus.Recebida));
+            new OrdemDeServicoCriadoEvent(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "x",
+                OrdemDeServicoStatus.Recebida));
 
         await handler.Handle(notification, CancellationToken.None);
 

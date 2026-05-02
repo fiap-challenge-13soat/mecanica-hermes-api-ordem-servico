@@ -1,4 +1,4 @@
-﻿using Mecanica.Hermes.Domain.Common.Abstractions;
+using Mecanica.Hermes.Domain.Common.Abstractions;
 using Mecanica.Hermes.Domain.Common.Results;
 using Mecanica.Hermes.Domain.OrdensDeServico.Abstractions;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
@@ -15,6 +15,7 @@ public class OrdemDeServicoEntregue : OrdemDeServicoStatusBase
 
     public override Result<OrdemDeServicoStatusBase> AvancarEtapa(Action<IDomainEvent> addDomainEvent)
     {
-        return Result<OrdemDeServicoStatusBase>.BadRequest("Ordem de serviço entregue, não pode avançar para a próxima etapa.");
+        return Result<OrdemDeServicoStatusBase>.BadRequest(
+            "Ordem de serviço entregue, não pode avançar para a próxima etapa.");
     }
 }

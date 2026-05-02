@@ -1,7 +1,6 @@
+#pragma warning disable CA1305 // Serilog Console sink does not expose an IFormatProvider overload
 using System.Diagnostics.CodeAnalysis;
 using Mecanica.Hermes.Infrastructure.Logging;
-
-#pragma warning disable CA1305 // Serilog Console sink does not expose an IFormatProvider overload
 using Mecanica.Hermes.Infrastructure.Observability;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Logging;
@@ -11,7 +10,8 @@ using Serilog.Events;
 
 namespace Mecanica.Hermes.Infrastructure.DependencyInjection;
 
-[ExcludeFromCodeCoverage(Justification = "Composition root — configuração de Serilog/OTel exercitada pelos tests de integração.")]
+[ExcludeFromCodeCoverage(Justification =
+    "Composition root — configuração de Serilog/OTel exercitada pelos tests de integração.")]
 public static class WebApplicationBuilderExtensions
 {
     private static bool IsHealthCheckLog(LogEvent logEvent)
@@ -82,7 +82,7 @@ public static class WebApplicationBuilderExtensions
                     ["service.name"] = OtlpEnvironment.ResolveServiceName("mecanica-hermes-api"),
                     ["k8s.pod.name"] = EnvironmentDetector.PodName,
                     ["k8s.namespace.name"] = EnvironmentDetector.PodNamespace,
-                    ["k8s.cluster.name"] = EnvironmentDetector.ClusterName,
+                    ["k8s.cluster.name"] = EnvironmentDetector.ClusterName
                 };
             });
         });

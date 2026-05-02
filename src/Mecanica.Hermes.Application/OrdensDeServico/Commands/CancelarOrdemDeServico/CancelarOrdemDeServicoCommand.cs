@@ -6,5 +6,8 @@ namespace Mecanica.Hermes.Application.OrdensDeServico.Commands.CancelarOrdemDeSe
 public sealed record CancelarOrdemDeServicoCommand(Guid OrdemDeServicoId)
     : IAsyncCommand, IOrdemDeServicoCommand
 {
-    public object ToMessage() => new CancelarOrdemDeServicoRequest(OrdemDeServicoId);
+    public object ToMessage()
+    {
+        return new CancelarOrdemDeServicoRequest(OrdemDeServicoId);
+    }
 }

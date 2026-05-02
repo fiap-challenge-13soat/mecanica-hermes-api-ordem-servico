@@ -1,36 +1,36 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <IsTestProject>true</IsTestProject>
-    <IsPackable>false</IsPackable>
-    <!-- CA1707: underscores in xUnit test method names are intentional convention -->
-    <!-- CA1711: IntegrationTestCollection ends with 'Collection' by xUnit requirement -->
-    <!-- CA1051: protected fields in test fixtures are intentional for subclass access -->
-    <NoWarn>$(NoWarn);CA1707;CA1711;CA1051</NoWarn>
-  </PropertyGroup>
+    <PropertyGroup>
+        <IsTestProject>true</IsTestProject>
+        <IsPackable>false</IsPackable>
+        <!-- CA1707: underscores in xUnit test method names are intentional convention -->
+        <!-- CA1711: IntegrationTestCollection ends with 'Collection' by xUnit requirement -->
+        <!-- CA1051: protected fields in test fixtures are intentional for subclass access -->
+        <NoWarn>$(NoWarn);CA1707;CA1711;CA1051</NoWarn>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="coverlet.collector" />
-    <PackageReference Include="FluentAssertions" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="Testcontainers.PostgreSql" />
-    <PackageReference Include="xunit" />
-    <PackageReference Include="xunit.runner.visualstudio" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="coverlet.collector"/>
+        <PackageReference Include="FluentAssertions"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+        <PackageReference Include="Testcontainers.PostgreSql"/>
+        <PackageReference Include="xunit"/>
+        <PackageReference Include="xunit.runner.visualstudio"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Using Include="Xunit" />
-    <Using Include="FluentAssertions" />
-  </ItemGroup>
+    <ItemGroup>
+        <Using Include="Xunit"/>
+        <Using Include="FluentAssertions"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Mecanica.Hermes.Api\Mecanica.Hermes.Api.csproj" />
-    <ProjectReference Include="..\..\src\Mecanica.Hermes.Application\Mecanica.Hermes.Application.csproj" />
-    <ProjectReference Include="..\..\src\Mecanica.Hermes.Domain\Mecanica.Hermes.Domain.csproj" />
-    <ProjectReference Include="..\..\src\Mecanica.Hermes.Infrastructure\Mecanica.Hermes.Infrastructure.csproj" />
-    <ProjectReference Include="..\Mecanica.Hermes.TestUtils\Mecanica.Hermes.TestUtils.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Mecanica.Hermes.Api\Mecanica.Hermes.Api.csproj"/>
+        <ProjectReference Include="..\..\src\Mecanica.Hermes.Application\Mecanica.Hermes.Application.csproj"/>
+        <ProjectReference Include="..\..\src\Mecanica.Hermes.Domain\Mecanica.Hermes.Domain.csproj"/>
+        <ProjectReference Include="..\..\src\Mecanica.Hermes.Infrastructure\Mecanica.Hermes.Infrastructure.csproj"/>
+        <ProjectReference Include="..\Mecanica.Hermes.TestUtils\Mecanica.Hermes.TestUtils.csproj"/>
+    </ItemGroup>
 
 </Project>
