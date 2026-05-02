@@ -56,7 +56,7 @@ internal static partial class ServiceCollectionExtensions
                 var table = match.Groups["table"].Value
                     .Replace("\"", "").Replace("public.", "").Trim();
 
-                // Required by New Relic APM Databases view (OTel semconv v1.33)
+                // Exigido pela view APM Databases do New Relic (OTel semconv v1.33).
                 activity.SetTag("db.operation.name", op);
                 activity.SetTag("db.collection.name", table);
             }));

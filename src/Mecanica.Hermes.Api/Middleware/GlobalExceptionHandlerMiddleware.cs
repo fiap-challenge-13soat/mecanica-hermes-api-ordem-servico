@@ -39,7 +39,7 @@ public sealed class GlobalExceptionHandlerMiddleware(
     {
         context.Response.ContentType = "application/problem+json";
 
-        // Show detailed errors in Development and Testing environments
+        // Exibe erros detalhados em ambientes Development e Testing.
         var isDevelopmentOrTesting =
             environment.IsDevelopment() || environment.EnvironmentName == EnvironmentNames.Testing;
 

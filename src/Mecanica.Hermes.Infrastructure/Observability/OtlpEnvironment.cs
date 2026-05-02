@@ -6,20 +6,20 @@ using Serilog.Sinks.OpenTelemetry;
 namespace Mecanica.Hermes.Infrastructure.Observability;
 
 /// <summary>
-///     Resolves the OTLP exporter configuration following the OpenTelemetry
-///     specification's environment variable contract. See
+///     Resolve a configuração do exporter OTLP seguindo o contrato de variáveis de ambiente
+///     da especificação OpenTelemetry. Veja
 ///     <see href="https://opentelemetry.io/docs/specs/otel/protocol/exporter/">OTLP Exporter Configuration</see>
-///     and
+///     e
 ///     <see href="https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/">
 ///         SDK Environment
 ///         Variables
 ///     </see>
 ///     .
-///     Precedence (highest first):
+///     Precedência (maior primeiro):
 ///     <list type="number">
-///         <item>Signal-specific env var (e.g. <c>OTEL_EXPORTER_OTLP_LOGS_*</c>).</item>
-///         <item>Generic env var (e.g. <c>OTEL_EXPORTER_OTLP_*</c>).</item>
-///         <item>Hard-coded default (only when an unambiguous safe default exists).</item>
+///         <item>Env var específica do sinal (ex.: <c>OTEL_EXPORTER_OTLP_LOGS_*</c>).</item>
+///         <item>Env var genérica (ex.: <c>OTEL_EXPORTER_OTLP_*</c>).</item>
+///         <item>Valor padrão fixo (apenas quando há um default seguro e não ambíguo).</item>
 ///     </list>
 /// </summary>
 [ExcludeFromCodeCoverage(Justification = "Resolução de variáveis de ambiente OTLP — composição de configuração observada em runtime.")]
@@ -29,10 +29,10 @@ internal static class OtlpEnvironment
     private const string LogsSignalPath = "/v1/logs";
 
     /// <summary>
-    ///     Resolves the OTLP logs endpoint URL.
-    ///     The signal-specific variable is used as-is; the generic variable has
-    ///     <c>/v1/logs</c> appended only for <c>http/protobuf</c> (per OTel spec).
-    ///     For <c>grpc</c>, the endpoint is used as-is without a signal path.
+    ///     Resolve a URL do endpoint OTLP de logs.
+    ///     A variável específica do sinal é usada como está; à variável genérica é acrescentado
+    ///     <c>/v1/logs</c> apenas para <c>http/protobuf</c> (conforme spec OTel).
+    ///     Para <c>grpc</c>, o endpoint é usado como está, sem path de sinal.
     /// </summary>
     public static string ResolveLogsEndpoint()
     {
@@ -53,10 +53,10 @@ internal static class OtlpEnvironment
     }
 
     /// <summary>
-    ///     Resolves the OTLP exporter headers for logs.
-    ///     The signal-specific variable <c>OTEL_EXPORTER_OTLP_LOGS_HEADERS</c> is
-    ///     consulted first, falling back to the generic
-    ///     <c>OTEL_EXPORTER_OTLP_HEADERS</c> when no logs-specific headers are set.
+    ///     Resolve os headers do exporter OTLP para logs.
+    ///     A variável específica do sinal <c>OTEL_EXPORTER_OTLP_LOGS_HEADERS</c> é
+    ///     consultada primeiro, com fallback para a genérica
+    ///     <c>OTEL_EXPORTER_OTLP_HEADERS</c> quando não há headers específicos para logs.
     /// </summary>
     public static IDictionary<string, string> ResolveLogsHeaders()
     {
@@ -67,9 +67,9 @@ internal static class OtlpEnvironment
     }
 
     /// <summary>
-    ///     Resolves the OTLP transport protocol for logs.
-    ///     Defaults to <see cref="OtlpProtocol.HttpProtobuf" /> because that is the only
-    ///     protocol the New Relic OTLP HTTP endpoint accepts on port 4318.
+    ///     Resolve o protocolo de transporte OTLP para logs.
+    ///     O padrão é <see cref="OtlpProtocol.HttpProtobuf" />, pois é o único protocolo
+    ///     aceito pelo endpoint OTLP HTTP do New Relic na porta 4318.
     /// </summary>
     public static OtlpProtocol ResolveLogsProtocol()
     {
@@ -85,10 +85,10 @@ internal static class OtlpEnvironment
     }
 
     /// <summary>
-    ///     Resolves the service name from <c>OTEL_SERVICE_NAME</c>, falling back
-    ///     to <paramref name="defaultName" /> when the env var is unset.
-    ///     This mirrors the auto-detection behaviour of the OpenTelemetry .NET SDK
-    ///     so that traces, metrics and logs share the same <c>service.name</c>.
+    ///     Resolve o nome do serviço a partir de <c>OTEL_SERVICE_NAME</c>, com fallback
+    ///     para <paramref name="defaultName" /> quando a env var não está definida.
+    ///     Espelha o comportamento de auto-detecção do OpenTelemetry .NET SDK
+    ///     para que traces, métricas e logs compartilhem o mesmo <c>service.name</c>.
     /// </summary>
     public static string ResolveServiceName(string defaultName)
     {
@@ -103,8 +103,8 @@ internal static class OtlpEnvironment
     }
 
     /// <summary>
-    ///     Parses an OTLP headers string formatted as <c>key1=value1,key2=value2</c>,
-    ///     percent-decoding each value as required by the OTel specification.
+    ///     Faz o parse de uma string de headers OTLP no formato <c>key1=value1,key2=value2</c>,
+    ///     decodificando cada valor por percent-encoding conforme exigido pela especificação OTel.
     /// </summary>
     private static Dictionary<string, string> ParseHeaders(string? raw)
     {

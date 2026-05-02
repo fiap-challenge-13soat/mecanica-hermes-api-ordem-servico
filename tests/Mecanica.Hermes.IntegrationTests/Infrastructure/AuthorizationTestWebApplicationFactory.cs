@@ -24,11 +24,12 @@ public sealed class AuthorizationTestWebApplicationFactory
 {
     internal const string TestIssuer = "https://test-issuer";
 
-    // These values match the AuthPolicies fallback ("admin-scope" / "cliente-scope").
-    // AuthPolicies uses static readonly fields that are initialized at class-load time —
-    // the first factory (IntegrationTestWebApplicationFactory) loads the class before these
-    // env vars are set, so the fallback values become the effective policy names for the
-    // entire process lifetime. Tokens must carry the same values.
+    // Estes valores coincidem com o fallback de AuthPolicies ("admin-scope" / "cliente-scope").
+    // AuthPolicies usa campos static readonly inicializados no carregamento da classe —
+    // a primeira factory (IntegrationTestWebApplicationFactory) carrega a classe antes que
+    // estas env vars sejam definidas, então os valores de fallback se tornam os nomes
+    // efetivos das policies para todo o ciclo de vida do processo. Os tokens devem carregar
+    // os mesmos valores.
     internal const string AdminScope = "admin-scope";
     internal const string ClientScope = "cliente-scope";
 
@@ -52,14 +53,14 @@ public sealed class AuthorizationTestWebApplicationFactory
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        // Use a different environment name to avoid DevelopmentAuthenticationMiddleware
-        // (Program.cs only adds it when IsDevelopment() || EnvironmentName == "Testing").
+        // Usa um nome de ambiente diferente para evitar o DevelopmentAuthenticationMiddleware
+        // (Program.cs só o adiciona quando IsDevelopment() || EnvironmentName == "Testing").
         builder.UseEnvironment("Testing_Auth");
 
-        // Ensure a non-null connection string so NpgsqlDataSourceBuilder does not crash at startup.
-        // The real DB is replaced by InMemory below via ConfigureServices.
-        // Only set if not already populated — avoids overwriting the real container URL
-        // that IntegrationTestWebApplicationFactory may have set when running in the same process.
+        // Garante uma connection string não nula para que o NpgsqlDataSourceBuilder não falhe na inicialização.
+        // O banco real é substituído por InMemory abaixo via ConfigureServices.
+        // Só define se ainda não estiver populado — evita sobrescrever a URL real do container
+        // que IntegrationTestWebApplicationFactory possa ter definido ao rodar no mesmo processo.
         if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable(VariableNames.DefaultConnectionString)))
             Environment.SetEnvironmentVariable(VariableNames.DefaultConnectionString,
                 "Host=localhost;Port=5432;Database=placeholder;Username=test;Password=test");
@@ -70,13 +71,13 @@ public sealed class AuthorizationTestWebApplicationFactory
 
         builder.ConfigureServices(services =>
         {
-            // Remove the Npgsql data source and existing DbContext options.
-            // NOTE: removing these alone is NOT enough — UseNpgsql internally calls
-            // NpgsqlOptionsExtension.ApplyServices which registers many Npgsql EF Core
-            // services into the app container. UseInMemoryDatabase does the same, so EF
-            // Core would see two providers and throw. The fix is UseInternalServiceProvider:
-            // we give EF Core a dedicated, isolated service provider so it never inspects
-            // the app container for provider conflicts.
+            // Remove o data source do Npgsql e as DbContextOptions existentes.
+            // NOTA: remover apenas isso NÃO basta — UseNpgsql chama internamente
+            // NpgsqlOptionsExtension.ApplyServices, que registra vários serviços do
+            // Npgsql EF Core no container da app. UseInMemoryDatabase faz o mesmo, então
+            // o EF Core veria dois providers e lançaria erro. A solução é UseInternalServiceProvider:
+            // damos ao EF Core um service provider isolado para que ele nunca inspecione
+            // o container da app em busca de conflitos de provider.
             services.RemoveAll<NpgsqlDataSource>();
             services.RemoveAll<DbContextOptions<AppDbContext>>();
             services.RemoveAll<DbContextOptions>();
@@ -90,7 +91,7 @@ public sealed class AuthorizationTestWebApplicationFactory
                 opt.UseInMemoryDatabase("auth-tests-db-" + Guid.NewGuid())
                     .UseInternalServiceProvider(efInMemoryProvider));
 
-            // Override JWT options to validate with our test symmetric key (no JWKS needed)
+            // Sobrescreve as opções JWT para validar com nossa chave simétrica de teste (sem JWKS).
             services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
             {
                 options.Authority = null;

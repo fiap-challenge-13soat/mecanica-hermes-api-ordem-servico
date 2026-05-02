@@ -7,15 +7,15 @@ namespace Mecanica.Hermes.Infrastructure.HealthChecks;
 public static class InfrastructureHealthChecksExtensions
 {
     /// <summary>
-    ///     Adds a MongoDB health check (<c>mongodb-saga</c>) when
-    ///     <c>MONGODB__CONNECTION_STRING</c> is set. No-op when the variable is absent
-    ///     (e.g. in-memory SAGA / tests).
+    ///     Adiciona um health check de MongoDB (<c>mongodb-saga</c>) quando
+    ///     <c>MONGODB__CONNECTION_STRING</c> está definida. No-op quando a variável está ausente
+    ///     (ex.: SAGA in-memory / testes).
     /// </summary>
     /// <remarks>
-    ///     MassTransit's own bus health check (RabbitMQ / Amazon SQS connectivity) is
-    ///     registered automatically by <c>AddMassTransit</c> via
-    ///     <c>ConfigureHealthCheckOptions</c> inside the MassTransit setup —
-    ///     no explicit call is needed here.
+    ///     O próprio health check de bus do MassTransit (conectividade RabbitMQ / Amazon SQS) é
+    ///     registrado automaticamente pelo <c>AddMassTransit</c> via
+    ///     <c>ConfigureHealthCheckOptions</c> no setup do MassTransit —
+    ///     nenhuma chamada explícita é necessária aqui.
     /// </remarks>
     public static IHealthChecksBuilder AddSagaStorageHealthCheck(
         this IHealthChecksBuilder builder,

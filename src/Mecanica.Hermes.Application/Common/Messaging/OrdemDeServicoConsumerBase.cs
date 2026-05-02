@@ -141,8 +141,8 @@ public abstract class OrdemDeServicoMutateConsumerBase<TCommand> : OrdemDeServic
         }
         catch (ConcurrencyConflictException)
         {
-            // Aggregate was modified concurrently. MassTransit retry policy will redeliver
-            // the message; the next attempt will reload the aggregate with fresh state.
+            // O agregado foi modificado concorrentemente. A política de retry do MassTransit
+            // reentregará a mensagem; a próxima tentativa recarregará o agregado com estado atualizado.
             Metrics?.ErroRegistrado(OperacaoMetricKey, OrdemDeServicoMetricKeys.ErrorTypes.ConcurrencyConflict);
             await PublishFailed(context, "Conflito de concorrência. A operação será reprocessada.");
             return;

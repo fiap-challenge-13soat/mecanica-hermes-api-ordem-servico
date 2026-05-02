@@ -7,8 +7,8 @@ namespace Mecanica.Hermes.Api.Presenter;
 public static class ResultPresenterExtensions
 {
     /// <summary>
-    ///     Maps a successful <see cref="Result{TApp}" /> to its API contract using the provided
-    ///     converter function, returning OK or a custom success result.
+    ///     Mapeia um <see cref="Result{TApp}" /> bem-sucedido para seu contrato de API
+    ///     usando a função de conversão fornecida, retornando OK ou um resultado de sucesso customizado.
     /// </summary>
     public static IResult Present<TApp, TApi>(
         this Result<TApp> result,

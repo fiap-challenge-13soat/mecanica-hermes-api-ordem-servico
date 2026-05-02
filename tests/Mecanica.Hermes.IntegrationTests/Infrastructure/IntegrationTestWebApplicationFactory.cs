@@ -13,7 +13,7 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
 
     static IntegrationTestWebApplicationFactory()
     {
-        // Disable RabbitMQ for integration tests - use in-memory transport instead
+        // Desabilita RabbitMQ nos testes de integração — usa o transporte in-memory.
         Environment.SetEnvironmentVariable("MASSTRANSIT__TRANSPORT_SERVICE", "None");
     }
 
@@ -28,22 +28,22 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
 
     public async Task InitializeAsync()
     {
-        // Start the container and wait for it to be ready
+        // Inicia o container e aguarda ficar pronto.
         await _dbContainer.StartAsync();
 
-        // Set the environment variable with the TestContainer connection string
+        // Define a variável de ambiente com a connection string do TestContainer.
         Environment.SetEnvironmentVariable("ConnectionStrings__DefaultConnection", _dbContainer.GetConnectionString());
 
-        // Create a test client to ensure the app is built with the correct connection string
+        // Cria um cliente de teste para garantir que a app seja construída com a connection string correta.
         _ = CreateClient();
 
-        // Run migrations after container is started and app is built
+        // Executa as migrations após o container estar iniciado e a app construída.
         try
         {
             using var scope = Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            // Ensure database is created and migrations are applied
+            // Garante que o banco esteja criado e as migrations aplicadas.
             await dbContext.Database.MigrateAsync();
         }
         catch (Exception ex)
@@ -62,13 +62,13 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        // Set required auth environment variables for Testing
+        // Define as variáveis de ambiente de autenticação exigidas em Testing.
         Environment.SetEnvironmentVariable("AUTH__AUTHORITY", "https://test-authority");
         Environment.SetEnvironmentVariable("AUTH__ISSUER", "https://test-issuer");
 
         builder.UseEnvironment("Testing");
 
-        // Override the connection string after the container is started
+        // Sobrescreve a connection string depois que o container é iniciado.
         builder.ConfigureServices(services =>
         {
             // MassTransit em modo in-memory para testes:

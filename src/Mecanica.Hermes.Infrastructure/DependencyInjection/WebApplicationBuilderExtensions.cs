@@ -59,11 +59,11 @@ public static class WebApplicationBuilderExtensions
                 return;
             }
 
-            // All exporter settings come from the standard OpenTelemetry env vars
-            // (OTEL_EXPORTER_OTLP_LOGS_* with fallback to OTEL_EXPORTER_OTLP_*).
-            // Authentication headers are read from OTEL_EXPORTER_OTLP_LOGS_HEADERS
-            // with fallback to OTEL_EXPORTER_OTLP_HEADERS
-            // (e.g. "api-key=<value>" for New Relic).
+            // Todas as configurações do exporter vêm das env vars padrão do OpenTelemetry
+            // (OTEL_EXPORTER_OTLP_LOGS_* com fallback para OTEL_EXPORTER_OTLP_*).
+            // Os headers de autenticação são lidos de OTEL_EXPORTER_OTLP_LOGS_HEADERS
+            // com fallback para OTEL_EXPORTER_OTLP_HEADERS
+            // (ex.: "api-key=<value>" para o New Relic).
             var headers = OtlpEnvironment.ResolveLogsHeaders();
 
             if (headers.Count == 0)

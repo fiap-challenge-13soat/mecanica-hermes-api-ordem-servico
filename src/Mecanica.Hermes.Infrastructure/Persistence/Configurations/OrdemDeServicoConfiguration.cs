@@ -54,10 +54,10 @@ internal class OrdemDeServicoConfiguration : IEntityTypeConfiguration<OrdemDeSer
             .HasForeignKey(x => x.OrdemDeServicoId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Optimistic concurrency via PostgreSQL xmin system column.
-        // xmin is a built-in Postgres MVCC column that increments on each row update.
-        // No migration column needed. On conflict, EF throws DbUpdateConcurrencyException
-        // which EfUnitOfWork wraps into ConcurrencyConflictException.
+        // Concorrência otimista via coluna de sistema xmin do PostgreSQL.
+        // xmin é uma coluna MVCC nativa do Postgres que incrementa a cada update na linha.
+        // Não é preciso adicionar coluna via migration. Em conflito, o EF lança
+        // DbUpdateConcurrencyException, que EfUnitOfWork encapsula em ConcurrencyConflictException.
         builder.Property<uint>("xmin")
             .HasColumnType("xid")
             .IsRowVersion()

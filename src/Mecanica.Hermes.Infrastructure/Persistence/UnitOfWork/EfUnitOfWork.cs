@@ -84,9 +84,9 @@ internal sealed class EfUnitOfWork(
         }
         catch (DbUpdateConcurrencyException ex)
         {
-            // Wrap EF Core concurrency exception so Application layer stays free of EF Core.
-            // MassTransit's retry policy will redeliver the message and the consumer will
-            // reload the aggregate with the current state before trying again.
+            // Encapsula a exceção de concorrência do EF Core para que a camada Application
+            // permaneça livre do EF Core. A política de retry do MassTransit reentregará a
+            // mensagem e o consumer recarregará o agregado com o estado atual antes de tentar novamente.
             throw new ConcurrencyConflictException(
                 "Conflito de concorrência ao salvar a Ordem de Serviço. O registro foi modificado por outra operação.",
                 ex);

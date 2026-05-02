@@ -17,18 +17,18 @@ internal static class ObservabilityConfiguration
         if (!EnvironmentDetector.IsObservabilityEnabled)
             return;
 
-        // Service name follows the OTel convention: OTEL_SERVICE_NAME wins over the
-        // hard-coded default. This keeps Serilog logs and OTel traces/metrics aligned.
+        // O nome do serviço segue a convenção do OTel: OTEL_SERVICE_NAME prevalece sobre o
+        // valor padrão fixo. Isso mantém logs Serilog e traces/métricas OTel alinhados.
         var serviceName = OtlpEnvironment.ResolveServiceName("mecanica-hermes-ordem-servico-api");
         var serviceVersion = typeof(ObservabilityConfiguration).Assembly.GetName().Version?.ToString() ?? "unknown";
 
         services.AddOpenTelemetry()
-            .UseOtlpExporter() // reads OTEL_EXPORTER_OTLP_* env vars
+            .UseOtlpExporter() // lê as env vars OTEL_EXPORTER_OTLP_*
             .ConfigureResource(resource =>
             {
                 resource
                     .AddService(serviceName, serviceVersion: serviceVersion)
-                    .AddContainerDetector() // injects container.id from cgroup
+                    .AddContainerDetector() // injeta container.id a partir do cgroup
                     .AddAttributes(new Dictionary<string, object>
                     {
                         ["k8s.pod.name"] = EnvironmentDetector.PodName,

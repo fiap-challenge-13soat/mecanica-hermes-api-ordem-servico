@@ -29,7 +29,7 @@ if (builder.Environment.EnvironmentName != EnvironmentNames.Testing)
 
 builder.Services.ConfigureInfrastructureServices(typeof(IApiAssemblyMarker).Assembly);
 
-// Register FluentValidation validators (used by ValidationFilter<T>)
+// Registra os validators do FluentValidation (usados por ValidationFilter<T>).
 builder.Services.AddSingleton<IValidator<CreateOrdemDeServicoRequest>, CreateOrdemDeServicoRequestValidator>();
 builder.Services.AddSingleton<IValidator<AddOrdemDeServicoProdutoRequest>, AddOrdemDeServicoProdutoRequestValidator>();
 builder.Services.AddSingleton<IValidator<AddOrdemDeServicoServicoRequest>, AddOrdemDeServicoServicoRequestValidator>();
@@ -117,8 +117,8 @@ builder.Services.AddHealthChecks()
         name: "postgres",
         failureStatus: HealthStatus.Unhealthy,
         tags: [HealthCheckTags.Ready, HealthCheckTags.Database])
-    // MassTransit bus check (RabbitMQ / Amazon SQS) is registered automatically by
-    // AddMassTransit via ConfigureHealthCheckOptions in the Infrastructure setup.
+    // O check do bus do MassTransit (RabbitMQ / Amazon SQS) é registrado automaticamente
+    // pelo AddMassTransit via ConfigureHealthCheckOptions no setup do Infrastructure.
     .AddSagaStorageHealthCheck(
         HealthStatus.Degraded,
         [HealthCheckTags.Ready, HealthCheckTags.Saga]);
@@ -155,7 +155,7 @@ app.UseAuthorization();
 
 app.MapHealthChecks("/healthz/live", new HealthCheckOptions
 {
-    Predicate = _ => false // only the always-healthy "self" check
+    Predicate = _ => false // apenas o check "self" (sempre saudável)
 });
 app.MapHealthChecks("/healthz/ready", new HealthCheckOptions
 {

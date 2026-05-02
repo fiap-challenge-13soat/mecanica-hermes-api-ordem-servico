@@ -26,10 +26,10 @@ internal static class ServiceCollectionExtensions
 
         services.AddMassTransit(x =>
         {
-            // Register the bus health check with "ready" and "messaging" tags so it is
-            // included in /healthz/ready. Degraded (not Unhealthy) because MassTransit
-            // retries the connection — the pod should stay in the pool during brief broker
-            // outages rather than immediately failing the readiness probe.
+            // Registra o health check do bus com as tags "ready" e "messaging" para que seja
+            // incluído em /healthz/ready. Usa Degraded (e não Unhealthy) porque o MassTransit
+            // tenta reconectar — o pod deve permanecer no pool durante quedas breves do broker
+            // em vez de falhar imediatamente o readiness probe.
             x.ConfigureHealthCheckOptions(options =>
             {
                 options.MinimalFailureStatus = HealthStatus.Degraded;
