@@ -24,6 +24,44 @@ coverage-report: test
     reportgenerator -reports:".temp/coverage/**/coverage.cobertura.xml" -targetdir:".temp/coverage/report" -reporttypes:"Html;TextSummary"
     @echo "Relatório: .temp/coverage/report/index.html"
 
+# --- Formatação ----------------------------------------------------------
+
+# Aplica formatação (whitespace + style + analyzers) na solução.
+format:
+    dotnet format Mecanica.Hermes.Ordem.Servico.sln
+
+# Verifica formatação sem alterar arquivos. Falha se algo estiver fora do padrão.
+# Espelha exatamente as checagens do workflow .github/workflows/format-ci.yml.
+format-check:
+    dotnet format whitespace Mecanica.Hermes.Ordem.Servico.sln --verify-no-changes --verbosity diagnostic
+    dotnet format style Mecanica.Hermes.Ordem.Servico.sln --verify-no-changes --verbosity diagnostic
+    dotnet format analyzers Mecanica.Hermes.Ordem.Servico.sln --verify-no-changes --verbosity diagnostic
+    @just _check-line-length
+
+# Verifica que nenhum .cs excede 120 colunas (max_line_length do .editorconfig).
+_check-line-length:
+    #!pwsh
+    $max = 120
+    $violations = Get-ChildItem -Path src,tests -Recurse -Filter *.cs |
+        Where-Object { $_.FullName -notmatch '[\\/](bin|obj|Migrations)[\\/]' } |
+        ForEach-Object {
+            $file = $_.FullName
+            $n = 0
+            foreach ($line in [System.IO.File]::ReadLines($file)) {
+                $n++
+                if ($line.Length -gt $max) {
+                    "{0}:{1}: {2} cols" -f $file, $n, $line.Length
+                }
+            }
+        }
+    if ($violations) {
+        $violations | ForEach-Object { Write-Host $_ }
+        Write-Host ""
+        Write-Error ("{0} linha(s) excedem {1} colunas (max_line_length do .editorconfig)." -f $violations.Count, $max)
+        exit 1
+    }
+    Write-Host ("OK: nenhuma linha excede {0} colunas." -f $max)
+
 # --- Migrations ----------------------------------------------------------
 
 # Cria nova migration (uso: just migration-add NomeDaMigracao).

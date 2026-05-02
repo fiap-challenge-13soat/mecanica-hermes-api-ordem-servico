@@ -66,3 +66,4 @@ nunit-*.xml
 reset-migrations.bat
 coverage-report/
 src/Mecanica.Hermes.Api/Properties/launchSettings.dev.json
+src/Mecanica.Hermes.Api/Properties/launchSettings.json
