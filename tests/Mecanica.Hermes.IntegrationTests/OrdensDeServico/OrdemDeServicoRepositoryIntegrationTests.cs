@@ -38,7 +38,7 @@ public class OrdemDeServicoRepositoryIntegrationTests(IntegrationTestWebApplicat
         var persisted = await repository.GetByIdAsync(ordem.Id);
 
         Assert.NotNull(persisted);
-        Assert.Equal(ordem.Id, persisted!.Id);
+        Assert.Equal(ordem.Id, persisted.Id);
         Assert.Equal(ordem.ClienteId, persisted.ClienteId);
         Assert.Equal(ordem.VeiculoId, persisted.VeiculoId);
         Assert.Equal("Motor", persisted.ProblemaRelatado);
@@ -69,7 +69,7 @@ public class OrdemDeServicoRepositoryIntegrationTests(IntegrationTestWebApplicat
             var uow = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             var loaded = await repo.GetByIdAsync(id);
             Assert.NotNull(loaded);
-            loaded!.AvancarEtapa();
+            loaded.AvancarEtapa();
             await repo.UpdateAsync(loaded);
             await uow.CommitAsync(CancellationToken.None);
         }
@@ -81,7 +81,7 @@ public class OrdemDeServicoRepositoryIntegrationTests(IntegrationTestWebApplicat
             var updated = await repo.GetByIdAsync(id);
 
             Assert.NotNull(updated);
-            Assert.Equal(OrdemDeServicoStatus.EmDiagnostico, updated!.StatusAtual.StatusAtual);
+            Assert.Equal(OrdemDeServicoStatus.EmDiagnostico, updated.StatusAtual.StatusAtual);
             Assert.NotEmpty(updated.HistoricosStatus);
         }
     }

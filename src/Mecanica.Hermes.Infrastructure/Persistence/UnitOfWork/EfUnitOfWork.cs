@@ -24,8 +24,6 @@ namespace Mecanica.Hermes.Infrastructure.Persistence.UnitOfWork;
 ///             despacha via <see cref="IDomainEventDispatcher" />.
 ///         </item>
 ///     </list>
-///     Esta abordagem substitui o despacho síncrono pós-commit (que perdia eventos em falha
-///     de dispatch). Agora a entrega é eventualmente consistente e at-least-once.
 /// </summary>
 internal sealed class EfUnitOfWork(
     AppDbContext db,

@@ -54,7 +54,7 @@ public class OrdemDeServicoStateMachineTests
         // Estado da instância deve ser "Processing"
         var instance = saga.Created.ContainsInState(ordemId, saga.StateMachine, saga.StateMachine.Processing);
         instance.Should().NotBeNull();
-        instance!.OperacaoEmAndamento.Should().Be("AvancarEtapaRequested");
+        instance.OperacaoEmAndamento.Should().Be("AvancarEtapaRequested");
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public class OrdemDeServicoStateMachineTests
 
         var instance = saga.Created.ContainsInState(ordemId, saga.StateMachine, saga.StateMachine.Initial);
         instance.Should().NotBeNull();
-        instance!.OperacaoEmAndamento.Should().BeNull();
+        instance.OperacaoEmAndamento.Should().BeNull();
         instance.UltimoMotivoFalha.Should().BeNull();
     }
 
@@ -112,7 +112,7 @@ public class OrdemDeServicoStateMachineTests
 
         var instance = saga.Created.ContainsInState(ordemId, saga.StateMachine, saga.StateMachine.Initial);
         instance.Should().NotBeNull();
-        instance!.UltimoMotivoFalha.Should().Be("status invalido");
+        instance.UltimoMotivoFalha.Should().Be("status invalido");
     }
 
     [Fact]
@@ -146,7 +146,7 @@ public class OrdemDeServicoStateMachineTests
 
         var instance = saga.Created.ContainsInState(ordemId, saga.StateMachine, saga.StateMachine.Processing);
         instance.Should().NotBeNull();
-        instance!.OperationTimeoutTokenId.Should().NotBeNull(
+        instance.OperationTimeoutTokenId.Should().NotBeNull(
             "o token do timeout sentinel deve ser preenchido ao entrar em Processing");
     }
 
@@ -166,7 +166,7 @@ public class OrdemDeServicoStateMachineTests
 
         var instance = saga.Created.ContainsInState(ordemId, saga.StateMachine, saga.StateMachine.Initial);
         instance.Should().NotBeNull();
-        instance!.OperationTimeoutTokenId.Should().BeNull(
+        instance.OperationTimeoutTokenId.Should().BeNull(
             "o Unschedule limpa o token ao finalizar a operação");
     }
 
@@ -187,7 +187,7 @@ public class OrdemDeServicoStateMachineTests
 
         var instance = saga.Created.ContainsInState(ordemId, saga.StateMachine, saga.StateMachine.Initial);
         instance.Should().NotBeNull("a SAGA deve retornar para Initial após timeout");
-        instance!.UltimoMotivoFalha.Should().StartWith("Timeout após",
+        instance.UltimoMotivoFalha.Should().StartWith("Timeout após",
             "o motivo de falha deve registrar o timeout da operação");
         instance.OperacaoEmAndamento.Should().BeNull();
     }

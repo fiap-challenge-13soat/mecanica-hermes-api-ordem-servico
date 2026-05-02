@@ -3,8 +3,6 @@ using Mecanica.Hermes.Application.OrdensDeServico.Commands;
 using Mecanica.Hermes.Domain.Common.Results;
 using MediatR;
 
-#pragma warning disable CA2016 // RequestHandlerDelegate<T> does not accept CancellationToken
-
 namespace Mecanica.Hermes.Application.Common.Behaviors;
 
 /// <summary>
@@ -35,7 +33,7 @@ public sealed class TracingBehavior<TRequest, TResponse>
         if (request is IOrdemDeServicoCommand ordemCommand)
             activity?.SetTag("ordem_de_servico.id", ordemCommand.OrdemDeServicoId.ToString());
 
-        var response = await next();
+        var response = await next(cancellationToken);
 
         activity?.SetStatus(response.IsSuccess ? ActivityStatusCode.Ok : ActivityStatusCode.Error);
 

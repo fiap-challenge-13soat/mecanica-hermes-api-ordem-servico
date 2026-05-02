@@ -5,7 +5,7 @@ namespace Mecanica.Hermes.Application.Common.Messaging;
 
 /// <summary>
 ///     Comando assíncrono — representa uma intenção de mudança de estado que deve ser
-///     despachada via mensageria (MassTransit) em vez de executada inline. Cada implementação
+///     despachada via mensageria (MassTransit). Cada implementação
 ///     converte-se em uma mensagem (via <see cref="ToMessage" />) que é publicada no broker
 ///     e processada por um consumer dedicado.
 ///     O caso de uso ("publicar mensagem") é genérico e fica no
