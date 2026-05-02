@@ -9,16 +9,17 @@ public class OtlpEnvironmentTests : IDisposable
 {
     private readonly List<string> _envVarsSet = [];
 
-    private void SetEnv(string name, string value)
-    {
-        Environment.SetEnvironmentVariable(name, value);
-        _envVarsSet.Add(name);
-    }
-
     public void Dispose()
     {
         foreach (var name in _envVarsSet)
             Environment.SetEnvironmentVariable(name, null);
+        GC.SuppressFinalize(this);
+    }
+
+    private void SetEnv(string name, string value)
+    {
+        Environment.SetEnvironmentVariable(name, value);
+        _envVarsSet.Add(name);
     }
 
     // -------------------------------------------------------------------------

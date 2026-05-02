@@ -4,16 +4,16 @@ using Mecanica.Hermes.Infrastructure.Observability;
 namespace Mecanica.Hermes.Infrastructure.Tests.Observability;
 
 /// <summary>
-/// Testa que <see cref="OrdemDeServicoMetrics"/> incrementa os contadores/histograms
-/// corretamente. Usa <see cref="MeterListener"/> para capturar as medidas sem depender
-/// de um exportador OTLP real.
+///     Testa que <see cref="OrdemDeServicoMetrics" /> incrementa os contadores/histograms
+///     corretamente. Usa <see cref="MeterListener" /> para capturar as medidas sem depender
+///     de um exportador OTLP real.
 /// </summary>
 [Trait("Category", "Unit")]
 public class OrdemDeServicoMetricsTests : IDisposable
 {
-    private readonly OrdemDeServicoMetrics _metrics = new();
-    private readonly MeterListener _listener;
     private readonly List<(string name, object value, KeyValuePair<string, object?>[] tags)> _captured = [];
+    private readonly MeterListener _listener;
+    private readonly OrdemDeServicoMetrics _metrics = new();
 
     public OrdemDeServicoMetricsTests()
     {
@@ -36,6 +36,7 @@ public class OrdemDeServicoMetricsTests : IDisposable
     {
         _listener.Dispose();
         _metrics.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     [Fact]
@@ -90,6 +91,7 @@ public class OrdemDeServicoMetricsTests : IDisposable
     {
         _metrics.DuracaoEtapaRegistrada("Recebida", 3.5);
 
-        _captured.Should().ContainSingle(c => c.name == "ordemdeservico.duracao_etapa_minutes" && (double)c.value == 3.5);
+        _captured.Should()
+            .ContainSingle(c => c.name == "ordemdeservico.duracao_etapa_minutes" && (double)c.value == 3.5);
     }
 }
