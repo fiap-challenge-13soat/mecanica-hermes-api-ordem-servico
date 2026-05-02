@@ -1,5 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Mecanica.Hermes.Infrastructure.Logging;
+
+#pragma warning disable CA1305 // Serilog Console sink does not expose an IFormatProvider overload
 using Mecanica.Hermes.Infrastructure.Observability;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Logging;
@@ -16,12 +18,12 @@ public static class WebApplicationBuilderExtensions
     {
         if (logEvent.Properties.TryGetValue("RequestPath", out var rp) &&
             rp is ScalarValue { Value: string requestPath } &&
-            requestPath.StartsWith("/health"))
+            requestPath.StartsWith("/health", StringComparison.OrdinalIgnoreCase))
             return true;
 
         if (logEvent.Properties.TryGetValue("Path", out var p) &&
             p is ScalarValue { Value: string path } &&
-            path.StartsWith("/health"))
+            path.StartsWith("/health", StringComparison.OrdinalIgnoreCase))
             return true;
 
         if (logEvent.Properties.TryGetValue("EndpointName", out var en) &&

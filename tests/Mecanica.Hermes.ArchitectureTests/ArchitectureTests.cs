@@ -2,6 +2,9 @@ using Mecanica.Hermes.Application;
 using Mecanica.Hermes.Domain;
 using NetArchTest.Rules;
 
+#pragma warning disable CA1707 // Underscores in test method names are standard xUnit convention
+#pragma warning disable CA1724 // Type name collision with namespace is acceptable in test projects
+
 namespace Mecanica.Hermes.ArchitectureTests;
 
 /// <summary>

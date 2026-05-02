@@ -11,7 +11,7 @@ internal sealed class AppDbContextDesignTimeFactory : IDesignTimeDbContextFactor
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
             .UseNpgsql(
-                "Host=localhost;Database=mecanica_hermes_design_time;Username=postgres",
+                "Host=localhost;Database=mecanica_hermes_design_time;Username=postgres;Password=teste123A!",
                 b => b.MigrationsAssembly(typeof(IInfrastructureAssemblyMarker).Assembly.GetName().Name)
                       .MigrationsHistoryTable("__EFMigrationsHistory", "public"))
             .Options;

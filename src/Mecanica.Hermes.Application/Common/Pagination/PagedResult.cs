@@ -1,3 +1,5 @@
+#pragma warning disable CA1000 // Static factory method on generic PagedResult<T> is intentional API design
+
 namespace Mecanica.Hermes.Application.Common.Pagination;
 
 public sealed class PagedResult<T>

@@ -8,6 +8,6 @@ namespace Mecanica.Hermes.Application.OrdensDeServico.Ports;
 /// </summary>
 public interface IOrdemDeServicoWriter
 {
-    Task AddAsync(OrdemDeServico servico);
-    Task UpdateAsync(OrdemDeServico servico);
+    Task AddAsync(OrdemDeServico ordemDeServico);
+    Task UpdateAsync(OrdemDeServico ordemDeServico);
 }

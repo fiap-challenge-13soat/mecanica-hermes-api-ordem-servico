@@ -3,6 +3,8 @@ using Mecanica.Hermes.Application.OrdensDeServico.Commands;
 using Mecanica.Hermes.Domain.Common.Results;
 using MediatR;
 
+#pragma warning disable CA2016 // RequestHandlerDelegate<T> does not accept CancellationToken
+
 namespace Mecanica.Hermes.Application.Common.Behaviors;
 
 /// <summary>

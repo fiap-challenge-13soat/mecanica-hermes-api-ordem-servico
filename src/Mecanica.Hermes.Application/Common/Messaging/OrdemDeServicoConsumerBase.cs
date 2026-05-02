@@ -20,9 +20,9 @@ namespace Mecanica.Hermes.Application.Common.Messaging;
 public abstract class OrdemDeServicoConsumerBase<TCommand> : IConsumer<TCommand>
     where TCommand : class, IOrdemDeServicoExecuteCommand
 {
-    protected readonly IOrdemDeServicoRepository Repository;
-    protected readonly IUnitOfWork UnitOfWork;
-    protected readonly IOrdemDeServicoMetrics? Metrics;
+    protected IOrdemDeServicoRepository Repository { get; }
+    protected IUnitOfWork UnitOfWork { get; }
+    protected IOrdemDeServicoMetrics? Metrics { get; }
 
     protected OrdemDeServicoConsumerBase(
         IOrdemDeServicoRepository repository,

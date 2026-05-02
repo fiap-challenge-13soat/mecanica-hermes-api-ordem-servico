@@ -96,7 +96,7 @@ internal static class OtlpEnvironment
     ///     Parses an OTLP headers string formatted as <c>key1=value1,key2=value2</c>,
     ///     percent-decoding each value as required by the OTel specification.
     /// </summary>
-    private static IDictionary<string, string> ParseHeaders(string? raw)
+    private static Dictionary<string, string> ParseHeaders(string? raw)
     {
         var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         if (string.IsNullOrWhiteSpace(raw))

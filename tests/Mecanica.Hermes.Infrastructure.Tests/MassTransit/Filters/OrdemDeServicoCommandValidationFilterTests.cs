@@ -60,8 +60,7 @@ public class OrdemDeServicoCommandValidationFilterTests
 
         await harness.Bus.Publish(new StubExecuteCommand(Guid.Empty));
 
-        // Aguarda o bus processar
-        await Task.Delay(200);
+        await Task.WhenAny(harness.InactivityTask, Task.Delay(TimeSpan.FromSeconds(3)));
 
         consumerHarness.Consumed.Select<StubExecuteCommand>().Count().Should().Be(0,
             "mensagem com OrdemDeServicoId == Guid.Empty deve ser descartada pelo filtro");

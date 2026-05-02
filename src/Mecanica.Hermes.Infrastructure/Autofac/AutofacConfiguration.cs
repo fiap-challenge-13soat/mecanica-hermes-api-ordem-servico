@@ -14,7 +14,7 @@ internal class AutofacConfiguration : Module
             .ToArray();
 
         builder.RegisterAssemblyTypes(assemblies)
-            .Where(t => t.Name.EndsWith("Repository"))
+            .Where(t => t.Name.EndsWith("Repository", StringComparison.Ordinal))
             .AsImplementedInterfaces()
             .InstancePerLifetimeScope();
 

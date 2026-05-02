@@ -7,7 +7,7 @@ using Mecanica.Hermes.Infrastructure.Persistence.Events;
 namespace Mecanica.Hermes.Infrastructure.Tests.Observability;
 
 /// <summary>
-/// Testes dos handlers de métricas: validam que cada Domain Event despara a métrica correta.
+/// Testes dos handlers de métricas: validam que cada Domain Event dispara a métrica correta.
 /// </summary>
 [Trait("Category", "Unit")]
 public class MetricsHandlersTests

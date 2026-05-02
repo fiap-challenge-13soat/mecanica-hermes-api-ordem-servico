@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using System.Text.Json;
+
+#pragma warning disable CA1873 // Log arguments are simple property accesses — not expensive
 using Mecanica.Hermes.Domain.Common.Abstractions;
 using Mecanica.Hermes.Infrastructure.Observability;
 using Microsoft.EntityFrameworkCore;

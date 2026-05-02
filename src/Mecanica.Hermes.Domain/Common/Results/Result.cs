@@ -1,5 +1,7 @@
 ﻿using System.Net;
 
+#pragma warning disable CA1000 // Static factory methods on generic Result<T> are intentional API design
+
 namespace Mecanica.Hermes.Domain.Common.Results;
 
 public class Result(HttpStatusCode statusCode)

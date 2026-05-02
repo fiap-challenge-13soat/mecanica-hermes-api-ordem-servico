@@ -1,5 +1,7 @@
 ﻿using Mecanica.Hermes.Infrastructure.Persistence;
 using Mecanica.Hermes.Infrastructure.Settings;
+
+#pragma warning disable CA1873 // Log argument is a const string reference — not expensive
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

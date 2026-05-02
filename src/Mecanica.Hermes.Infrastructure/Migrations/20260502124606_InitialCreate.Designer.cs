@@ -9,11 +9,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Mecanica.Hermes.Infrastructure.Persistence.Migrations
+namespace Mecanica.Hermes.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260429113003_AlterOutboxAddStatusAndTraceContext")]
-    partial class AlterOutboxAddStatusAndTraceContext
+    [Migration("20260502124606_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -57,6 +57,12 @@ namespace Mecanica.Hermes.Infrastructure.Persistence.Migrations
 
                     b.Property<Guid>("VeiculoId")
                         .HasColumnType("uuid");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.HasKey("Id");
 

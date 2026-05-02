@@ -15,7 +15,7 @@ public sealed class QuantidadeVo
     }
 
     public int Valor { get; private set; }
-    public override string ToString() => Valor.ToString();
+    public override string ToString() => Valor.ToString(System.Globalization.CultureInfo.InvariantCulture);
 
     public static Result<QuantidadeVo> Criar(int valor)
     {

@@ -10,7 +10,7 @@ internal static class ServiceCollectionExtensions
     public static void ConfigureMassTransit(this IServiceCollection services)
     {
         services.AddMassTransitOptions();
-        Enum.TryParse<TransportService>(Environment.GetEnvironmentVariable(VariableNames.MassTransitTransportService), out var transportService);
+        _ = Enum.TryParse<TransportService>(Environment.GetEnvironmentVariable(VariableNames.MassTransitTransportService), out var transportService);
 
         if (transportService == TransportService.RabbitMq)
             services.AddMassTransitWithRabbitMq();
@@ -31,7 +31,7 @@ internal static class ServiceCollectionExtensions
     
     private static void AddMassTransitOptions(this IServiceCollection services)
     {
-        TryParse(Environment.GetEnvironmentVariable(VariableNames.MassTransitPrefetchCount), out var prefetchCount);
+        _ = TryParse(Environment.GetEnvironmentVariable(VariableNames.MassTransitPrefetchCount), out var prefetchCount);
 
         var queueNamePrefix = Environment.GetEnvironmentVariable(VariableNames.MassTransitQueueNamePrefix);
         if (string.IsNullOrWhiteSpace(queueNamePrefix))

@@ -25,10 +25,10 @@ internal static class VariableNames
     public const string OtelExporterOtlpLogsProtocol = "OTEL_EXPORTER_OTLP_LOGS_PROTOCOL";
     
     // MassTransit specification
-    public const string MassTransitConnectionString = "MASTTRANSIT__CONNECTION_STRING";
-    public const string MassTransitPrefetchCount = "MASTTRANSIT__PREFETCH_COUNT";
-    public const string MassTransitTransportService = "MASTTRANSIT__TRANSPORT_SERVICE";
-    public const string MassTransitQueueNamePrefix = "MASTTRANSIT__QUEUE_NAME_PREFIX";
+    public const string MassTransitConnectionString = "MASSTRANSIT__CONNECTION_STRING";
+    public const string MassTransitPrefetchCount = "MASSTRANSIT__PREFETCH_COUNT";
+    public const string MassTransitTransportService = "MASSTRANSIT__TRANSPORT_SERVICE";
+    public const string MassTransitQueueNamePrefix = "MASSTRANSIT__QUEUE_NAME_PREFIX";
 
     // MongoDB specification — SAGA state persistence
     public const string MongoDbConnectionString = "MONGODB__CONNECTION_STRING";

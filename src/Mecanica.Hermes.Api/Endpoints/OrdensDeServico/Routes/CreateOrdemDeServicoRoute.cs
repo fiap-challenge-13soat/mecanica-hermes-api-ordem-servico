@@ -52,7 +52,7 @@ public static class CreateOrdemDeServicoRoute
             return response.Present();
 
         return Results.Accepted(
-            uri: $"/ordens-de-servico/{ordemDeServicoId}",
+            uri: $"/api/ordens-de-servico/{ordemDeServicoId}",
             value: new CreateOrdemDeServicoAcceptedResponse(ordemDeServicoId));
     }
 }

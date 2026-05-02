@@ -75,19 +75,19 @@ internal class OrdemDeServicoRepository(AppDbContext db, IUnitOfWork uow) : IOrd
             totalCount);
     }
 
-    public async Task AddAsync(OrdemDeServico servico)
+    public async Task AddAsync(OrdemDeServico ordemDeServico)
     {
-        var entity = servico.ToEntity();
+        var entity = ordemDeServico.ToEntity();
         await db.OrdensDeServico.AddAsync(entity);
         // O Id é definido na construção do agregado (OrdemDeServico.Criar);
         // ToEntity copia esse mesmo Id, então não há necessidade de sincronizar de volta.
-        uow.CollectEventsFrom(servico);
+        uow.CollectEventsFrom(ordemDeServico);
     }
 
-    public async Task UpdateAsync(OrdemDeServico servico)
+    public async Task UpdateAsync(OrdemDeServico ordemDeServico)
     {
-        var entity = servico.ToEntity();
+        var entity = ordemDeServico.ToEntity();
         db.OrdensDeServico.Update(entity);
-        uow.CollectEventsFrom(servico);
+        uow.CollectEventsFrom(ordemDeServico);
     }
 }

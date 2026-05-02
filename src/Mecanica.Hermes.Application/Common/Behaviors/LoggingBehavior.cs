@@ -3,6 +3,9 @@ using Mecanica.Hermes.Domain.Common.Results;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
+#pragma warning disable CA2016 // RequestHandlerDelegate<T> does not accept CancellationToken
+#pragma warning disable CA1873 // Log arguments are simple local variables — not expensive
+
 namespace Mecanica.Hermes.Application.Common.Behaviors;
 
 /// <summary>

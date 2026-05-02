@@ -19,7 +19,7 @@ COPY src/Mecanica.Hermes.Api/Mecanica.Hermes.Api.csproj                         
 
 RUN dotnet restore src/Mecanica.Hermes.Api/Mecanica.Hermes.Api.csproj
 
-# Copy the full source and publish a self-contained release output.
+# Copy the full source and publish a framework-dependent release output.
 COPY src/ src/
 RUN dotnet publish src/Mecanica.Hermes.Api/Mecanica.Hermes.Api.csproj \
       --configuration Release \
