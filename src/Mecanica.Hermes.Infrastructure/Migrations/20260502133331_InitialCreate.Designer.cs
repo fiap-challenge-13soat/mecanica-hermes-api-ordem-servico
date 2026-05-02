@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mecanica.Hermes.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260502124606_InitialCreate")]
+    [Migration("20260502133331_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

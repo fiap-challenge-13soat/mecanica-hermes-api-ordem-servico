@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql;
 
 namespace Mecanica.Hermes.IntegrationTests.Infrastructure;
 
@@ -25,8 +26,13 @@ public sealed class AuthorizationTestWebApplicationFactory
         new(System.Text.Encoding.UTF8.GetBytes("test-signing-key-must-be-long-enough-for-hs256-algorithm!"));
 
     internal const string TestIssuer = "https://test-issuer";
-    internal const string AdminScope = "mechermes-admin/admin";
-    internal const string ClientScope = "mechermes-admin/client";
+    // These values match the AuthPolicies fallback ("admin-scope" / "cliente-scope").
+    // AuthPolicies uses static readonly fields that are initialized at class-load time —
+    // the first factory (IntegrationTestWebApplicationFactory) loads the class before these
+    // env vars are set, so the fallback values become the effective policy names for the
+    // entire process lifetime. Tokens must carry the same values.
+    internal const string AdminScope = "admin-scope";
+    internal const string ClientScope = "cliente-scope";
 
     static AuthorizationTestWebApplicationFactory()
     {
@@ -50,21 +56,30 @@ public sealed class AuthorizationTestWebApplicationFactory
         }
         Environment.SetEnvironmentVariable("AUTH__AUTHORITY", TestIssuer);
         Environment.SetEnvironmentVariable("AUTH__ISSUER", TestIssuer);
-        Environment.SetEnvironmentVariable(VariableNames.AuthAdminScope, AdminScope);
-        Environment.SetEnvironmentVariable(VariableNames.AuthClienteScope, ClientScope);
         Environment.SetEnvironmentVariable("RUN_MIGRATIONS_ON_STARTUP", "false");
         Environment.SetEnvironmentVariable("OUTBOX__ALLOW_NON_LOCKING_FALLBACK", "true");
 
         builder.ConfigureServices(services =>
         {
-            // Replace PostgreSQL DbContext with InMemory (no DB needed for auth tests)
-            var descriptor = services.SingleOrDefault(d =>
-                d.ServiceType == typeof(DbContextOptions<AppDbContext>));
-            if (descriptor != null)
-                services.Remove(descriptor);
+            // Remove the Npgsql data source and existing DbContext options.
+            // NOTE: removing these alone is NOT enough — UseNpgsql internally calls
+            // NpgsqlOptionsExtension.ApplyServices which registers many Npgsql EF Core
+            // services into the app container. UseInMemoryDatabase does the same, so EF
+            // Core would see two providers and throw. The fix is UseInternalServiceProvider:
+            // we give EF Core a dedicated, isolated service provider so it never inspects
+            // the app container for provider conflicts.
+            services.RemoveAll<NpgsqlDataSource>();
+            services.RemoveAll<DbContextOptions<AppDbContext>>();
+            services.RemoveAll<DbContextOptions>();
+            services.RemoveAll<AppDbContext>();
+
+            var efInMemoryProvider = new ServiceCollection()
+                .AddEntityFrameworkInMemoryDatabase()
+                .BuildServiceProvider();
 
             services.AddDbContext<AppDbContext>(opt =>
-                opt.UseInMemoryDatabase("auth-tests-db-" + Guid.NewGuid()));
+                opt.UseInMemoryDatabase("auth-tests-db-" + Guid.NewGuid())
+                   .UseInternalServiceProvider(efInMemoryProvider));
 
             // Override JWT options to validate with our test symmetric key (no JWKS needed)
             services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
@@ -90,7 +105,7 @@ public sealed class AuthorizationTestWebApplicationFactory
         });
     }
 
-    internal string GenerateToken(IEnumerable<string> scopes)
+    internal static string GenerateToken(IEnumerable<string> scopes)
     {
         var claims = new List<Claim>
         {

@@ -3,6 +3,8 @@ using System.Net.Http.Headers;
 using Mecanica.Hermes.IntegrationTests.Infrastructure;
 using Xunit;
 
+#pragma warning disable CA1001 // IAsyncLifetime.DisposeAsync handles disposal; IDisposable not needed
+
 namespace Mecanica.Hermes.IntegrationTests.OrdensDeServico;
 
 /// <summary>
@@ -62,7 +64,7 @@ public sealed class AuthorizationTests : IAsyncLifetime
     [Fact]
     public async Task CriarOrdemDeServico_ComScopeClienteApenas_DeveRetornar403()
     {
-        var token = _factory.GenerateToken([AuthorizationTestWebApplicationFactory.ClientScope]);
+        var token = AuthorizationTestWebApplicationFactory.GenerateToken([AuthorizationTestWebApplicationFactory.ClientScope]);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var response = await _client.PostAsJsonAsync("/api/ordens-de-servico", CreateBody);
@@ -73,7 +75,7 @@ public sealed class AuthorizationTests : IAsyncLifetime
     [Fact]
     public async Task ListarTodas_ComScopeClienteApenas_DeveRetornar403()
     {
-        var token = _factory.GenerateToken([AuthorizationTestWebApplicationFactory.ClientScope]);
+        var token = AuthorizationTestWebApplicationFactory.GenerateToken([AuthorizationTestWebApplicationFactory.ClientScope]);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var response = await _client.GetAsync("/api/ordens-de-servico");
@@ -86,7 +88,7 @@ public sealed class AuthorizationTests : IAsyncLifetime
     [Fact]
     public async Task CriarOrdemDeServico_ComScopeAdmin_DeveRetornar202()
     {
-        var token = _factory.GenerateToken([AuthorizationTestWebApplicationFactory.AdminScope]);
+        var token = AuthorizationTestWebApplicationFactory.GenerateToken([AuthorizationTestWebApplicationFactory.AdminScope]);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var response = await _client.PostAsJsonAsync("/api/ordens-de-servico", CreateBody);
@@ -105,7 +107,7 @@ public sealed class AuthorizationTests : IAsyncLifetime
     [Fact]
     public async Task GetOrdemDeServico_ComScopeCliente_DevePassarAutorizacao()
     {
-        var token = _factory.GenerateToken([AuthorizationTestWebApplicationFactory.ClientScope]);
+        var token = AuthorizationTestWebApplicationFactory.GenerateToken([AuthorizationTestWebApplicationFactory.ClientScope]);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var response = await _client.GetAsync($"/api/ordens-de-servico/{Guid.NewGuid()}");

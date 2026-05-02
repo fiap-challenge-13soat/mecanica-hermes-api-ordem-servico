@@ -87,7 +87,19 @@ internal class OrdemDeServicoRepository(AppDbContext db, IUnitOfWork uow) : IOrd
     public async Task UpdateAsync(OrdemDeServico ordemDeServico)
     {
         var entity = ordemDeServico.ToEntity();
+
+        // GetByIdAsync uses AsNoTracking(), so the PostgreSQL xmin system column
+        // is never carried through the entity → domain round-trip. Without the
+        // original xmin, EF Core generates UPDATE … WHERE xmin = 0, which always
+        // misses. Reload xmin here (single PK lookup) so the concurrency check passes.
+        var xmin = await db.OrdensDeServico
+            .Where(o => o.Id == entity.Id)
+            .Select(o => EF.Property<uint>(o, "xmin"))
+            .FirstOrDefaultAsync();
+
         db.OrdensDeServico.Update(entity);
+        db.Entry(entity).Property<uint>("xmin").OriginalValue = xmin;
+
         uow.CollectEventsFrom(ordemDeServico);
     }
 }

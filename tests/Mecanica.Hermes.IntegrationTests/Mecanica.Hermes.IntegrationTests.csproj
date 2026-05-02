@@ -3,6 +3,10 @@
   <PropertyGroup>
     <IsTestProject>true</IsTestProject>
     <IsPackable>false</IsPackable>
+    <!-- CA1707: underscores in xUnit test method names are intentional convention -->
+    <!-- CA1711: IntegrationTestCollection ends with 'Collection' by xUnit requirement -->
+    <!-- CA1051: protected fields in test fixtures are intentional for subclass access -->
+    <NoWarn>$(NoWarn);CA1707;CA1711;CA1051</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
