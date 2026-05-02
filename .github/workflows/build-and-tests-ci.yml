@@ -64,7 +64,9 @@ jobs:
             -reports:".temp/coverage/**/coverage.opencover.xml" \
             -targetdir:"coverage-report" \
             -reporttypes:"Html;JsonSummary;TextSummary" \
-            -filefilters:"-*.g.cs;-*Designer.cs;-*Migrations/*.cs" \
+            -assemblyfilters:"+Mecanica.Hermes.Api;+Mecanica.Hermes.Application;+Mecanica.Hermes.Domain;+Mecanica.Hermes.Infrastructure;-*Tests;-Mecanica.Hermes.TestUtils" \
+            -classfilters:"-*Migrations*;-*Program" \
+            -filefilters:"+**/src/**;-*.g.cs;-*Designer.cs;-*Migrations/*.cs;-**/tests/**" \
             -title:"Cobertura de Testes"
 
       - name: Publicar artefato de cobertura HTML

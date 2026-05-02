@@ -5,10 +5,10 @@
       <DataCollector friendlyName="XPlat code coverage">
         <Configuration>
           <Format>cobertura,opencover</Format>
-          <ExcludeByFile>**/Migrations/*.cs,**/obj/**,**/bin/**</ExcludeByFile>
-          <ExcludeByAttribute>Obsolete,GeneratedCode,CompilerGenerated,ExcludeFromCodeCoverage</ExcludeByAttribute>
-          <Exclude>[*]*Migrations.*,[Mecanica.Hermes.Api]*Program*,[*.Tests]*,[Mecanica.Hermes.TestUtils]*</Exclude>
-          <Include>[Mecanica.Hermes.*]*</Include>
+          <ExcludeByFile>**/Migrations/*.cs,**/obj/**,**/bin/**,**/tests/**</ExcludeByFile>
+          <ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute,ExcludeFromCodeCoverageAttribute</ExcludeByAttribute>
+          <Exclude>[*]*Migrations.*,[Mecanica.Hermes.Api]*Program*,[*Tests]*,[Mecanica.Hermes.TestUtils]*</Exclude>
+          <Include>[Mecanica.Hermes.Api]*,[Mecanica.Hermes.Application]*,[Mecanica.Hermes.Domain]*,[Mecanica.Hermes.Infrastructure]*</Include>
           <SkipAutoProps>true</SkipAutoProps>
           <UseSourceLink>false</UseSourceLink>
         </Configuration>
