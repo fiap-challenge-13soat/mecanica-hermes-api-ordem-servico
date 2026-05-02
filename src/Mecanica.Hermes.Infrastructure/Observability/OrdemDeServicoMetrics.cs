@@ -4,7 +4,8 @@ using Mecanica.Hermes.Application.OrdensDeServico.Ports;
 
 namespace Mecanica.Hermes.Infrastructure.Observability;
 
-[ExcludeFromCodeCoverage(Justification = "Wrapper de System.Diagnostics.Metrics — observado via telemetria, não por testes.")]
+[ExcludeFromCodeCoverage(
+    Justification = "Wrapper de System.Diagnostics.Metrics — observado via telemetria, não por testes.")]
 internal sealed class OrdemDeServicoMetrics : IOrdemDeServicoMetrics, IDisposable
 {
     public const string MeterName = "MecanicaHermes.Business";

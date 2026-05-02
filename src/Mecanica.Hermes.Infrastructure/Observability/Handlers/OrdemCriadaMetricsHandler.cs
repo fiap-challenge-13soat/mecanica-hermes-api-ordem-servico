@@ -6,7 +6,8 @@ using MediatR;
 
 namespace Mecanica.Hermes.Infrastructure.Observability.Handlers;
 
-[ExcludeFromCodeCoverage(Justification = "Handler de métricas — instrumentação observada via telemetria, não por testes.")]
+[ExcludeFromCodeCoverage(
+    Justification = "Handler de métricas — instrumentação observada via telemetria, não por testes.")]
 internal sealed class OrdemCriadaMetricsHandler(IOrdemDeServicoMetrics metrics)
     : INotificationHandler<DomainEventNotification<OrdemDeServicoCriadoEvent>>
 {

@@ -22,7 +22,8 @@ namespace Mecanica.Hermes.Infrastructure.Observability;
 ///         <item>Valor padrão fixo (apenas quando há um default seguro e não ambíguo).</item>
 ///     </list>
 /// </summary>
-[ExcludeFromCodeCoverage(Justification = "Resolução de variáveis de ambiente OTLP — composição de configuração observada em runtime.")]
+[ExcludeFromCodeCoverage(
+    Justification = "Resolução de variáveis de ambiente OTLP — composição de configuração observada em runtime.")]
 internal static class OtlpEnvironment
 {
     private const string DefaultLogsEndpoint = "https://otlp.nr-data.net:4318/v1/logs";

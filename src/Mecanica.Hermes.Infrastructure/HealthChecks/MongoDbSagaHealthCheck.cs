@@ -11,7 +11,8 @@ namespace Mecanica.Hermes.Infrastructure.HealthChecks;
 ///     Cacheia um <see cref="MongoClient" /> por connection string, pois MongoClient
 ///     é thread-safe e foi projetado para ser um singleton de vida longa.
 /// </summary>
-[ExcludeFromCodeCoverage(Justification = "Health check de infraestrutura — depende de MongoDB real e é validado em runtime.")]
+[ExcludeFromCodeCoverage(
+    Justification = "Health check de infraestrutura — depende de MongoDB real e é validado em runtime.")]
 internal sealed class MongoDbSagaHealthCheck(string connectionString) : IHealthCheck
 {
     private static readonly ConcurrentDictionary<string, IMongoClient> _clients = new();
