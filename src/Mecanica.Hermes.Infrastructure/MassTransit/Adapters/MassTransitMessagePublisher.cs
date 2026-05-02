@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using MassTransit;
 using Mecanica.Hermes.Application.Common.Messaging;
 using Microsoft.Extensions.Logging;
@@ -54,5 +55,6 @@ internal sealed class MassTransitMessagePublisher(
 ///     Lançada quando o broker de mensagens está indisponível após todas as tentativas de retry.
 ///     Mapeada para HTTP 503 pelo GlobalExceptionHandlerMiddleware.
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = "Exception sem lógica — apenas transporte de mensagem.")]
 public sealed class BrokerUnavailableException(string message, Exception? inner = null)
     : Exception(message, inner);

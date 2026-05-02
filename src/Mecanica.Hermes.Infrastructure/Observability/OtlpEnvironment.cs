@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using Mecanica.Hermes.Infrastructure.Settings;
 using Serilog.Sinks.OpenTelemetry;
@@ -21,6 +22,7 @@ namespace Mecanica.Hermes.Infrastructure.Observability;
 ///         <item>Hard-coded default (only when an unambiguous safe default exists).</item>
 ///     </list>
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = "Resolução de variáveis de ambiente OTLP — composição de configuração observada em runtime.")]
 internal static class OtlpEnvironment
 {
     private const string DefaultLogsEndpoint = "https://otlp.nr-data.net:4318/v1/logs";

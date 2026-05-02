@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -5,6 +6,7 @@ namespace Mecanica.Hermes.Infrastructure.Persistence;
 
 // Used exclusively by EF Core design-time tools (dotnet ef migrations add/update).
 // Not registered in the DI container at runtime.
+[ExcludeFromCodeCoverage(Justification = "Design-time only — usado por dotnet ef, não roda em produção.")]
 internal sealed class AppDbContextDesignTimeFactory : IDesignTimeDbContextFactory<AppDbContext>
 {
     public AppDbContext CreateDbContext(string[] args)

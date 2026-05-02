@@ -8,8 +8,7 @@ public static class ResultPresenterExtensions
 {
     /// <summary>
     ///     Maps a successful <see cref="Result{TApp}" /> to its API contract using the provided
-    ///     converter function, returning OK or a custom success result. Uses manual mapping instead
-    ///     of AutoMapper to eliminate the library dependency.
+    ///     converter function, returning OK or a custom success result.
     /// </summary>
     public static IResult Present<TApp, TApi>(
         this Result<TApp> result,
