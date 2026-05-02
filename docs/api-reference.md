@@ -52,7 +52,7 @@ Resposta `202 Accepted`:
 
 ```http
 HTTP/1.1 202 Accepted
-Location: /ordens-de-servico/<id>
+Location: /api/ordens-de-servico/<id>
 Content-Type: application/json
 
 {
@@ -61,7 +61,7 @@ Content-Type: application/json
 ```
 
 > O `id` é gerado **na camada de API** antes de publicar a request, para que o cliente
-> possa polling em `GET /api/ordens-de-servico/{id}` enquanto a SAGA conclui.
+> possa fazer polling em `GET /api/ordens-de-servico/{id}` enquanto a SAGA conclui.
 
 ### Buscar ordem de serviço por id
 
@@ -156,11 +156,54 @@ Para *consumers externos* que queiram reagir a eventos, escutem
 
 ## Health checks
 
-| Endpoint | Tags | Falha quando |
+### Endpoints
+
+| Endpoint | Propósito | Predicate |
 | --- | --- | --- |
-| `GET /healthz/live` | sempre saudável | nunca |
-| `GET /healthz/ready` | `Ready`, `Database` | PostgreSQL não responde |
-| `GET /health` | `Ready` | idem `/healthz/ready` (alias) |
+| `GET /healthz/live` | Liveness probe (Kubernetes) | Nenhum — retorna sempre `200 Healthy` |
+| `GET /healthz/ready` | Readiness probe (Kubernetes) | Checks com tag `ready` |
+| `GET /health` | Alias operacional de `/healthz/ready` | Idem |
+
+### Checks registrados
+
+| Nome | Tag(s) | `FailureStatus` | Ativo quando |
+| --- | --- | --- | --- |
+| `postgres` | `ready`, `database` | `Unhealthy` | Sempre (conexão PostgreSQL obrigatória) |
+| `masstransit-bus` | `ready`, `messaging` | `Degraded` | `MASSTRANSIT__TRANSPORT_SERVICE` = `RabbitMq` ou `AmazonSqs` |
+| `mongodb-saga` | `ready`, `saga` | `Degraded` | `MONGODB__CONNECTION_STRING` definida |
+
+> **`Unhealthy` vs `Degraded`:**  
+> `postgres` usa `Unhealthy` porque sem banco a aplicação não funciona.  
+> `masstransit-bus` e `mongodb-saga` usam `Degraded` porque o MassTransit
+> possui lógica de reconexão automática — um broker temporariamente indisponível
+> não deve retirar o pod imediatamente do pool do load balancer.
+
+### Implementação
+
+- **`postgres`** — pacote `AspNetCore.HealthChecks.NpgSql`; executa `SELECT 1`.
+- **`masstransit-bus`** — registrado internamente pelo `AddMassTransit` via
+  `ConfigureHealthCheckOptions`. Reflete o estado real do bus (conectado / reconectando).
+  Não é registrado quando transport = `None` (testes / desenvolvimento sem broker).
+- **`mongodb-saga`** — `MongoDbSagaHealthCheck` customizado em `Infrastructure/HealthChecks/`;
+  executa `db.adminCommand({ ping: 1 })`. Usa um `MongoClient` cacheado por connection string
+  (thread-safe, evita criar conexões a cada probe). Não é registrado quando
+  `MONGODB__CONNECTION_STRING` está ausente (SAGA in-memory).
+
+### Exemplo de resposta (`/healthz/ready` com todos os checks)
+
+```json
+{
+  "status": "Healthy",
+  "checks": [
+    { "name": "postgres",        "status": "Healthy",  "tags": ["ready", "database"]  },
+    { "name": "masstransit-bus", "status": "Healthy",  "tags": ["ready", "messaging"] },
+    { "name": "mongodb-saga",    "status": "Healthy",  "tags": ["ready", "saga"]      }
+  ]
+}
+```
+
+> O formato acima requer um `ResponseWriter` customizado; o comportamento padrão do
+> ASP.NET Core retorna apenas `Healthy` / `Degraded` / `Unhealthy` como texto plano.
 
 ## Rate limiting
 
