@@ -10,7 +10,7 @@ Guia operacional para os incidentes mais frequentes. Cada cenário lista **sinto
 ### Sintomas
 
 - Cliente reporta que requests para uma `OrdemDeServicoId` específica são "ignoradas".
-- Métrica `ordemservico.etapa_avancada` para sem nenhum erro associado.
+- Métrica `ordemdeservico.etapa_avancada` para sem nenhum erro associado.
 - Endpoints retornam `202 Accepted` mas o estado na OS não muda.
 
 ### Diagnóstico
@@ -38,7 +38,7 @@ Guia operacional para os incidentes mais frequentes. Cada cenário lista **sinto
   para forçar a SAGA de volta a `Initial`.
 - **Médio prazo:** garantir que o `DelayedMessageScheduler` está registrado e ativo
   (`AddDelayedMessageScheduler` + `UseDelayedMessageScheduler`). Veja
-  [ADR-015](./adrs.md#adr-015).
+  [ADR-014](./adrs.md#adr-014).
 
 ---
 
@@ -114,7 +114,7 @@ FROM "OutboxMessages";
 1. Verificar se algum **handler** novo foi introduzido com erro.
 2. `LastError` típico: `Type 'X' não pôde ser resolvido` → o `DomainEventNameAttribute`
    foi removido ou trocado entre versões. (Lembrar: o discriminador é o nome do attribute,
-   não o `AssemblyQualifiedName` — ver [ADR-014](./adrs.md#adr-014).)
+   não o `AssemblyQualifiedName` — ver [ADR-013](./adrs.md#adr-013).)
 
 ### Mitigação
 
@@ -204,7 +204,7 @@ dotnet ef migrations list \
 
 ### Sintomas
 
-- Métrica `ordemservico.erros{tipo_erro="concurrency_conflict"}` cresce.
+- Métrica `ordemdeservico.erros{tipo_erro="concurrency_conflict"}` cresce.
 - `OperationFailed` com `"Conflito de concorrência. A operação será reprocessada."`.
 
 ### Diagnóstico

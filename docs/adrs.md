@@ -53,19 +53,7 @@ bem-sucedida (originalmente direto, hoje via Outbox — ver ADR-011).
 
 ---
 
-## ADR-005 — Soft delete com índices filtrados
-
-**Status:** Aceito.
-
-**Decisão:** Tabelas de domínio carregam `IsDeleted` com filtros globais no EF Core.
-Índices únicos são *parciais* (`WHERE IsDeleted = false`).
-
-**Justificativa:** preserva histórico e mantém restrições de unicidade sem exclusão
-física.
-
----
-
-## ADR-006 — MassTransit para processamento assíncrono
+## ADR-005 — MassTransit para processamento assíncrono
 
 **Status:** Aceito.
 
@@ -76,7 +64,7 @@ escalabilidade e resiliência.
 
 ---
 
-## ADR-007 — Separação entre `Request` e `Execute*` na mensageria
+## ADR-006 — Separação entre `Request` e `Execute*` na mensageria
 
 **Status:** Aceito.
 
@@ -98,7 +86,7 @@ especializados) — mesmo carregando campos idênticos.
 
 ---
 
-## ADR-008 — Port `IAsyncMessagePublisher`
+## ADR-007 — Port `IAsyncMessagePublisher`
 
 **Status:** Aceito.
 
@@ -117,7 +105,7 @@ introduzida só para isolar `IConsumer`.
 
 ---
 
-## ADR-009 — Pipeline padrão de Consumers (Template Method)
+## ADR-008 — Pipeline padrão de Consumers (Template Method)
 
 **Status:** Aceito (refinado por ADR-012).
 
@@ -129,7 +117,7 @@ publicação de `OperationCompleted/Failed` em um único ponto de manutenção.
 
 ---
 
-## ADR-010 — ISP nos repositórios (Reader / Writer)
+## ADR-009 — ISP nos repositórios (Reader / Writer)
 
 **Status:** Aceito.
 
@@ -142,7 +130,7 @@ read replica sem alterar consumers de escrita.
 
 ---
 
-## ADR-011 — Outbox transacional para Domain Events
+## ADR-010 — Outbox transacional para Domain Events
 
 **Status:** Aceito.
 
@@ -163,11 +151,10 @@ lê em lotes e despacha.
 - Latência de despacho aumenta no pior caso (próximo poll, default 2s).
 - Tabela `OutboxMessages` acumula registros processados; `OutboxCleanupService` faz
   retenção (default 7 dias).
-- Migration `AddOutboxMessages` requerida em ambientes existentes.
 
 ---
 
-## ADR-012 — Pipeline com hierarquia (Mutate vs Create)
+## ADR-011 — Pipeline com hierarquia (Mutate vs Create)
 
 **Status:** Aceito.
 
@@ -183,7 +170,7 @@ repetia a lógica de publicação; mantém SRP em cada base.
 
 ---
 
-## ADR-013 — Estratégia de testes automatizados
+## ADR-012 — Estratégia de testes automatizados
 
 **Status:** Aceito.
 
@@ -200,7 +187,7 @@ cobertura no CI configurado para ≥ 80% de linhas.
 
 ---
 
-## ADR-014 — Outbox: DLQ, concorrência e discriminador estável
+## ADR-013 — Outbox: DLQ, concorrência e discriminador estável
 
 **Status:** Aceito.
 
@@ -223,7 +210,7 @@ cuida da retenção (default 7 dias).
 
 ---
 
-## ADR-015 — SAGA timeout sentinel
+## ADR-014 — SAGA timeout sentinel
 
 **Status:** Aceito.
 
@@ -240,7 +227,7 @@ bloqueia a SAGA indefinidamente, impedindo novas requests para aquela `OrdemDeSe
 
 ---
 
-## ADR-016 — Pacotes MassTransit: todos os transports no mesmo assembly
+## ADR-015 — Pacotes MassTransit: todos os transports no mesmo assembly
 
 **Status:** Aceito.
 
@@ -249,7 +236,7 @@ referenciados no mesmo projeto `Mecanica.Hermes.Infrastructure`, mesmo quando ap
 está ativo em runtime.
 
 **Justificativa:** o composition root escolhe o transport via env
-`MASTTRANSIT__TRANSPORT_SERVICE`; manter todos no mesmo assembly simplifica o deploy e
+`MASSTRANSIT__TRANSPORT_SERVICE`; manter todos no mesmo assembly simplifica o deploy e
 evita projetos condicionais. Overhead de tamanho do container ~5 MB.
 
 **Consequências:** revisitar quando o projeto tiver ≥ 3 transports distintos em uso
@@ -257,7 +244,7 @@ simultâneo ou quando a imagem precisar ser minimizada.
 
 ---
 
-## ADR-017 — Contracts library (planejado)
+## ADR-016 — Contracts library (planejado)
 
 **Status:** Planejado.
 
@@ -275,7 +262,7 @@ apenas para os contracts (não para execução de pipeline). Ao extrair, criar
 
 ---
 
-## ADR-018 — `EnvironmentNames` centralizado em Domain
+## ADR-017 — `EnvironmentNames` centralizado em Domain
 
 **Status:** Aceito.
 

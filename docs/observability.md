@@ -15,7 +15,7 @@ configuração padrão exporta para o New Relic, mas qualquer collector OTLP ser
 A composição vive em `Mecanica.Hermes.Infrastructure/Observability/`:
 
 - `ObservabilityConfiguration.cs` — registra OTel no DI.
-- `OrdemDeServicoMetrics.cs` — `Meter` `MecanicaHermes.OrdemDeServico` + counters/histograms.
+- `OrdemDeServicoMetrics.cs` — `Meter` `MecanicaHermes.Business` + counters/histograms.
 - `Handlers/` — handlers MediatR que escutam Domain Events e atualizam métricas.
 - `ActivitySources.cs` — constantes para `ActivitySource`.
 - `OtlpEnvironment.cs` / `EnvironmentDetector.cs` — leitura/validação das env vars OTLP.
@@ -25,15 +25,15 @@ Para a configuração das variáveis OTLP, ver
 
 ## Métricas emitidas
 
-Sob o **Meter** `MecanicaHermes.OrdemDeServico`:
+Sob o **Meter** `MecanicaHermes.Business`:
 
 | Métrica | Tipo | Tags | Significado |
 | --- | --- | --- | --- |
-| `ordemservico.criadas` | Counter (long) | — | Número de OS criadas com sucesso. Emitida pelo handler de `OrdemDeServicoCriadoEvent`. |
-| `ordemservico.etapa_avancada` | Counter (long) | `status_anterior`, `status_novo`, `tipo_movimentacao` | Transições bem-sucedidas. `tipo_movimentacao` ∈ `{etapa_avancada, etapa_revertida}`. |
-| `ordemservico.canceladas` | Counter (long) | `status_anterior` | Cancelamentos. |
-| `ordemservico.erros` | Counter (long) | `operacao`, `tipo_erro` | Erros por operação. `operacao` é o `OperacaoMetricKey` do consumer (ex.: `criar`, `avancar_etapa`). |
-| `ordemservico.duracao_etapa_minutes` | Histogram (double, minutos) | `status` | Duração que a OS permaneceu em um determinado status (medida ao avançar). |
+| `ordemdeservico.criadas` | Counter (long) | — | Número de OS criadas com sucesso. Emitida pelo handler de `OrdemDeServicoCriadoEvent`. |
+| `ordemdeservico.etapa_avancada` | Counter (long) | `status_anterior`, `status_novo`, `tipo_movimentacao` | Transições bem-sucedidas. `tipo_movimentacao` ∈ `{etapa_avancada, etapa_revertida}`. |
+| `ordemdeservico.canceladas` | Counter (long) | `status_anterior` | Cancelamentos. |
+| `ordemdeservico.erros` | Counter (long) | `operacao`, `tipo_erro` | Erros por operação. `operacao` é o `OperacaoMetricKey` do consumer (ex.: `criar`, `avancar_etapa`). |
+| `ordemdeservico.duracao_etapa_minutes` | Histogram (double, minutos) | `status` | Duração que a OS permaneceu em um determinado status (medida ao avançar). |
 
 ### Convenções
 
@@ -50,29 +50,29 @@ Sob o **Meter** `MecanicaHermes.OrdemDeServico`:
 
 ```promql
 # Taxa de OS criadas por minuto (5m janela)
-rate(ordemservico_criadas_total[5m]) * 60
+rate(ordemdeservico_criadas_total[5m]) * 60
 
 # Top 5 transições mais frequentes
-topk(5, sum by (status_anterior, status_novo) (rate(ordemservico_etapa_avancada_total[1h])))
+topk(5, sum by (status_anterior, status_novo) (rate(ordemdeservico_etapa_avancada_total[1h])))
 
 # Erros por operação (últimos 5 min)
-sum by (operacao, tipo_erro) (rate(ordemservico_erros_total[5m]))
+sum by (operacao, tipo_erro) (rate(ordemdeservico_erros_total[5m]))
 
 # P95 da duração por status (últimos 15 min)
-histogram_quantile(0.95, sum by (le, status) (rate(ordemservico_duracao_etapa_minutes_bucket[15m])))
+histogram_quantile(0.95, sum by (le, status) (rate(ordemdeservico_duracao_etapa_minutes_bucket[15m])))
 ```
 
 ## Tracing
 
 Activity sources principais (em `ActivitySources.cs`):
 
-- `MecanicaHermes.OrdemDeServico` — spans de comandos/queries (criados pelo
+- `MecanicaHermes` — spans de comandos/queries (criados pelo
   `TracingBehavior`).
 - Instrumentação automática de ASP.NET Core, HttpClient, Npgsql via pacotes OTel.
 
 O Outbox preserva o `traceparent` ativo no momento do commit em `OutboxMessages.TraceContext`
 e o restaura ao despachar — assim, traces continuam contínuos mesmo cruzando a fronteira
-do background processor (ver [ADR-014](./adrs.md#adr-014)).
+do background processor (ver [ADR-013](./adrs.md#adr-013)).
 
 ## Logs
 

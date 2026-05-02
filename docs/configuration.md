@@ -30,20 +30,16 @@ de licença e secrets de dev. Use o quadro abaixo como referência das variávei
 
 | Variável | Default | Notas |
 | --- | --- | --- |
-| `MASTTRANSIT__TRANSPORT_SERVICE` | `RabbitMq` (no launchSettings) | `RabbitMq`, `AmazonSqs` ou `MongoDb`. |
-| `MASTTRANSIT__CONNECTION_STRING` | — | Conexão do transport escolhido. |
-| `MASTTRANSIT__PREFETCH_COUNT` | `24` | Mensagens em flight por consumer. |
-| `MASTTRANSIT__QUEUE_NAME_PREFIX` | `mecanica-hermes` | Prefixo de filas. |
-
-> A grafia "MASTTRANSIT" (com TT duplo) está reproduzida exatamente como no código
-> ([src/Mecanica.Hermes.Infrastructure/Settings/VariableNames.cs](../src/Mecanica.Hermes.Infrastructure/Settings/VariableNames.cs)).
-> Não corrigir sem migrar todos os ambientes.
+| `MASSTRANSIT__TRANSPORT_SERVICE` | `RabbitMq` (no launchSettings) | `RabbitMq`, `AmazonSqs` ou `MongoDb`. |
+| `MASSTRANSIT__CONNECTION_STRING` | — | Conexão do transport escolhido. |
+| `MASSTRANSIT__PREFETCH_COUNT` | `24` | Mensagens em flight por consumer. |
+| `MASSTRANSIT__QUEUE_NAME_PREFIX` | `mecanica-hermes` | Prefixo de filas. |
 
 ### Estado da SAGA (MongoDB)
 
 | Variável | Notas |
 | --- | --- |
-| `MONGODB__CONNECTION_STRING` | Connection string do MongoDB. |
+| `MONGODB__CONNECTION_STRING` | Connection string do MongoDB ou DocumentDB. |
 | `MONGODB__SAGA_DATABASE` | Nome do database (ex.: `mechermes_saga`). |
 
 ### Outbox
@@ -84,7 +80,6 @@ A API segue a [especificação OTLP](https://opentelemetry.io/docs/specs/otel/pr
 | Variável | Notas |
 | --- | --- |
 | `MediatR__LicenseKey` | License key do MediatR. |
-| `AutoMapper__LicenseKey` | Mantida por compatibilidade — runtime atual não depende de AutoMapper. |
 
 ### Ambiente
 
@@ -104,10 +99,10 @@ Modelo para o seu `launchSettings.json` local (substitua os placeholders):
 ```text
 ASPNETCORE_ENVIRONMENT=Development
 ConnectionStrings__DefaultConnection=Host=localhost;Port=5432;Database=MecHermesOrdemDeServicoDB;Username=postgres;Password=<sua-senha>
-MASTTRANSIT__CONNECTION_STRING=amqp://guest:guest@localhost:5672/
-MASTTRANSIT__TRANSPORT_SERVICE=RabbitMq
-MASTTRANSIT__PREFETCH_COUNT=24
-MASTTRANSIT__QUEUE_NAME_PREFIX=mecanica-hermes
+MASSTRANSIT__CONNECTION_STRING=amqp://guest:guest@localhost:5672/
+MASSTRANSIT__TRANSPORT_SERVICE=RabbitMq
+MASSTRANSIT__PREFETCH_COUNT=24
+MASSTRANSIT__QUEUE_NAME_PREFIX=mecanica-hermes
 MONGODB__CONNECTION_STRING=mongodb://localhost:27017
 MONGODB__SAGA_DATABASE=mechermes_saga
 OBSERVABILITY__ENABLED=true

@@ -52,7 +52,7 @@ correlacionada por `CorrelateById(ctx => ctx.Message.OrdemDeServicoId)`.
 `OrdemDeServicoOperationTimedOut` via `DelayedMessageScheduler` para `5 minutos` depois.
 Caso o timer dispare antes do consumer responder, a SAGA volta para `Initial` registrando
 `UltimoMotivoFalha`. O timer é cancelado (`Unschedule`) quando o evento de finalização
-chega normalmente. Veja [ADR-015](./adrs.md#adr-015).
+chega normalmente. Veja [ADR-014](./adrs.md#adr-014).
 
 A persistência da SAGA é feita em **MongoDB** (`MONGODB__SAGA_DATABASE`), na collection
 `ordem-de-servico-saga-state`.
@@ -115,7 +115,7 @@ Publicados pelos consumers ao final do pipeline. Servem para a SAGA finalizar o 
 | `OrdemDeServicoOperationTimedOut` | `OrdemDeServicoId`, `Operacao` |
 
 > **Por que `Request` e `Execute*` carregam os mesmos campos mas existem separados?**
-> Veja [ADR-007](./adrs.md#adr-007). Em resumo: `Request` representa a *intenção do
+> Veja [ADR-006](./adrs.md#adr-006). Em resumo: `Request` representa a *intenção do
 > cliente* e vai para a fila da SAGA; `Execute*` representa a *ordem operacional do
 > orquestrador* e vai para a fila do consumer. Filas separadas permitem `Ignore` na SAGA
 > sem que os consumers vejam mensagens duplicadas.
@@ -209,7 +209,7 @@ public sealed class AprovarOrdemDeServicoConsumer(
 
 A criação não carrega um agregado existente — usa `OrdemDeServicoCreateConsumerBase<T>`
 em vez de `Mutate`. O hook é `Result<OrdemDeServico> CreateAggregate(TCommand)` e o
-pipeline chama `AddAsync` em vez de `UpdateAsync`. Veja [ADR-012](./adrs.md#adr-012).
+pipeline chama `AddAsync` em vez de `UpdateAsync`. Veja [ADR-011](./adrs.md#adr-011).
 
 ## Outbox
 
@@ -270,17 +270,17 @@ Tudo via `OutboxOptions` (env vars com prefixo `OUTBOX__`):
 
 ## Transports suportados
 
-A escolha do transport é feita pela env var `MASTTRANSIT__TRANSPORT_SERVICE`, que pode ser:
+A escolha do transport é feita pela env var `MASSTRANSIT__TRANSPORT_SERVICE`, que pode ser:
 
 - `RabbitMq` (default em `launchSettings`)
 - `AmazonSqs`
 - `MongoDb`
 
-Os três transports são pacotados juntos no assembly de Infrastructure
-(ver [ADR-016](./adrs.md#adr-016)) — apenas o configurado em runtime é registrado.
+Os três transports são empacotados juntos no assembly de Infrastructure
+(ver [ADR-015](./adrs.md#adr-015)) — apenas o configurado em runtime é registrado.
 
 ## Plano: lib de contratos
 
 Está planejada (não executada) a extração dos contratos de mensageria para
 `Mecanica.Hermes.Contracts.OrdemDeServico`. Critério para extrair: aparição do **primeiro
-consumidor externo** (outro serviço, BFF). Detalhes: [ADR-017](./adrs.md#adr-017).
+consumidor externo** (outro serviço, BFF). Detalhes: [ADR-016](./adrs.md#adr-016).

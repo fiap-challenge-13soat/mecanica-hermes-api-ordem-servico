@@ -8,7 +8,6 @@ seus próprios alvos de transição e suas regras de edição.
 
 ```mermaid
 stateDiagram-v2
-    direction LR
     [*] --> Recebida
     Recebida --> EmDiagnostico : Avancar
     EmDiagnostico --> AguardandoAprovacao : Avancar

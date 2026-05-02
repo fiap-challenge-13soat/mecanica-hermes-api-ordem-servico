@@ -6,7 +6,6 @@
 - **`FOR UPDATE SKIP LOCKED`**: usado pelo `OutboxProcessor` para coordenar múltiplas
   réplicas sem race condition.
 - **Índices parciais**: índice em `OutboxMessages (Status)` filtrado por `Status = Pending`.
-- **Soft delete + filtros globais** funcionam bem com índices únicos parciais.
 - **`xmin`** é usado como concurrency token nativo do PostgreSQL (sem coluna manual de
   versionamento).
 - **EF Core + Npgsql** maduros; banco gerenciado em produção via Amazon RDS.
@@ -34,7 +33,6 @@ erDiagram
       uint32 xmin "Concurrency token"
       datetime CreatedAt
       datetime UpdatedAt
-      bool IsDeleted
     }
 
     ORDEM_DE_SERVICO_STATUS {
@@ -54,7 +52,6 @@ erDiagram
       string StatusDestino
       datetime DataInicio
       datetime DataFinalizacao
-      bool IsDeleted
     }
 
     ORDEM_DE_SERVICO_PRODUTOS {
@@ -63,7 +60,6 @@ erDiagram
       guid ProdutoId
       decimal ValorVenda
       int Quantidade
-      bool IsDeleted
     }
 
     ORDEM_DE_SERVICO_SERVICOS {
@@ -71,7 +67,6 @@ erDiagram
       guid OrdemDeServicoId FK
       guid ServicoId
       decimal ValorVenda
-      bool IsDeleted
     }
 
     OUTBOX_MESSAGES {
@@ -89,8 +84,6 @@ erDiagram
 
 ## Decisões de modelagem
 
-- **Soft delete (`IsDeleted`)** com filtro global no EF Core. Índices únicos são *parciais*
-  (`WHERE IsDeleted = false`) para preservar unicidade apenas em registros ativos.
 - **Snapshots em `OrdemDeServicoProdutos` e `OrdemDeServicoServicos`** — `ProdutoId` e
   `ServicoId` são referências lógicas (sem FK) para preservar histórico mesmo quando o
   catálogo externo muda preço/descrição.
@@ -112,7 +105,7 @@ erDiagram
 
 ## Persistência de Saga (MongoDB)
 
-A `OrdemDeServicoStateMachine` armazena seu estado em **MongoDB**, configurado por:
+A `OrdemDeServicoStateMachine` armazena seu estado em **MongoDB / DocumentDB**, configurado por:
 
 - `MONGODB__CONNECTION_STRING`
 - `MONGODB__SAGA_DATABASE`

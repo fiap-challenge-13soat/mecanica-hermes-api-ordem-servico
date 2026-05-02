@@ -191,7 +191,7 @@ Query handlers dependem de `IOrdemDeServicoReader` (somente leitura, ISP) e reto
 
 Os **Consumers** continuam acoplados a `IConsumer<T>` do MassTransit por opção deliberada —
 são *driver adapters* de entrada e o `MassTransit.TestFramework` já permite testá-los sem
-broker real (ver [ADR-008](./adrs.md#adr-008)).
+broker real (ver [ADR-007](./adrs.md#adr-007)).
 
 ### Outbox transacional
 
@@ -199,7 +199,7 @@ Domain events disparados pelo agregado são serializados em `OutboxMessages` na 
 transação** do `SaveChangesAsync` do agregado. Um `OutboxProcessor` (BackgroundService) lê
 em lotes (`SELECT … FOR UPDATE SKIP LOCKED` no PostgreSQL) e despacha via MediatR + bus.
 Mensagens com falha persistente são movidas para `DeadLettered` após `MaxRetries`. Veja
-[ADR-011](./adrs.md#adr-011), [ADR-014](./adrs.md#adr-014) e
+[ADR-010](./adrs.md#adr-010), [ADR-013](./adrs.md#adr-013) e
 [messaging.md](./messaging.md#outbox).
 
 ### Entity / Domain split
