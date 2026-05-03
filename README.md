@@ -9,11 +9,11 @@
 [![RabbitMQ](https://img.shields.io/badge/RabbitMQ-3-FF6600)](https://www.rabbitmq.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-SAGA%20state-47A248)](https://www.mongodb.com/)
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico&metric=alert_status)](https://sonarcloud.io/project/overview?id=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico&metric=coverage)](https://sonarcloud.io/project/overview?id=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico&metric=sqale_rating)](https://sonarcloud.io/project/overview?id=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico)
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico&metric=reliability_rating)](https://sonarcloud.io/project/overview?id=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico&metric=security_rating)](https://sonarcloud.io/project/overview?id=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico&metric=alert_status&token=6aa5812f4a2c7616442ace938524a8b0999b56c3)](https://sonarcloud.io/summary/new_code?id=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico&metric=coverage&token=6aa5812f4a2c7616442ace938524a8b0999b56c3)](https://sonarcloud.io/summary/new_code?id=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico&metric=sqale_rating&token=6aa5812f4a2c7616442ace938524a8b0999b56c3)](https://sonarcloud.io/summary/new_code?id=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico&metric=reliability_rating&token=6aa5812f4a2c7616442ace938524a8b0999b56c3)](https://sonarcloud.io/summary/new_code?id=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico&metric=security_rating&token=6aa5812f4a2c7616442ace938524a8b0999b56c3)](https://sonarcloud.io/summary/new_code?id=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico)
 
 ---
 
