@@ -89,6 +89,8 @@ Faz `createWorkflowDispatch` em `fiap-challenge-13soat/mecanica-hermes-k8s/api-d
 
 ## Workflow 4 — `sonarqube-ci.yml`
 
+**Dashboard:** [sonarcloud.io/project/overview?id=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico](https://sonarcloud.io/project/overview?id=fiap-challenge-13soat_mecanica-hermes-api-ordem-servico)
+
 **Triggers:**
 
 - `pull_request` (`opened`, `synchronize`, `reopened`) — análise com decoração no PR.
