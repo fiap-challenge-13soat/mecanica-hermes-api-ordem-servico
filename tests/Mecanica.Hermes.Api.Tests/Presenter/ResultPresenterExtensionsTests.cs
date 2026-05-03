@@ -43,6 +43,40 @@ public class ResultPresenterExtensionsTests
             .Which.Value!.Errors.Should().ContainSingle().Which.Should().Be("erro");
     }
 
+    [Fact]
+    public void Present_Conflict_DeveRetornarConflictComProblemDetails()
+    {
+        var result = new Result(System.Net.HttpStatusCode.Conflict);
+        result.Errors.Add("duplicado");
+
+        var present = result.Present();
+
+        present.Should().BeOfType<Conflict<ApiProblemDetails>>()
+            .Which.Value!.Errors.Should().Contain("duplicado");
+    }
+
+    [Fact]
+    public void Present_Unauthorized_DeveRetornarUnauthorized()
+    {
+        new Result(System.Net.HttpStatusCode.Unauthorized).Present()
+            .Should().BeOfType<UnauthorizedHttpResult>();
+    }
+
+    [Fact]
+    public void Present_NoContentFailure_DeveRetornarNoContent()
+    {
+        new Result(System.Net.HttpStatusCode.NoContent).Present().Should().BeOfType<NoContent>();
+    }
+
+    [Fact]
+    public void Present_InternalServerError_DeveRetornarProblem()
+    {
+        var result = new Result(System.Net.HttpStatusCode.InternalServerError);
+        result.Errors.Add("boom");
+
+        result.Present().Should().BeOfType<ProblemHttpResult>();
+    }
+
     // --- Result<T> ---
 
     [Fact]
@@ -80,6 +114,84 @@ public class ResultPresenterExtensionsTests
         var present = result.Present();
 
         present.Should().BeOfType<ProblemHttpResult>();
+    }
+
+    [Fact]
+    public void PresentGeneric_Unauthorized_SemMapper_DeveRetornarUnauthorized()
+    {
+        Result<string>.Unauthorized().Present().Should().BeOfType<UnauthorizedHttpResult>();
+    }
+
+    [Fact]
+    public void PresentGeneric_BadRequest_SemMapper_DeveRetornarBadRequest()
+    {
+        Result<string>.BadRequest("erro").Present()
+            .Should().BeOfType<BadRequest<ApiProblemDetails>>()
+            .Which.Value!.Errors.Should().Contain("erro");
+    }
+
+    [Fact]
+    public void PresentGeneric_NoContentFailure_SemMapper_DeveRetornarNoContent()
+    {
+        Result<string>.NoContent().Present().Should().BeOfType<NoContent>();
+    }
+
+    // --- Result<T> com mapper: ramos de falha não devem invocar a função de map ---
+
+    [Fact]
+    public void PresentGenericComMapper_Failure_NaoDeveInvocarMapper()
+    {
+        var mapInvoked = false;
+        Func<SrcDto, ApiDto> map = src =>
+        {
+            mapInvoked = true;
+            return new ApiDto(src.Data);
+        };
+
+        Result<SrcDto>.NotFound().Present(map);
+
+        mapInvoked.Should().BeFalse("falhas não devem invocar o mapper");
+    }
+
+    [Fact]
+    public void PresentGenericComMapper_NotFound_DeveRetornarNotFound()
+    {
+        Result<SrcDto>.NotFound().Present(_ => new ApiDto("x")).Should().BeOfType<NotFound>();
+    }
+
+    [Fact]
+    public void PresentGenericComMapper_Conflict_DeveRetornarConflict()
+    {
+        Result<SrcDto>.Conflict("dup").Present(_ => new ApiDto("x"))
+            .Should().BeOfType<Conflict<ApiProblemDetails>>();
+    }
+
+    [Fact]
+    public void PresentGenericComMapper_Unauthorized_DeveRetornarUnauthorized()
+    {
+        Result<SrcDto>.Unauthorized().Present(_ => new ApiDto("x"))
+            .Should().BeOfType<UnauthorizedHttpResult>();
+    }
+
+    [Fact]
+    public void PresentGenericComMapper_BadRequest_DeveRetornarBadRequest()
+    {
+        Result<SrcDto>.BadRequest("erro").Present(_ => new ApiDto("x"))
+            .Should().BeOfType<BadRequest<ApiProblemDetails>>();
+    }
+
+    [Fact]
+    public void PresentGenericComMapper_NoContentFailure_DeveRetornarNoContent()
+    {
+        Result<SrcDto>.NoContent().Present(_ => new ApiDto("x"))
+            .Should().BeOfType<NoContent>();
+    }
+
+    [Fact]
+    public void PresentGenericComMapper_InternalServerError_DeveRetornarProblem()
+    {
+        Result<SrcDto>.InternalServerError("boom").Present(_ => new ApiDto("x"))
+            .Should().BeOfType<ProblemHttpResult>();
     }
 
     [Fact]
