@@ -69,9 +69,9 @@ public class OrdemDeServicoCommandValidationFilterTests
 
     // ── Stubs internos ao teste ──────────────────────────────────────────────
 
-    private record StubExecuteCommand(Guid OrdemDeServicoId) : IOrdemDeServicoExecuteCommand;
+    private sealed record StubExecuteCommand(Guid OrdemDeServicoId) : IOrdemDeServicoExecuteCommand;
 
-    private class StubExecuteCommandConsumer : IConsumer<StubExecuteCommand>
+    private sealed class StubExecuteCommandConsumer : IConsumer<StubExecuteCommand>
     {
         public Task Consume(ConsumeContext<StubExecuteCommand> context)
         {
