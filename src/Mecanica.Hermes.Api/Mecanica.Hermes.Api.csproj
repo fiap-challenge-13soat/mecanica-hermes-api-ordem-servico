@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <DebugType>full</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="FluentValidation"/>
+        <PackageReference Include="MassTransit.Abstractions"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
+        <PackageReference Include="Scalar.AspNetCore"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Mecanica.Hermes.Domain\Mecanica.Hermes.Domain.csproj"/>
+        <ProjectReference Include="..\Mecanica.Hermes.Application\Mecanica.Hermes.Application.csproj"/>
+        <ProjectReference Include="..\Mecanica.Hermes.Infrastructure\Mecanica.Hermes.Infrastructure.csproj"/>
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <PackageReference Include="coverlet.collector"/>
+        <PackageReference Include="FluentAssertions"/>
+        <PackageReference Include="MassTransit.TestFramework"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+        <PackageReference Include="Moq"/>
+        <PackageReference Include="xunit"/>
+        <PackageReference Include="xunit.runner.visualstudio"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Mecanica.Hermes.Application\Mecanica.Hermes.Application.csproj"/>
+        <ProjectReference Include="..\..\src\Mecanica.Hermes.Domain\Mecanica.Hermes.Domain.csproj"/>
+        <ProjectReference Include="..\Mecanica.Hermes.TestUtils\Mecanica.Hermes.TestUtils.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="Xunit"/>
+        <Using Include="FluentAssertions"/>
+        <Using Include="Moq"/>
+    </ItemGroup>
+
+</Project>
