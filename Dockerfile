@@ -32,7 +32,9 @@ WORKDIR /app
 
 # Usuário não-root — a imagem aspnet:10.0 já traz o usuário `app` (UID 1654)
 # pré-criado, atendendo least-privilege e políticas Kubernetes runAsNonRoot:true.
-COPY --from=build --chown=app:app /app/publish .
+# --chmod=0555 (r-x): artefatos publicados só precisam de leitura/execução em
+# runtime; remover o bit de escrita endurece o filesystem da imagem.
+COPY --from=build --chown=app:app --chmod=0555 /app/publish .
 
 USER app
 
