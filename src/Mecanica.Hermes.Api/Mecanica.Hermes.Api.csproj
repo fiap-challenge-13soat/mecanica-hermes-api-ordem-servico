@@ -1,10 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <DebugType>full</DebugType>
         <DebugSymbols>true</DebugSymbols>
         <DefineConstants>DEBUG;TRACE</DefineConstants>
-        <OutputType>Exe</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
