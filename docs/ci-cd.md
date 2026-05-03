@@ -7,8 +7,8 @@ flowchart LR
     A[push main / feature/**] --> B[build-and-tests-ci]
     B -- success on main --> C[docker-ci]
     D[push tag v*.*.*] --> C
-    C -- success on main --> E[k8s-deploy-trigger HML]
-    C -- success on tag v* --> F[k8s-deploy-trigger PRD]
+    C -- success on main --> E[k8s-trigger-cd HML]
+    C -- success on tag v* --> F[k8s-trigger-cd PRD]
 ```
 
 ## Workflow 1 — `build-and-tests-ci.yml`
@@ -69,7 +69,7 @@ Tags geradas (via `docker/metadata-action`):
 | `DOCKER_USERNAME` | Usuário Docker Hub |
 | `DOCKER_PASSWORD` | Senha ou token Docker Hub |
 
-## Workflow 3 — `k8s-deploy-trigger.yml`
+## Workflow 3 — `k8s-trigger-cd.yml`
 
 **Trigger:** `workflow_run` do workflow 2.
 

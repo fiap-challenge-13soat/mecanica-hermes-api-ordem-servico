@@ -30,15 +30,13 @@ RUN dotnet publish src/Mecanica.Hermes.Api/Mecanica.Hermes.Api.csproj \
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 
-# Non-root user — required for least-privilege execution and many Kubernetes
-# security policies (runAsNonRoot: true).
-RUN addgroup --system appgroup \
- && adduser  --system --ingroup appgroup --no-create-home appuser
+# Usuário não-root — a imagem aspnet:10.0 já traz o usuário `app` (UID 1654)
+# pré-criado, atendendo least-privilege e políticas Kubernetes runAsNonRoot:true.
+# --chmod=0555 (r-x): artefatos publicados só precisam de leitura/execução em
+# runtime; remover o bit de escrita endurece o filesystem da imagem.
+COPY --from=build --chown=app:app --chmod=0555 /app/publish .
 
-COPY --from=build /app/publish .
-RUN chown -R appuser:appgroup /app
-
-USER appuser
+USER app
 
 # The aspnet:10.0 base image already sets ASPNETCORE_HTTP_PORTS=8080, but
 # we make it explicit here so the intent is visible in the image config.
