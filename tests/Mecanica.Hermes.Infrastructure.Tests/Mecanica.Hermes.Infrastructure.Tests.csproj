@@ -1,4 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <!-- O SDK Web e estas duas flags são necessários para que o Cecil do coverlet consiga
+             resolver tipos do shared framework (ex.: Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions)
+             ao instrumentar Mecanica.Hermes.Infrastructure.dll. Sem isso, a cobertura desse
+             assembly ficava 0% no Sonar (CecilAssemblyResolutionException). -->
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <PreserveCompilationContext>true</PreserveCompilationContext>
+    </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="coverlet.collector"/>
