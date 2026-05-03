@@ -110,7 +110,15 @@ public sealed class AuthorizationTestWebApplicationFactory
             services.AddMassTransit(x =>
             {
                 x.ConfigureSaga(null, "test");
-                x.UsingInMemory((context, cfg) => cfg.ConfigureEndpoints(context));
+                // Habilita o MessageSchedulerContext no pipe — sem isso as atividades
+                // `.Schedule(...)` da SAGA falham com PayloadNotFoundException.
+                // Espelha o setup de produção (RabbitMqBusFactoryConfiguratorExtensions).
+                x.AddDelayedMessageScheduler();
+                x.UsingInMemory((context, cfg) =>
+                {
+                    cfg.UseDelayedMessageScheduler();
+                    cfg.ConfigureEndpoints(context);
+                });
             });
         });
     }
