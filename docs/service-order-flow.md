@@ -84,10 +84,10 @@ Quatro transições de estado podem ser iniciadas por **eventos MassTransit publ
 
 | Evento externo | Origem | Consumer | Transição |
 | --- | --- | --- | --- |
-| `orcamento.aprovado-pelo-cliente` | API de Cadastros | `OrcamentoAprovadoPeloClienteConsumer` | `AguardandoAprovacao` → `EmExecucao` |
-| `orcamento.rejeitado-pelo-cliente` | API de Cadastros | `OrcamentoRejeitadoPeloClienteConsumer` | `AguardandoAprovacao` → `Rejeitada` |
-| `pagamento.confirmado` | API de Pagamentos | `PagamentoConfirmadoConsumer` | `AguardandoPagamento` → `PagamentoConfirmado` |
-| `pagamento.recusado` | API de Pagamentos | `PagamentoRecusadoConsumer` | `AguardandoPagamento` → `ManutencaoFinalizada` (reverte) |
+| `orcamento.aprovado-pelo-cliente.v1` | API de Cadastros | `OrcamentoAprovadoPeloClienteConsumer` | `AguardandoAprovacao` → `EmExecucao` |
+| `orcamento.rejeitado-pelo-cliente.v1` | API de Cadastros | `OrcamentoRejeitadoPeloClienteConsumer` | `AguardandoAprovacao` → `Rejeitada` |
+| `pagamento.confirmado.v1` | API de Pagamentos | `PagamentoConfirmadoConsumer` | `AguardandoPagamento` → `PagamentoConfirmado` |
+| `pagamento.recusado.v1` | API de Pagamentos | `PagamentoRecusadoConsumer` | `AguardandoPagamento` → `ManutencaoFinalizada` (reverte) |
 
 O padrão de tradução é sempre o mesmo: o consumer publica o `*Request` correspondente no bus, e a SAGA trata como se fosse um trigger interno.
 

@@ -299,8 +299,8 @@ Publicados pelo `EtapaAvancadaIntegrationPublisher`, que é um `INotificationHan
 
 | EntityName | Classe | Quando publica | Payload |
 | --- | --- | --- | --- |
-| `ordem-de-servico.aguardando-aprovacao` | `OrdemDeServicoAguardandoAprovacaoEvent` | `StatusAtual == AguardandoAprovacao` | `OrdemDeServicoId` |
-| `ordem-de-servico.aguardando-pagamento` | `OrdemDeServicoAguardandoPagamentoEvent` | `StatusAtual == AguardandoPagamento` | `OrdemDeServicoId`, `ClienteId`, `Valor` |
+| `ordem-de-servico.aguardando-aprovacao.v1` | `OrdemDeServicoAguardandoAprovacaoEvent` | `StatusAtual == AguardandoAprovacao` | `OrdemDeServicoId` |
+| `ordem-de-servico.aguardando-pagamento.v1` | `OrdemDeServicoAguardandoPagamentoEvent` | `StatusAtual == AguardandoPagamento` | `OrdemDeServicoId`, `ClienteId`, `Valor` |
 
 > `OrdemDeServicoAguardandoPagamentoEvent` carrega `ClienteId` e `Valor` para que a API de Pagamentos possa iniciar o pagamento sem consultar a OS de volta.
 
@@ -310,10 +310,10 @@ Os 4 consumers cross-service vivem em `Application/OrdensDeServico/Consumers/Int
 
 | EntityName | Origem | Consumer | Ação na SAGA |
 | --- | --- | --- | --- |
-| `orcamento.aprovado-pelo-cliente` | API de Cadastros | `OrcamentoAprovadoPeloClienteConsumer` | Publica `AprovarOrdemDeServicoRequest` → SAGA executa `ExecuteAprovarOrdemDeServico` |
-| `orcamento.rejeitado-pelo-cliente` | API de Cadastros | `OrcamentoRejeitadoPeloClienteConsumer` | Publica `RejeitarOrdemDeServicoRequest` → SAGA executa `ExecuteRejeitarOrdemDeServico` |
-| `pagamento.confirmado` | API de Pagamentos | `PagamentoConfirmadoConsumer` | Publica `PagamentoAprovadoRequest` → SAGA executa `ExecutePagamentoAprovado` |
-| `pagamento.recusado` | API de Pagamentos | `PagamentoRecusadoConsumer` | Publica `ReverterEtapaRequest` → SAGA executa `ExecuteReverterEtapa` (volta para `ManutencaoFinalizada`) |
+| `orcamento.aprovado-pelo-cliente.v1` | API de Cadastros | `OrcamentoAprovadoPeloClienteConsumer` | Publica `AprovarOrdemDeServicoRequest` → SAGA executa `ExecuteAprovarOrdemDeServico` |
+| `orcamento.rejeitado-pelo-cliente.v1` | API de Cadastros | `OrcamentoRejeitadoPeloClienteConsumer` | Publica `RejeitarOrdemDeServicoRequest` → SAGA executa `ExecuteRejeitarOrdemDeServico` |
+| `pagamento.confirmado.v1` | API de Pagamentos | `PagamentoConfirmadoConsumer` | Publica `PagamentoAprovadoRequest` → SAGA executa `ExecutePagamentoAprovado` |
+| `pagamento.recusado.v1` | API de Pagamentos | `PagamentoRecusadoConsumer` | Publica `ReverterEtapaRequest` → SAGA executa `ExecuteReverterEtapa` (volta para `ManutencaoFinalizada`) |
 
 ### Fluxo bidirecional
 
