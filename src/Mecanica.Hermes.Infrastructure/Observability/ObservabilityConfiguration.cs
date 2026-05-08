@@ -1,4 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
+using Mecanica.Hermes.Infrastructure.MassTransit.Observability;
+using Mecanica.Hermes.Infrastructure.Persistence.Outbox;
 using Mecanica.Hermes.Shared.Observability;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
@@ -59,6 +61,8 @@ internal static class ObservabilityConfiguration
                 metrics
                     .AddMeter(ActivitySources.ApplicationName)
                     .AddMeter(OrdemDeServicoMetrics.MeterName)
+                    .AddMeter(OutboxHealthMetrics.MeterName)
+                    .AddMeter(DlqMetrics.MeterName)
                     .AddAspNetCoreInstrumentation()
                     .AddNpgsqlInstrumentation()
                     .AddHttpClientInstrumentation()
