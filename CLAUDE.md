@@ -2,6 +2,34 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Ecosystem Context
+
+This repository is **one of five** in the Mecânica Hermes ecosystem. They live as siblings under
+`C:\git\mecanica-hermes\` (or equivalent). When working here, keep in mind:
+
+| Repo | Role | Key tech |
+|---|---|---|
+| `mecanica-hermes-api-ordem-servico` | **This repo** — orquestra ordens de serviço (state machine, SAGA principal) | .NET 10, PostgreSQL, RabbitMQ, MongoDB (saga state) |
+| `mecanica-hermes-cadastros` | Cadastros de Clientes e Produtos; recebe webhook de aprovação/rejeição de orçamento | .NET 10, PostgreSQL |
+| `mecanica-hermes-api-pagamentos` | Integração com Mercado Pago, gera link, recebe webhook MP, polling de status | .NET 10, MongoDB |
+| `mecanica-hermes-tests-e2e` | Suíte E2E Robot Framework BDD cobrindo as 3 APIs em Docker Compose | Python 3.11, Robot Framework, Allure |
+| `mecanica-hermes-shared-sdk` | SDK compartilhado em GitHub Packages (6 pacotes NuGet) | .NET 10, MassTransit.Abstractions |
+
+### Cross-service integration
+
+- **Mensageria** (RabbitMQ via MassTransit): 7 eventos versionados via `[EntityName(".v1")]`. Esta API
+  publica e consome 6 deles (ver "Cross-service Integration Events" abaixo). O sufixo `.v1` é
+  contrato — qualquer mudança de schema cria `.v2` em paralelo (deprecation window).
+- **HTTP M2M**: esta API consome `GET /api/clientes/{id}` do Cadastros (autenticação via JWT M2M;
+  no Development o `DevelopmentAuthenticationMiddleware` bypassa).
+
+### Shared SDK status (em adoção)
+
+PR #1 do `mecanica-hermes-shared-sdk` ainda **não foi mergeado** quando este CLAUDE.md foi escrito.
+Quando for: 6 pacotes NuGet (`Mecanica.Hermes.Shared.Core`, `.Application`, `.AspNetCore`,
+`.Observability`, `.MassTransit`, `Mecanica.Hermes.Contracts`) substituirão ~700 linhas duplicadas
+deste repo. Até lá, **não mover código para o SDK** sem alinhar com o usuário primeiro.
+
 ## Commands
 
 ```bash
@@ -97,6 +125,24 @@ Domain events raised inside an aggregate are:
 2. Picked up by the `OutboxProcessor` background service, which dispatches them via `DomainEventDispatcher` → MediatR notification → MassTransit publish.
 
 This ensures at-least-once event delivery even if the message broker is temporarily unavailable.
+
+### Cross-service Integration Events
+
+7 contratos cross-service circulam entre OS, Cadastros e Pagamentos. Todos versionados com sufixo
+`.v1` no `[EntityName]` (kebab-case). Esta API:
+
+| Direção | Evento (`EntityName`) | Fluxo |
+|---|---|---|
+| Publica → | `ordem-de-servico.aguardando-aprovacao.v1` | Quando OS entra em `AguardandoAprovacao` (Cadastros consome para gerar webhook link) |
+| Consome ← | `orcamento-aprovado-pelo-cliente.v1` | Cadastros notifica que cliente aprovou pelo webhook |
+| Consome ← | `orcamento-rejeitado-pelo-cliente.v1` | Cadastros notifica rejeição |
+| Publica → | `ordem-de-servico.aguardando-pagamento.v1` | OS pediu pagamento (Pagamentos consome para gerar link MP) |
+| Consome ← | `link-pagamento-gerado.v1` | Pagamentos confirma que o link foi gerado |
+| Consome ← | `pagamento.confirmado.v1` | Pagamentos confirma aprovação (avança SAGA para `PagamentoConfirmado`) |
+| Consome ← | `pagamento.recusado.v1` | Pagamentos sinaliza recusa (SAGA volta a `AguardandoPagamento` para nova tentativa) |
+
+**Regra de evolução**: nunca alterar a forma de um evento publicado — sempre criar `.v2` em paralelo
+e drenar `.v1` antes de removê-lo.
 
 ### Infrastructure: Entity/Domain Split
 
