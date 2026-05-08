@@ -1,4 +1,3 @@
-#pragma warning disable CA1873 // Log arguments are simple property accesses — not expensive
 using System.Diagnostics;
 using System.Text.Json;
 using Mecanica.Hermes.Domain.Common.Abstractions;
@@ -34,7 +33,7 @@ namespace Mecanica.Hermes.Infrastructure.Persistence.Outbox;
 ///         </item>
 ///     </list>
 /// </summary>
-internal sealed class OutboxProcessor(
+internal sealed partial class OutboxProcessor(
     IServiceScopeFactory scopeFactory,
     OutboxHealthMetrics metrics,
     IOptions<OutboxOptions> options,
@@ -46,7 +45,7 @@ internal sealed class OutboxProcessor(
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        logger.LogInformation("OutboxProcessor iniciado. Polling a cada {Interval}.", _options.PollInterval);
+        LogIniciado(logger, _options.PollInterval);
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -56,8 +55,7 @@ internal sealed class OutboxProcessor(
             }
             catch (Exception ex) when (!stoppingToken.IsCancellationRequested)
             {
-                logger.LogError(ex, "Falha ao processar lote do Outbox. Próxima tentativa em {Interval}.",
-                    _options.PollInterval);
+                LogFalhaLote(logger, ex, _options.PollInterval);
             }
 
             try
@@ -70,7 +68,7 @@ internal sealed class OutboxProcessor(
             }
         }
 
-        logger.LogInformation("OutboxProcessor parado.");
+        LogParado(logger);
     }
 
     private async Task ProcessBatchAsync(CancellationToken ct)
@@ -104,11 +102,7 @@ internal sealed class OutboxProcessor(
             // ATENÇÃO: sem FOR UPDATE SKIP LOCKED, múltiplas instâncias podem processar o mesmo lote.
             // Use OUTBOX__ALLOW_NON_LOCKING_FALLBACK=true apenas em ambientes de teste.
             if (!_options.AllowNonLockingFallback)
-                logger.LogCritical(
-                    "OutboxProcessor: o provider de banco não suporta FOR UPDATE SKIP LOCKED. " +
-                    "O fallback LINQ está sendo usado sem AllowNonLockingFallback=true. " +
-                    "Em múltiplas instâncias, isso pode causar double-delivery de eventos. " +
-                    "Defina OUTBOX__ALLOW_NON_LOCKING_FALLBACK=true para suprimir este aviso em testes.");
+                LogFallbackSemLock(logger);
 
             pending = await db.OutboxMessages
                 .Where(m => m.Status == OutboxMessageStatus.Pending)
@@ -136,7 +130,7 @@ internal sealed class OutboxProcessor(
                 if (evtType is null)
                 {
                     var err = $"Tipo '{message.Type}' não pôde ser resolvido.";
-                    logger.LogWarning("OutboxMessage {Id}: {Error}", message.Id, err);
+                    LogMensagemInvalida(logger, message.Id, err);
                     message.MarkAsFailed(err, _options.MaxRetries);
                     RecordFailure(message, activity);
                     continue;
@@ -146,7 +140,7 @@ internal sealed class OutboxProcessor(
                 if (domainEvent is null)
                 {
                     const string err = "Payload deserializado é null ou não implementa IDomainEvent.";
-                    logger.LogWarning("OutboxMessage {Id}: {Error}", message.Id, err);
+                    LogMensagemInvalida(logger, message.Id, err);
                     message.MarkAsFailed(err, _options.MaxRetries);
                     RecordFailure(message, activity);
                     continue;
@@ -159,8 +153,7 @@ internal sealed class OutboxProcessor(
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Falha ao despachar OutboxMessage {Id} ({Type}). Retry={Retry}",
-                    message.Id, message.Type, message.RetryCount + 1);
+                LogFalhaDispatch(logger, ex, message.Id, message.Type, message.RetryCount + 1);
                 message.MarkAsFailed(ex.Message, _options.MaxRetries);
                 RecordFailure(message, activity);
             }
@@ -175,10 +168,7 @@ internal sealed class OutboxProcessor(
         if (message.Status == OutboxMessageStatus.DeadLettered)
         {
             metrics.MessageDeadLettered();
-            logger.LogCritical(
-                "OutboxMessage {Id} ({Type}) atingiu o limite de {MaxRetries} tentativas e foi movida " +
-                "para Dead Letter.",
-                message.Id, message.Type, _options.MaxRetries);
+            LogDeadLetter(logger, message.Id, message.Type, _options.MaxRetries);
         }
         else
         {
@@ -218,4 +208,42 @@ internal sealed class OutboxProcessor(
                 return attr?.Name == typeName;
             });
     }
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "OutboxProcessor iniciado. Polling a cada {Interval}.")]
+    private static partial void LogIniciado(ILogger logger, TimeSpan interval);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "OutboxProcessor parado.")]
+    private static partial void LogParado(ILogger logger);
+
+    [LoggerMessage(
+        Level = LogLevel.Error,
+        Message = "Falha ao processar lote do Outbox. Próxima tentativa em {Interval}.")]
+    private static partial void LogFalhaLote(ILogger logger, Exception exception, TimeSpan interval);
+
+    [LoggerMessage(
+        Level = LogLevel.Critical,
+        Message = "OutboxProcessor: o provider de banco não suporta FOR UPDATE SKIP LOCKED. "
+                  + "O fallback LINQ está sendo usado sem AllowNonLockingFallback=true. "
+                  + "Em múltiplas instâncias, isso pode causar double-delivery de eventos. "
+                  + "Defina OUTBOX__ALLOW_NON_LOCKING_FALLBACK=true para suprimir este aviso em testes.")]
+    private static partial void LogFallbackSemLock(ILogger logger);
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "OutboxMessage {Id}: {Error}")]
+    private static partial void LogMensagemInvalida(ILogger logger, Guid id, string error);
+
+    [LoggerMessage(
+        Level = LogLevel.Error,
+        Message = "Falha ao despachar OutboxMessage {Id} ({Type}). Retry={Retry}")]
+    private static partial void LogFalhaDispatch(
+        ILogger logger,
+        Exception exception,
+        Guid id,
+        string type,
+        int retry);
+
+    [LoggerMessage(
+        Level = LogLevel.Critical,
+        Message = "OutboxMessage {Id} ({Type}) atingiu o limite de {MaxRetries} tentativas e foi movida "
+                  + "para Dead Letter.")]
+    private static partial void LogDeadLetter(ILogger logger, Guid id, string type, int maxRetries);
 }

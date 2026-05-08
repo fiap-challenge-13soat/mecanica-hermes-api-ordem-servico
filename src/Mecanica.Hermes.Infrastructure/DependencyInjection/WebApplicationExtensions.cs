@@ -1,4 +1,3 @@
-#pragma warning disable CA1873 // Log argument is a const string reference — not expensive
 using Mecanica.Hermes.Infrastructure.Persistence;
 using Mecanica.Hermes.Infrastructure.Settings;
 using Microsoft.AspNetCore.Builder;
@@ -8,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Mecanica.Hermes.Infrastructure.DependencyInjection;
 
-public static class WebApplicationExtensions
+public static partial class WebApplicationExtensions
 {
     /// <summary>
     ///     Aplica migrations pendentes na inicialização da aplicação, se a env var
@@ -29,10 +28,7 @@ public static class WebApplicationExtensions
             && !enabled)
         {
             var logger = app.Services.GetRequiredService<ILogger<WebApplication>>();
-            logger.LogInformation(
-                "Migrations na inicialização desabilitadas ({Var}=false). " +
-                "Certifique-se de que as migrations foram aplicadas externamente.",
-                VariableNames.RunMigrationsOnStartup);
+            LogMigrationsDesabilitadas(logger, VariableNames.RunMigrationsOnStartup);
             return;
         }
 
@@ -40,4 +36,10 @@ public static class WebApplicationExtensions
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         await dbContext.Database.MigrateAsync();
     }
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "Migrations na inicialização desabilitadas ({Var}=false). "
+                  + "Certifique-se de que as migrations foram aplicadas externamente.")]
+    private static partial void LogMigrationsDesabilitadas(ILogger logger, string var);
 }

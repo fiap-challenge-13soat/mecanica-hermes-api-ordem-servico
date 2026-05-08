@@ -18,7 +18,7 @@ namespace Mecanica.Hermes.Application.OrdensDeServico.Consumers.Integration;
 ///         o evento é ignorado.
 ///     </para>
 /// </summary>
-public sealed class PagamentoRecusadoConsumer(
+public sealed partial class PagamentoRecusadoConsumer(
     IOrdemDeServicoReader reader,
     IOrdemDeServicoMetrics metrics,
     ILogger<PagamentoRecusadoConsumer> logger)
@@ -34,9 +34,7 @@ public sealed class PagamentoRecusadoConsumer(
 
         if (ordem is null)
         {
-            logger.LogWarning(
-                "Evento {Evento} ignorado: ordem {OrdemId} não encontrada na base de OS.",
-                EventoEntityName, ordemId);
+            LogOrdemNaoEncontrada(logger, EventoEntityName, ordemId);
             return;
         }
 
@@ -44,13 +42,26 @@ public sealed class PagamentoRecusadoConsumer(
         if (statusAtual != EstadoFonteEsperado)
         {
             metrics.EventoIntegracaoIgnorado(EventoEntityName, statusAtual.ToString());
-            logger.LogInformation(
-                "Evento {Evento} ignorado por idempotência: OS {OrdemId} está em {StatusAtual}, " +
-                "esperado {EstadoFonte} para reverter pagamento. Provável redelivery do webhook MP.",
-                EventoEntityName, ordemId, statusAtual, EstadoFonteEsperado);
+            LogIgnoradoPorIdempotencia(logger, EventoEntityName, ordemId, statusAtual, EstadoFonteEsperado);
             return;
         }
 
         await context.Publish(new ReverterEtapaRequest(ordemId), context.CancellationToken);
     }
+
+    [LoggerMessage(
+        Level = LogLevel.Warning,
+        Message = "Evento {Evento} ignorado: ordem {OrdemId} não encontrada na base de OS.")]
+    private static partial void LogOrdemNaoEncontrada(ILogger logger, string evento, Guid ordemId);
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "Evento {Evento} ignorado por idempotência: OS {OrdemId} está em {StatusAtual}, "
+                  + "esperado {EstadoFonte} para reverter pagamento. Provável redelivery do webhook MP.")]
+    private static partial void LogIgnoradoPorIdempotencia(
+        ILogger logger,
+        string evento,
+        Guid ordemId,
+        OrdemDeServicoStatus statusAtual,
+        OrdemDeServicoStatus estadoFonte);
 }

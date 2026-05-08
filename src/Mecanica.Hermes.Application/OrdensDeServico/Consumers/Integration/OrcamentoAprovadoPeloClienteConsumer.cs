@@ -19,7 +19,7 @@ namespace Mecanica.Hermes.Application.OrdensDeServico.Consumers.Integration;
 ///         redeliver após restart.
 ///     </para>
 /// </summary>
-public sealed class OrcamentoAprovadoPeloClienteConsumer(
+public sealed partial class OrcamentoAprovadoPeloClienteConsumer(
     IOrdemDeServicoReader reader,
     IOrdemDeServicoMetrics metrics,
     ILogger<OrcamentoAprovadoPeloClienteConsumer> logger)
@@ -35,9 +35,7 @@ public sealed class OrcamentoAprovadoPeloClienteConsumer(
 
         if (ordem is null)
         {
-            logger.LogWarning(
-                "Evento {Evento} ignorado: ordem {OrdemId} não encontrada na base de OS.",
-                EventoEntityName, ordemId);
+            LogOrdemNaoEncontrada(logger, EventoEntityName, ordemId);
             return;
         }
 
@@ -45,13 +43,26 @@ public sealed class OrcamentoAprovadoPeloClienteConsumer(
         if (statusAtual != EstadoFonteEsperado)
         {
             metrics.EventoIntegracaoIgnorado(EventoEntityName, statusAtual.ToString());
-            logger.LogInformation(
-                "Evento {Evento} ignorado por idempotência: OS {OrdemId} está em {StatusAtual}, " +
-                "esperado {EstadoFonte} para promover. Provável entrega tardia/duplicada.",
-                EventoEntityName, ordemId, statusAtual, EstadoFonteEsperado);
+            LogIgnoradoPorIdempotencia(logger, EventoEntityName, ordemId, statusAtual, EstadoFonteEsperado);
             return;
         }
 
         await context.Publish(new AprovarOrdemDeServicoRequest(ordemId), context.CancellationToken);
     }
+
+    [LoggerMessage(
+        Level = LogLevel.Warning,
+        Message = "Evento {Evento} ignorado: ordem {OrdemId} não encontrada na base de OS.")]
+    private static partial void LogOrdemNaoEncontrada(ILogger logger, string evento, Guid ordemId);
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "Evento {Evento} ignorado por idempotência: OS {OrdemId} está em {StatusAtual}, "
+                  + "esperado {EstadoFonte} para promover. Provável entrega tardia/duplicada.")]
+    private static partial void LogIgnoradoPorIdempotencia(
+        ILogger logger,
+        string evento,
+        Guid ordemId,
+        OrdemDeServicoStatus statusAtual,
+        OrdemDeServicoStatus estadoFonte);
 }
