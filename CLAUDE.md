@@ -126,6 +126,32 @@ Domain events raised inside an aggregate are:
 
 This ensures at-least-once event delivery even if the message broker is temporarily unavailable.
 
+### Idempotência cross-service nos consumers de integração
+
+Os 4 consumers em `Application/OrdensDeServico/Consumers/Integration/`
+(`OrcamentoAprovado/Rejeitado`, `PagamentoConfirmado/Recusado`) **carregam a OS antes de
+despachar à SAGA** e ignoram o evento se a OS já está em estado-destino. Mitiga entrega
+tardia/redelivery (RabbitMQ retry, Mercado Pago redelivery após nosso ack):
+
+| Evento | Estado-fonte esperado | Ação se OS já não está nele |
+|---|---|---|
+| `orcamento.aprovado-pelo-cliente.v1` | `AguardandoAprovacao` | skip + métrica |
+| `orcamento.rejeitado-pelo-cliente.v1` | `AguardandoAprovacao` | skip + métrica |
+| `pagamento.confirmado.v1` | `AguardandoPagamento` | skip + métrica |
+| `pagamento.recusado.v1` | `AguardandoPagamento` | skip + métrica |
+
+Métrica: `IOrdemDeServicoMetrics.EventoIntegracaoIgnorado(evento, statusAtual)` — counter
+`ordemdeservico.evento_integracao_ignorado` no meter `MecanicaHermes.Business`.
+
+### DLQ observability
+
+`MessagingFaultObserver` (`Infrastructure/MassTransit/Observability/`) é um
+`IConsumeObserver` global encadeado em `BusFactoryConfiguratorExtensions.ConfigureCommonFactory`.
+Quando `ConsumeFault<T>` dispara (após retry imediato 3x + delayed redelivery 3x exponencial),
+emite counter `messaging.consume_faults` com tags `message_type`/`exception_type` no meter
+`MecanicaHermes.Messaging`. Use pra alarmar quando consumers `Execute*` da SAGA ou
+`Integration/*` falham em definitivo (OS travada num estado pra um `OrdemId` específico).
+
 ### Cross-service Integration Events
 
 7 contratos cross-service circulam entre OS, Cadastros e Pagamentos. Todos versionados com sufixo
