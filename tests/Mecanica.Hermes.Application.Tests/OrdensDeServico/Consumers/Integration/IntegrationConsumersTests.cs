@@ -126,7 +126,8 @@ public class IntegrationConsumersTests
         reader.Setup(r => r.GetByIdAsync(ordem.Id)).ReturnsAsync(ordem);
 
         RejeitarOrdemDeServicoRequest? published = null;
-        var ctx = FakeConsumeContext.MockFor(new OrcamentoRejeitadoPeloClienteEvent(ordem.Id, DateTime.UtcNow, "Sem condição"));
+        var evento = new OrcamentoRejeitadoPeloClienteEvent(ordem.Id, DateTime.UtcNow, "Sem condição");
+        var ctx = FakeConsumeContext.MockFor(evento);
         ctx.Setup(c => c.Publish(It.IsAny<RejeitarOrdemDeServicoRequest>(), It.IsAny<CancellationToken>()))
             .Callback<RejeitarOrdemDeServicoRequest, CancellationToken>((m, _) => published = m)
             .Returns(Task.CompletedTask);
@@ -149,7 +150,8 @@ public class IntegrationConsumersTests
         var reader = new Mock<IOrdemDeServicoReader>();
         reader.Setup(r => r.GetByIdAsync(ordem.Id)).ReturnsAsync(ordem);
 
-        var ctx = FakeConsumeContext.MockFor(new OrcamentoRejeitadoPeloClienteEvent(ordem.Id, DateTime.UtcNow, "Sem condição"));
+        var evento = new OrcamentoRejeitadoPeloClienteEvent(ordem.Id, DateTime.UtcNow, "Sem condição");
+        var ctx = FakeConsumeContext.MockFor(evento);
         var metrics = new Mock<IOrdemDeServicoMetrics>();
 
         var sut = new OrcamentoRejeitadoPeloClienteConsumer(
@@ -228,7 +230,8 @@ public class IntegrationConsumersTests
         reader.Setup(r => r.GetByIdAsync(ordem.Id)).ReturnsAsync(ordem);
 
         ReverterEtapaRequest? published = null;
-        var ctx = FakeConsumeContext.MockFor(new PagamentoRecusadoEvent(ordem.Id, Guid.NewGuid(), "Sem saldo", DateTime.UtcNow));
+        var evento = new PagamentoRecusadoEvent(ordem.Id, Guid.NewGuid(), "Sem saldo", DateTime.UtcNow);
+        var ctx = FakeConsumeContext.MockFor(evento);
         ctx.Setup(c => c.Publish(It.IsAny<ReverterEtapaRequest>(), It.IsAny<CancellationToken>()))
             .Callback<ReverterEtapaRequest, CancellationToken>((m, _) => published = m)
             .Returns(Task.CompletedTask);
@@ -251,7 +254,8 @@ public class IntegrationConsumersTests
         var reader = new Mock<IOrdemDeServicoReader>();
         reader.Setup(r => r.GetByIdAsync(ordem.Id)).ReturnsAsync(ordem);
 
-        var ctx = FakeConsumeContext.MockFor(new PagamentoRecusadoEvent(ordem.Id, Guid.NewGuid(), "Sem saldo", DateTime.UtcNow));
+        var evento = new PagamentoRecusadoEvent(ordem.Id, Guid.NewGuid(), "Sem saldo", DateTime.UtcNow);
+        var ctx = FakeConsumeContext.MockFor(evento);
         var metrics = new Mock<IOrdemDeServicoMetrics>();
 
         var sut = new PagamentoRecusadoConsumer(
