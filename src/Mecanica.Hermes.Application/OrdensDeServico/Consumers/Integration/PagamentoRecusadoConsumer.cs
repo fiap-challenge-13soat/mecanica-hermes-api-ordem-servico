@@ -51,6 +51,6 @@ public sealed class PagamentoRecusadoConsumer(
             return;
         }
 
-        await context.Publish(new ReverterEtapaRequest(ordemId));
+        await context.Publish(new ReverterEtapaRequest(ordemId), context.CancellationToken);
     }
 }

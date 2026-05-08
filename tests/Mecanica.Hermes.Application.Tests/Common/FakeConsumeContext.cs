@@ -13,6 +13,13 @@ namespace Mecanica.Hermes.Application.Tests.Common;
 internal static class FakeConsumeContext
 {
     public static ConsumeContext<T> For<T>(T message, Action<object>? onPublish = null) where T : class
+        => MockFor(message, onPublish).Object;
+
+    /// <summary>
+    ///     Retorna o <see cref="Mock{T}" /> bruto para testes que precisam de
+    ///     <c>.Setup</c> ou <c>.Verify</c> em sobrecargas genéricas de <c>Publish&lt;T&gt;</c>.
+    /// </summary>
+    public static Mock<ConsumeContext<T>> MockFor<T>(T message, Action<object>? onPublish = null) where T : class
     {
         var mock = new Mock<ConsumeContext<T>>();
         mock.SetupGet(c => c.Message).Returns(message);
@@ -24,6 +31,6 @@ internal static class FakeConsumeContext
             .Callback((object msg, CancellationToken _) => onPublish?.Invoke(msg))
             .Returns(Task.CompletedTask);
 
-        return mock.Object;
+        return mock;
     }
 }

@@ -97,4 +97,5 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             GITHUB_USERNAME=${{ github.actor }}
-            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          secrets: |
+            github_token=${{ secrets.GITHUB_TOKEN }}

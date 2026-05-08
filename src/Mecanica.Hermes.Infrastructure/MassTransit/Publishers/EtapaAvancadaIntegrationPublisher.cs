@@ -10,7 +10,7 @@ namespace Mecanica.Hermes.Infrastructure.MassTransit.Publishers;
 
 internal sealed class EtapaAvancadaIntegrationPublisher(
     IPublishEndpoint publishEndpoint,
-    IOrdemDeServicoRepository repository)
+    IOrdemDeServicoReader reader)
     : INotificationHandler<DomainEventNotification<OrdemDeServicoEtapaAvancadaEvent>>
 {
     public async Task Handle(
@@ -29,8 +29,11 @@ internal sealed class EtapaAvancadaIntegrationPublisher(
 
         if (e.StatusAtual == OrdemDeServicoStatus.AguardandoPagamento)
         {
-            var ordem = await repository.GetByIdAsync(e.OrdemDeServicoId);
-            if (ordem is null) return;
+            var ordem = await reader.GetByIdAsync(e.OrdemDeServicoId);
+            if (ordem is null)
+                throw new InvalidOperationException(
+                    $"OS {e.OrdemDeServicoId} não encontrada ao publicar evento AguardandoPagamento. " +
+                    "Inconsistência de dados: o domínio avançou de estado mas a OS não está persistida.");
 
             await publishEndpoint.Publish(
                 new OrdemDeServicoAguardandoPagamentoEvent(

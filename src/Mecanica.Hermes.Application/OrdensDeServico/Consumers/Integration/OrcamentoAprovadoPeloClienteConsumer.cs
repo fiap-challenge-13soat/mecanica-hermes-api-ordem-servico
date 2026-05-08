@@ -52,6 +52,6 @@ public sealed class OrcamentoAprovadoPeloClienteConsumer(
             return;
         }
 
-        await context.Publish(new AprovarOrdemDeServicoRequest(ordemId));
+        await context.Publish(new AprovarOrdemDeServicoRequest(ordemId), context.CancellationToken);
     }
 }

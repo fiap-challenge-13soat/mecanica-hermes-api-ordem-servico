@@ -160,12 +160,12 @@ emite counter `messaging.consume_faults` com tags `message_type`/`exception_type
 | Direção | Evento (`EntityName`) | Fluxo |
 |---|---|---|
 | Publica → | `ordem-de-servico.aguardando-aprovacao.v1` | Quando OS entra em `AguardandoAprovacao` (Cadastros consome para gerar webhook link) |
-| Consome ← | `orcamento-aprovado-pelo-cliente.v1` | Cadastros notifica que cliente aprovou pelo webhook |
-| Consome ← | `orcamento-rejeitado-pelo-cliente.v1` | Cadastros notifica rejeição |
+| Consome ← | `orcamento.aprovado-pelo-cliente.v1` | Cadastros notifica que cliente aprovou pelo webhook |
+| Consome ← | `orcamento.rejeitado-pelo-cliente.v1` | Cadastros notifica rejeição |
 | Publica → | `ordem-de-servico.aguardando-pagamento.v1` | OS pediu pagamento (Pagamentos consome para gerar link MP) |
 | Consome ← | `link-pagamento-gerado.v1` | Pagamentos confirma que o link foi gerado |
 | Consome ← | `pagamento.confirmado.v1` | Pagamentos confirma aprovação (avança SAGA para `PagamentoConfirmado`) |
-| Consome ← | `pagamento.recusado.v1` | Pagamentos sinaliza recusa (SAGA volta a `AguardandoPagamento` para nova tentativa) |
+| Consome ← | `pagamento.recusado.v1` | Pagamentos sinaliza recusa (SAGA reverte para `ManutencaoFinalizada` para nova tentativa de pagamento) |
 
 **Regra de evolução**: nunca alterar a forma de um evento publicado — sempre criar `.v2` em paralelo
 e drenar `.v1` antes de removê-lo.

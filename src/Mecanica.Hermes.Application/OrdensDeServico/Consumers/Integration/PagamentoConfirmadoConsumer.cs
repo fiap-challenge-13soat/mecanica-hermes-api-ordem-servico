@@ -51,6 +51,6 @@ public sealed class PagamentoConfirmadoConsumer(
             return;
         }
 
-        await context.Publish(new PagamentoAprovadoRequest(ordemId));
+        await context.Publish(new PagamentoAprovadoRequest(ordemId), context.CancellationToken);
     }
 }
