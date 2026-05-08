@@ -1,10 +1,10 @@
 using MassTransit;
-using MediatR;
-using Mecanica.Hermes.Contracts.Integration;
 using Mecanica.Hermes.Application.OrdensDeServico.Ports;
+using Mecanica.Hermes.Contracts.Integration;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
 using Mecanica.Hermes.Domain.OrdensDeServico.Events;
 using Mecanica.Hermes.Infrastructure.Persistence.Events;
+using MediatR;
 
 namespace Mecanica.Hermes.Infrastructure.MassTransit.Publishers;
 

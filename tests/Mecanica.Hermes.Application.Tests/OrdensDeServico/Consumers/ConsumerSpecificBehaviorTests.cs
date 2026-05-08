@@ -1,10 +1,10 @@
-using Mecanica.Hermes.Shared.Core.Persistence;
 using Mecanica.Hermes.Application.OrdensDeServico.Consumers;
 using Mecanica.Hermes.Application.OrdensDeServico.Messages.Commands;
 using Mecanica.Hermes.Application.OrdensDeServico.Ports;
 using Mecanica.Hermes.Application.Tests.Common;
 using Mecanica.Hermes.Domain.OrdensDeServico;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
+using Mecanica.Hermes.Shared.Core.Persistence;
 using Mecanica.Hermes.TestUtils.Builders;
 
 namespace Mecanica.Hermes.Application.Tests.OrdensDeServico.Consumers;

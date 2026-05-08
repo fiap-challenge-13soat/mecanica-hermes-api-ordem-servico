@@ -1,10 +1,10 @@
 using System.Text.Json;
 using Mecanica.Hermes.Domain.Common.Abstractions;
-using Mecanica.Hermes.Shared.Core.Domain;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
 using Mecanica.Hermes.Domain.OrdensDeServico.Events;
 using Mecanica.Hermes.Infrastructure.Persistence;
 using Mecanica.Hermes.Infrastructure.Persistence.Outbox;
+using Mecanica.Hermes.Shared.Core.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;

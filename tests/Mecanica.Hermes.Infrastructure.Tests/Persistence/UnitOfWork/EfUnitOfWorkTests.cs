@@ -1,8 +1,8 @@
 using System.Reflection;
-using Mecanica.Hermes.Shared.Core.Domain;
 using Mecanica.Hermes.Infrastructure.Persistence;
 using Mecanica.Hermes.Infrastructure.Persistence.Outbox;
 using Mecanica.Hermes.Infrastructure.Persistence.UnitOfWork;
+using Mecanica.Hermes.Shared.Core.Domain;
 using Mecanica.Hermes.TestUtils.Builders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;

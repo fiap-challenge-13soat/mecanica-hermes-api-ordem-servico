@@ -1,5 +1,5 @@
-using Mecanica.Hermes.Shared.Core.Domain;
 using Mecanica.Hermes.Infrastructure.Persistence.Events;
+using Mecanica.Hermes.Shared.Core.Domain;
 using MediatR;
 using Microsoft.Extensions.Logging.Abstractions;
 

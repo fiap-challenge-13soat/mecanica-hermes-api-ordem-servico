@@ -1,6 +1,6 @@
+using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
 using Mecanica.Hermes.Shared.Core.Domain;
 using Mecanica.Hermes.Shared.Core.Results;
-using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
 
 namespace Mecanica.Hermes.Domain.OrdensDeServico.Abstractions;
 

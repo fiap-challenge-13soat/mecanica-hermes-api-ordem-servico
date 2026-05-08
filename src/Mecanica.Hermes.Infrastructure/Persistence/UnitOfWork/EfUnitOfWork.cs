@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using System.Text.Json;
-using Mecanica.Hermes.Shared.Core.Persistence;
-using Mecanica.Hermes.Shared.Core.Domain;
 using Mecanica.Hermes.Infrastructure.Persistence.Outbox;
+using Mecanica.Hermes.Shared.Core.Domain;
+using Mecanica.Hermes.Shared.Core.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
