@@ -1,4 +1,4 @@
-using Mecanica.Hermes.Domain.Common.Abstractions;
+using Mecanica.Hermes.Shared.Core.Domain;
 using MediatR;
 
 namespace Mecanica.Hermes.Infrastructure.Persistence.Events;

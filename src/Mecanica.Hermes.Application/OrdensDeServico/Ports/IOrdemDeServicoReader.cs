@@ -1,4 +1,4 @@
-using Mecanica.Hermes.Application.Common.Pagination;
+using Mecanica.Hermes.Shared.Core.Pagination;
 using Mecanica.Hermes.Domain.OrdensDeServico;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
 

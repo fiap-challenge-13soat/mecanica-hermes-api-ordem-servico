@@ -1,5 +1,5 @@
 using System.Reflection;
-using Mecanica.Hermes.Domain.Common.Abstractions;
+using Mecanica.Hermes.Shared.Core.Domain;
 using Mecanica.Hermes.Infrastructure.Persistence;
 using Mecanica.Hermes.Infrastructure.Persistence.Outbox;
 using Mecanica.Hermes.Infrastructure.Persistence.UnitOfWork;

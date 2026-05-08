@@ -1,7 +1,8 @@
 using System.Net;
 using System.Text.Json;
 using Mecanica.Hermes.Api.Presenter;
-using Mecanica.Hermes.Domain.Common;
+using Mecanica.Hermes.Shared.AspNetCore.Presenter;
+using Mecanica.Hermes.Shared.Core;
 using Mecanica.Hermes.Infrastructure.MassTransit.Adapters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;

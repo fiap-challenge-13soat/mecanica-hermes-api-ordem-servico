@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using MassTransit;
 using Mecanica.Hermes.Application.Common.Messaging;
+using Mecanica.Hermes.Shared.Application.Messaging;
 using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Retry;

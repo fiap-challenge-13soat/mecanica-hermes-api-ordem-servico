@@ -1,4 +1,4 @@
-using Mecanica.Hermes.Application.Common.Pagination;
+using Mecanica.Hermes.Shared.Core.Pagination;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 

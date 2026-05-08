@@ -1,7 +1,9 @@
 using System.Reflection;
 using Mecanica.Hermes.Application;
 using Mecanica.Hermes.Application.Common.Behaviors;
+using Mecanica.Hermes.Shared.Application.Behaviors;
 using Mecanica.Hermes.Application.Common.Messaging;
+using Mecanica.Hermes.Shared.Application.Messaging;
 using Mecanica.Hermes.Application.OrdensDeServico.Ports;
 using Mecanica.Hermes.Domain;
 using Mecanica.Hermes.Infrastructure.MassTransit.Adapters;

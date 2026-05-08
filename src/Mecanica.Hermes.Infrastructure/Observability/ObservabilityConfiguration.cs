@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Mecanica.Hermes.Shared.Observability;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using OpenTelemetry;
@@ -42,7 +43,7 @@ internal static class ObservabilityConfiguration
             .WithTracing(tracing =>
             {
                 tracing
-                    .AddSource(ActivitySources.ApplicationName)
+                    .AddSource(ActivitySources.ApiName)
                     .AddSource("MecanicaHermes.Application")
                     .AddNpgsql()
                     .AddAspNetCoreInstrumentation(opts =>

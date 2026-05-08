@@ -1,7 +1,9 @@
+using Mecanica.Hermes.Shared.AspNetCore.Endpoints;
 using Mecanica.Hermes.Api.Endpoints.OrdensDeServico.Contracts;
 using Mecanica.Hermes.Api.Endpoints.OrdensDeServico.Mappings;
 using Mecanica.Hermes.Api.Presenter;
-using Mecanica.Hermes.Application.Common.Pagination;
+using Mecanica.Hermes.Shared.AspNetCore.Presenter;
+using Mecanica.Hermes.Shared.Core.Pagination;
 using Mecanica.Hermes.Application.OrdensDeServico.Queries.ListOrdemDeServicoByStatus;
 using Mecanica.Hermes.Infrastructure.Settings;
 using MediatR;

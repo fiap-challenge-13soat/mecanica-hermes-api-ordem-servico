@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
-using Mecanica.Hermes.Application.Common.Persistence;
 using Mecanica.Hermes.Domain.Common.Abstractions;
+using Mecanica.Hermes.Shared.Core.Persistence;
+using Mecanica.Hermes.Shared.Core.Domain;
 using Mecanica.Hermes.Infrastructure.Persistence.Events;
 using Mecanica.Hermes.Infrastructure.Persistence.Outbox;
 using Mecanica.Hermes.Infrastructure.Persistence.UnitOfWork;

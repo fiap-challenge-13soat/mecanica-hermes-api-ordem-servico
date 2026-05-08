@@ -1,6 +1,5 @@
-using Mecanica.Hermes.Domain.Common.Abstractions;
-using Mecanica.Hermes.Domain.Common.Clock;
-using Mecanica.Hermes.Domain.Common.Results;
+using Mecanica.Hermes.Shared.Core.Domain;
+using Mecanica.Hermes.Shared.Core.Results;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
 
 namespace Mecanica.Hermes.Domain.OrdensDeServico.Abstractions;

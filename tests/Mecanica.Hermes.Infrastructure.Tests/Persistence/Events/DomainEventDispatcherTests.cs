@@ -1,4 +1,4 @@
-using Mecanica.Hermes.Domain.Common.Abstractions;
+using Mecanica.Hermes.Shared.Core.Domain;
 using Mecanica.Hermes.Infrastructure.Persistence.Events;
 using MediatR;
 using Microsoft.Extensions.Logging.Abstractions;

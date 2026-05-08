@@ -1,5 +1,5 @@
-using Mecanica.Hermes.Application.Common.Pagination;
-using Mecanica.Hermes.Application.Common.Persistence;
+using Mecanica.Hermes.Shared.Core.Pagination;
+using Mecanica.Hermes.Shared.Core.Persistence;
 using Mecanica.Hermes.Application.OrdensDeServico.Ports;
 using Mecanica.Hermes.Domain.OrdensDeServico;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;

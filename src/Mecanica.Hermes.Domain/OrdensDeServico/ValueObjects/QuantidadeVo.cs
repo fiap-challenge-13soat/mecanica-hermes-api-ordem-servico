@@ -1,5 +1,5 @@
 using System.Globalization;
-using Mecanica.Hermes.Domain.Common.Results;
+using Mecanica.Hermes.Shared.Core.Results;
 
 namespace Mecanica.Hermes.Domain.OrdensDeServico.ValueObjects;
 

@@ -1,4 +1,4 @@
-using Mecanica.Hermes.Application.Common.Persistence;
+using Mecanica.Hermes.Shared.Core.Persistence;
 using Mecanica.Hermes.Application.OrdensDeServico.Consumers;
 using Mecanica.Hermes.Application.OrdensDeServico.Messages.Commands;
 using Mecanica.Hermes.Application.OrdensDeServico.Ports;

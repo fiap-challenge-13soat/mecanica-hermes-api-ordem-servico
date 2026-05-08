@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using System.Text.Json;
 using Mecanica.Hermes.Domain.Common.Abstractions;
+using Mecanica.Hermes.Shared.Core.Domain;
+using Mecanica.Hermes.Shared.Observability;
 using Mecanica.Hermes.Infrastructure.Observability;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

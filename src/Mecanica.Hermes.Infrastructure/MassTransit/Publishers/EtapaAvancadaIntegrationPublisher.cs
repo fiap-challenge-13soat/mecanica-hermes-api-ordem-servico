@@ -1,6 +1,6 @@
 using MassTransit;
 using MediatR;
-using Mecanica.Hermes.Application.OrdensDeServico.Messages.Integration;
+using Mecanica.Hermes.Contracts.Integration;
 using Mecanica.Hermes.Application.OrdensDeServico.Ports;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
 using Mecanica.Hermes.Domain.OrdensDeServico.Events;

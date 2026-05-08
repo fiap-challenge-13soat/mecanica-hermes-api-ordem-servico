@@ -1,5 +1,5 @@
 using System.Net;
-using Mecanica.Hermes.Application.Common.Pagination;
+using Mecanica.Hermes.Shared.Core.Pagination;
 using Mecanica.Hermes.Application.OrdensDeServico.Ports;
 using Mecanica.Hermes.Application.OrdensDeServico.Queries.GetOrdemDeServicoById;
 using Mecanica.Hermes.Application.OrdensDeServico.Queries.ListAllOrdensDeServico;

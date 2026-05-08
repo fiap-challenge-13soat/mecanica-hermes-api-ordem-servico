@@ -1,6 +1,8 @@
+using Mecanica.Hermes.Shared.AspNetCore.Endpoints;
 using Mecanica.Hermes.Api.Endpoints.OrdensDeServico.Contracts;
-using Mecanica.Hermes.Api.Filters;
+using Mecanica.Hermes.Shared.AspNetCore.Filters;
 using Mecanica.Hermes.Api.Presenter;
+using Mecanica.Hermes.Shared.AspNetCore.Presenter;
 using Mecanica.Hermes.Application.OrdensDeServico.Commands.AddProduto;
 using Mecanica.Hermes.Infrastructure.Settings;
 using MediatR;

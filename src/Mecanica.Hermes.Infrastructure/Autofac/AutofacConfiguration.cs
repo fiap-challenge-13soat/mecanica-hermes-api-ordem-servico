@@ -1,7 +1,8 @@
 using System.Reflection;
 using Autofac;
 using Mecanica.Hermes.Application.Common.Messaging;
-using Mecanica.Hermes.Domain.Common.Results;
+using Mecanica.Hermes.Shared.Application.Messaging;
+using Mecanica.Hermes.Shared.Core.Results;
 using MediatR;
 using Module = Autofac.Module;
 

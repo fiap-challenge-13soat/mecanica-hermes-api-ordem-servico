@@ -1,5 +1,5 @@
 using Mecanica.Hermes.Api.Endpoints.OrdensDeServico.Contracts;
-using Mecanica.Hermes.Application.Common.Pagination;
+using Mecanica.Hermes.Shared.Core.Pagination;
 using Mecanica.Hermes.Application.OrdensDeServico.Dtos;
 
 namespace Mecanica.Hermes.Api.Endpoints.OrdensDeServico.Mappings;

@@ -31,6 +31,8 @@
         <PackageReference Include="Npgsql.OpenTelemetry"/>
         <PackageReference Include="AspNetCore.HealthChecks.NpgSql"/>
         <PackageReference Include="Polly.Core"/>
+        <PackageReference Include="Mecanica.Hermes.Shared.Application"/>
+        <PackageReference Include="Mecanica.Hermes.Shared.Observability"/>
     </ItemGroup>
 
     <ItemGroup>
