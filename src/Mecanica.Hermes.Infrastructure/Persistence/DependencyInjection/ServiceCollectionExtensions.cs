@@ -1,10 +1,11 @@
 using System.Text.RegularExpressions;
-using Mecanica.Hermes.Application.Common.Persistence;
 using Mecanica.Hermes.Domain.Common.Abstractions;
 using Mecanica.Hermes.Infrastructure.Persistence.Events;
 using Mecanica.Hermes.Infrastructure.Persistence.Outbox;
 using Mecanica.Hermes.Infrastructure.Persistence.UnitOfWork;
 using Mecanica.Hermes.Infrastructure.Settings;
+using Mecanica.Hermes.Shared.Core.Domain;
+using Mecanica.Hermes.Shared.Core.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;

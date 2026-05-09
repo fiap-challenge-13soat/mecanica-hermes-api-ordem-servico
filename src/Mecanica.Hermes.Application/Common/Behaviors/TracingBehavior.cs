@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Mecanica.Hermes.Application.OrdensDeServico.Commands;
-using Mecanica.Hermes.Domain.Common.Results;
+using Mecanica.Hermes.Shared.Core.Results;
 using MediatR;
 
 namespace Mecanica.Hermes.Application.Common.Behaviors;

@@ -1,6 +1,6 @@
-using Mecanica.Hermes.Domain.Common.Abstractions;
-using Mecanica.Hermes.Domain.Common.Results;
 using Mecanica.Hermes.Domain.OrdensDeServico.ValueObjects;
+using Mecanica.Hermes.Shared.Core.Domain;
+using Mecanica.Hermes.Shared.Core.Results;
 
 namespace Mecanica.Hermes.Domain.OrdensDeServico;
 

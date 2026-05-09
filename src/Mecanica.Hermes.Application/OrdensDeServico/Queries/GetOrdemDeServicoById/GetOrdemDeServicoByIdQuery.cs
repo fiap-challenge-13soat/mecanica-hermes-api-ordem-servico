@@ -1,5 +1,5 @@
 using Mecanica.Hermes.Application.OrdensDeServico.Dtos;
-using Mecanica.Hermes.Domain.Common.Results;
+using Mecanica.Hermes.Shared.Core.Results;
 using MediatR;
 
 namespace Mecanica.Hermes.Application.OrdensDeServico.Queries.GetOrdemDeServicoById;

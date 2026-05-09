@@ -1,6 +1,6 @@
-using Mecanica.Hermes.Application.Common.Pagination;
 using Mecanica.Hermes.Domain.OrdensDeServico;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
+using Mecanica.Hermes.Shared.Core.Pagination;
 
 namespace Mecanica.Hermes.Application.OrdensDeServico.Ports;
 

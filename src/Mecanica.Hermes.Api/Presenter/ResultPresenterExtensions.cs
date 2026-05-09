@@ -1,5 +1,6 @@
 using System.Net;
-using Mecanica.Hermes.Domain.Common.Results;
+using Mecanica.Hermes.Shared.AspNetCore.Presenter;
+using Mecanica.Hermes.Shared.Core.Results;
 using Microsoft.AspNetCore.Http;
 
 namespace Mecanica.Hermes.Api.Presenter;

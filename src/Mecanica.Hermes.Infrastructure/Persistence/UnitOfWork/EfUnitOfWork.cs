@@ -1,9 +1,9 @@
 using System.Diagnostics;
 using System.Text.Json;
-using Mecanica.Hermes.Application.Common.Exceptions;
-using Mecanica.Hermes.Application.Common.Persistence;
 using Mecanica.Hermes.Domain.Common.Abstractions;
 using Mecanica.Hermes.Infrastructure.Persistence.Outbox;
+using Mecanica.Hermes.Shared.Core.Domain;
+using Mecanica.Hermes.Shared.Core.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -25,7 +25,7 @@ namespace Mecanica.Hermes.Infrastructure.Persistence.UnitOfWork;
 ///         </item>
 ///     </list>
 /// </summary>
-internal sealed class EfUnitOfWork(
+internal sealed partial class EfUnitOfWork(
     AppDbContext db,
     ILogger<EfUnitOfWork> logger,
     TimeProvider timeProvider) : IUnitOfWork
@@ -70,9 +70,7 @@ internal sealed class EfUnitOfWork(
                     // Serialização falhou — log e segue sem outbox para esse evento.
                     // Decisão deliberada: a perda de um evento isolado é preferível a abortar o commit
                     // do estado. Casos críticos devem fazer o serializador ser totalmente determinístico.
-                    logger.LogError(ex,
-                        "Falha ao serializar Domain Event {EventType} para Outbox. Evento NÃO será despachado.",
-                        evt.GetType().Name);
+                    LogSerializationFailure(logger, ex, evt.GetType().Name);
                 }
         }
 
@@ -90,4 +88,9 @@ internal sealed class EfUnitOfWork(
                 ex);
         }
     }
+
+    [LoggerMessage(
+        Level = LogLevel.Error,
+        Message = "Falha ao serializar Domain Event {EventType} para Outbox. Evento NÃO será despachado.")]
+    private static partial void LogSerializationFailure(ILogger logger, Exception exception, string eventType);
 }

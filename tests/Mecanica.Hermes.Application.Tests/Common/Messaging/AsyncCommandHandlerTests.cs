@@ -1,7 +1,8 @@
 using System.Net;
 using Mecanica.Hermes.Application.Common.Messaging;
 using Mecanica.Hermes.Application.OrdensDeServico.Commands;
-using Mecanica.Hermes.Domain.Common.Results;
+using Mecanica.Hermes.Shared.Application.Messaging;
+using Mecanica.Hermes.Shared.Core.Results;
 
 namespace Mecanica.Hermes.Application.Tests.Common.Messaging;
 

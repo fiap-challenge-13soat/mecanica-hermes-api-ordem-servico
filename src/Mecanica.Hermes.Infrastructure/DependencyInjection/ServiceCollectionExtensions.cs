@@ -9,6 +9,8 @@ using Mecanica.Hermes.Infrastructure.MassTransit.Configurations;
 using Mecanica.Hermes.Infrastructure.Observability;
 using Mecanica.Hermes.Infrastructure.Persistence.DependencyInjection;
 using Mecanica.Hermes.Infrastructure.Settings;
+using Mecanica.Hermes.Shared.Application.Behaviors;
+using Mecanica.Hermes.Shared.Application.Messaging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;

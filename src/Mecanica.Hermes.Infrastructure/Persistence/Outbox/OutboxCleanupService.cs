@@ -1,4 +1,3 @@
-#pragma warning disable CA1873 // Log arguments are simple property/variable accesses — not expensive
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,7 +13,7 @@ namespace Mecanica.Hermes.Infrastructure.Persistence.Outbox;
 ///     Roda com período 10× o <see cref="OutboxOptions.PollInterval" />, portanto não compete
 ///     com o <see cref="OutboxProcessor" /> em frequência de I/O.
 /// </summary>
-internal sealed class OutboxCleanupService(
+internal sealed partial class OutboxCleanupService(
     IServiceScopeFactory scopeFactory,
     IOptions<OutboxOptions> options,
     ILogger<OutboxCleanupService> logger) : BackgroundService
@@ -24,7 +23,7 @@ internal sealed class OutboxCleanupService(
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var cleanupInterval = _options.PollInterval * 10;
-        logger.LogInformation("OutboxCleanupService iniciado. Cleanup a cada {Interval}.", cleanupInterval);
+        LogIniciado(logger, cleanupInterval);
 
         while (!stoppingToken.IsCancellationRequested)
             try
@@ -38,7 +37,7 @@ internal sealed class OutboxCleanupService(
             }
             catch (Exception ex) when (!stoppingToken.IsCancellationRequested)
             {
-                logger.LogError(ex, "Falha ao executar cleanup do Outbox.");
+                LogFalhaCleanup(logger, ex);
             }
     }
 
@@ -54,7 +53,17 @@ internal sealed class OutboxCleanupService(
             .ExecuteDeleteAsync(ct);
 
         if (deleted > 0)
-            logger.LogInformation("OutboxCleanupService removeu {Count} mensagens processadas anteriores a {Cutoff:O}.",
-                deleted, cutoff);
+            LogMensagensRemovidas(logger, deleted, cutoff);
     }
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "OutboxCleanupService iniciado. Cleanup a cada {Interval}.")]
+    private static partial void LogIniciado(ILogger logger, TimeSpan interval);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Falha ao executar cleanup do Outbox.")]
+    private static partial void LogFalhaCleanup(ILogger logger, Exception exception);
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "OutboxCleanupService removeu {Count} mensagens processadas anteriores a {Cutoff:O}.")]
+    private static partial void LogMensagensRemovidas(ILogger logger, int count, DateTime cutoff);
 }

@@ -1,6 +1,9 @@
 using Mecanica.Hermes.Infrastructure.Persistence;
 using Mecanica.Hermes.Infrastructure.Persistence.Outbox;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 
 namespace Mecanica.Hermes.Infrastructure.Tests.Persistence.Outbox;
 
@@ -89,6 +92,43 @@ public class OutboxCleanupServiceTests
             remaining.Should().ContainSingle(m => m.Id == pendingId,
                 "mensagens Pending nunca são removidas pelo cleanup");
         }
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_DeveLogarInicioEResistirAFalhaDoProvider()
+    {
+        // Cobre o caminho real do BackgroundService: LogIniciado + try/catch em torno de
+        // CleanupAsync. InMemory não suporta ExecuteDeleteAsync — a exceção é capturada
+        // (LogFalhaCleanup) e o loop continua até o stoppingToken cancelar.
+        var db = new AppDbContext(NewOptions(Guid.NewGuid().ToString()));
+
+        var services = new ServiceCollection();
+        services.AddSingleton(db);
+        var sp = services.BuildServiceProvider();
+
+        var scope = new Mock<IServiceScope>();
+        scope.Setup(s => s.ServiceProvider).Returns(sp);
+        var scopeFactory = new Mock<IServiceScopeFactory>();
+        scopeFactory.Setup(f => f.CreateScope()).Returns(scope.Object);
+
+        var options = Options.Create(new OutboxOptions
+        {
+            PollInterval = TimeSpan.FromMilliseconds(20) // cleanupInterval = 200ms
+        });
+
+        var sut = new OutboxCleanupService(scopeFactory.Object, options, NullLogger<OutboxCleanupService>.Instance);
+
+        using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(400));
+        await sut.StartAsync(cts.Token);
+        await Task.Delay(350);
+
+        // Parada graciosa não deve lançar — confirma que o catch absorveu a falha do provider.
+        var stop = async () => await sut.StopAsync(CancellationToken.None);
+        await stop.Should().NotThrowAsync();
+
+        // Pelo menos um ciclo de cleanup foi iniciado (CreateScope só é chamado dentro de CleanupAsync),
+        // provando que o loop de ExecuteAsync executou e tolerou a falha do provider InMemory.
+        scopeFactory.Verify(f => f.CreateScope(), Times.AtLeastOnce);
     }
 
     [Fact]

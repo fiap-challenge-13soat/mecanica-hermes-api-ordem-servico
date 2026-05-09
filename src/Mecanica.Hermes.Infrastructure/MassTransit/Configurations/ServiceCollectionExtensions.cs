@@ -1,4 +1,5 @@
 using MassTransit;
+using Mecanica.Hermes.Infrastructure.MassTransit.Observability;
 using Mecanica.Hermes.Infrastructure.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -11,6 +12,8 @@ internal static class ServiceCollectionExtensions
     public static void ConfigureMassTransit(this IServiceCollection services)
     {
         services.AddMassTransitOptions();
+        services.AddSingleton<DlqMetrics>();
+        services.AddSingleton<MessagingFaultObserver>();
         _ = Enum.TryParse<TransportService>(
             Environment.GetEnvironmentVariable(VariableNames.MassTransitTransportService), out var transportService);
 

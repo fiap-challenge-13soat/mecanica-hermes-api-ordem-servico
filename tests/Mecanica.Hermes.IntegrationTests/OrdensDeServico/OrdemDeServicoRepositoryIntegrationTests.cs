@@ -1,8 +1,8 @@
-using Mecanica.Hermes.Application.Common.Pagination;
-using Mecanica.Hermes.Application.Common.Persistence;
 using Mecanica.Hermes.Application.OrdensDeServico.Ports;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
 using Mecanica.Hermes.IntegrationTests.Infrastructure;
+using Mecanica.Hermes.Shared.Core.Pagination;
+using Mecanica.Hermes.Shared.Core.Persistence;
 using Mecanica.Hermes.TestUtils.Builders;
 
 namespace Mecanica.Hermes.IntegrationTests.OrdensDeServico;

@@ -11,7 +11,8 @@ namespace Mecanica.Hermes.Infrastructure.MassTransit.Filters;
 ///     descartada com log de erro sem ser recolocada na fila — mensagens com ID inválido são
 ///     determinísticas e nunca serão válidas após retry.
 /// </summary>
-internal sealed class OrdemDeServicoCommandValidationFilter<T>(ILogger<OrdemDeServicoCommandValidationFilter<T>> logger)
+internal sealed partial class OrdemDeServicoCommandValidationFilter<T>(
+    ILogger<OrdemDeServicoCommandValidationFilter<T>> logger)
     : IFilter<ConsumeContext<T>>
     where T : class, IOrdemDeServicoExecuteCommand
 {
@@ -19,9 +20,7 @@ internal sealed class OrdemDeServicoCommandValidationFilter<T>(ILogger<OrdemDeSe
     {
         if (context.Message.OrdemDeServicoId == Guid.Empty)
         {
-            logger.LogError(
-                "Mensagem {MessageType} recebida com OrdemDeServicoId vazio. Mensagem descartada.",
-                typeof(T).Name);
+            LogOrdemIdVazio(logger, typeof(T).Name);
             return;
         }
 
@@ -32,4 +31,9 @@ internal sealed class OrdemDeServicoCommandValidationFilter<T>(ILogger<OrdemDeSe
     {
         context.CreateFilterScope("ordemDeServicoCommandValidation");
     }
+
+    [LoggerMessage(
+        Level = LogLevel.Error,
+        Message = "Mensagem {MessageType} recebida com OrdemDeServicoId vazio. Mensagem descartada.")]
+    private static partial void LogOrdemIdVazio(ILogger logger, string messageType);
 }

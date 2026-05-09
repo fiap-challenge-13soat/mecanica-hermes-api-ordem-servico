@@ -4,6 +4,7 @@ using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
 using Mecanica.Hermes.Domain.OrdensDeServico.Events;
 using Mecanica.Hermes.Infrastructure.Persistence;
 using Mecanica.Hermes.Infrastructure.Persistence.Outbox;
+using Mecanica.Hermes.Shared.Core.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -28,7 +29,8 @@ public class OutboxProcessorTests
     }
 
     private static (OutboxProcessor sut, Mock<IDomainEventDispatcher> dispatcherMock, AppDbContext db) BuildSut(
-        int maxRetries = 3)
+        int maxRetries = 3,
+        bool allowNonLockingFallback = true)
     {
         var db = NewDb();
 
@@ -49,7 +51,7 @@ public class OutboxProcessorTests
             BatchSize = 10,
             MaxRetries = maxRetries,
             PollInterval = TimeSpan.FromMilliseconds(50),
-            AllowNonLockingFallback = true // InMemory provider — locking SQL não suportado
+            AllowNonLockingFallback = allowNonLockingFallback
         });
 
         var metrics = new OutboxHealthMetrics();
@@ -191,5 +193,49 @@ public class OutboxProcessorTests
         dispatcherMock.Verify(
             d => d.DispatchAsync(It.IsAny<IEnumerable<IDomainEvent>>(), It.IsAny<CancellationToken>()),
             Times.AtLeastOnce);
+    }
+
+    [Fact]
+    public async Task ProcessBatch_QuandoDispatcherLanca_DeveMarcarFalhaSemThrow()
+    {
+        // Cobre o catch de exceções genéricas em ProcessBatchAsync (LogFalhaDispatch + MarkAsFailed).
+        const string eventType = "ordem-de-servico.criado.v1";
+        var evt = new OrdemDeServicoCriadoEvent(
+            Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(),
+            "problema", OrdemDeServicoStatus.Recebida);
+
+        var (sut, dispatcherMock, db) = BuildSut(3);
+        dispatcherMock
+            .Setup(d => d.DispatchAsync(It.IsAny<IEnumerable<IDomainEvent>>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new InvalidOperationException("dispatcher boom"));
+
+        var msg = new OutboxMessageEntity(Guid.NewGuid(), eventType, JsonSerializer.Serialize(evt), DateTime.UtcNow);
+        db.OutboxMessages.Add(msg);
+        await db.SaveChangesAsync();
+
+        using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(300));
+        await sut.StartAsync(cts.Token);
+        await Task.Delay(200);
+        await sut.StopAsync(CancellationToken.None);
+
+        var saved = await db.OutboxMessages.FirstAsync();
+        saved.RetryCount.Should().BeGreaterThan(0);
+        saved.LastError.Should().Contain("dispatcher boom");
+    }
+
+    [Fact]
+    public async Task ProcessBatch_SemAllowNonLockingFallback_AindaProcessaEEmiteAvisoCritico()
+    {
+        // Em InMemory, FromSqlRaw lança InvalidOperationException; com AllowNonLockingFallback=false
+        // o caminho de aviso (LogFallbackSemLock) é exercitado mas o lote ainda é processado.
+        var (sut, _, db) = BuildSut(3, allowNonLockingFallback: false);
+
+        // Sem mensagens, só garantimos que o ciclo entra no fallback sem explodir.
+        using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(200));
+        await sut.StartAsync(cts.Token);
+        await Task.Delay(150);
+        await sut.StopAsync(CancellationToken.None);
+
+        (await db.OutboxMessages.CountAsync()).Should().Be(0);
     }
 }

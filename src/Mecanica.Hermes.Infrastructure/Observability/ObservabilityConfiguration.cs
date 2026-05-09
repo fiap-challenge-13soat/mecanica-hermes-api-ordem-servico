@@ -1,4 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
+using Mecanica.Hermes.Infrastructure.MassTransit.Observability;
+using Mecanica.Hermes.Infrastructure.Persistence.Outbox;
+using Mecanica.Hermes.Shared.Observability;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using OpenTelemetry;
@@ -42,7 +45,7 @@ internal static class ObservabilityConfiguration
             .WithTracing(tracing =>
             {
                 tracing
-                    .AddSource(ActivitySources.ApplicationName)
+                    .AddSource(ActivitySources.ApiName)
                     .AddSource("MecanicaHermes.Application")
                     .AddNpgsql()
                     .AddAspNetCoreInstrumentation(opts =>
@@ -58,6 +61,8 @@ internal static class ObservabilityConfiguration
                 metrics
                     .AddMeter(ActivitySources.ApplicationName)
                     .AddMeter(OrdemDeServicoMetrics.MeterName)
+                    .AddMeter(OutboxHealthMetrics.MeterName)
+                    .AddMeter(DlqMetrics.MeterName)
                     .AddAspNetCoreInstrumentation()
                     .AddNpgsqlInstrumentation()
                     .AddHttpClientInstrumentation()

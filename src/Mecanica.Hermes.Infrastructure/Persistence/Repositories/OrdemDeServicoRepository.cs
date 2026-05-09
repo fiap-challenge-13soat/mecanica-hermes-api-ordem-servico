@@ -1,9 +1,9 @@
-using Mecanica.Hermes.Application.Common.Pagination;
-using Mecanica.Hermes.Application.Common.Persistence;
 using Mecanica.Hermes.Application.OrdensDeServico.Ports;
 using Mecanica.Hermes.Domain.OrdensDeServico;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
 using Mecanica.Hermes.Infrastructure.Persistence.Mappings;
+using Mecanica.Hermes.Shared.Core.Pagination;
+using Mecanica.Hermes.Shared.Core.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mecanica.Hermes.Infrastructure.Persistence.Repositories;

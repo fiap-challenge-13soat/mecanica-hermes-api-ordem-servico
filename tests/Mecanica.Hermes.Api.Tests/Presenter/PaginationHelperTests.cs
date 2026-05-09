@@ -1,5 +1,6 @@
 using Mecanica.Hermes.Api.Presenter;
-using Mecanica.Hermes.Application.Common.Pagination;
+using Mecanica.Hermes.Shared.AspNetCore.Presenter;
+using Mecanica.Hermes.Shared.Core.Pagination;
 using Microsoft.AspNetCore.Http;
 
 namespace Mecanica.Hermes.Api.Tests.Presenter;

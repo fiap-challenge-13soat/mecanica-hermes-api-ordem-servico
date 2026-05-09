@@ -13,6 +13,8 @@ internal sealed class OrdemDeServicoMetrics : IOrdemDeServicoMetrics, IDisposabl
     private readonly Counter<long> _erros;
     private readonly Counter<long> _etapaAvancada;
 
+    private readonly Counter<long> _eventoIntegracaoIgnorado;
+
     private readonly Meter _meter;
     private readonly Counter<long> _ordemCanceladas;
     private readonly Counter<long> _ordemCriadas;
@@ -36,6 +38,10 @@ internal sealed class OrdemDeServicoMetrics : IOrdemDeServicoMetrics, IDisposabl
         _ordemCanceladas = _meter.CreateCounter<long>(
             "ordemdeservico.canceladas",
             description: "Número de ordens de serviço canceladas");
+        _eventoIntegracaoIgnorado = _meter.CreateCounter<long>(
+            "ordemdeservico.evento_integracao_ignorado",
+            description: "Eventos de integração cross-service ignorados por idempotência " +
+                         "(OS já em estado-destino quando o evento foi entregue)");
     }
 
     public void Dispose()
@@ -81,5 +87,12 @@ internal sealed class OrdemDeServicoMetrics : IOrdemDeServicoMetrics, IDisposabl
     {
         _ordemCanceladas.Add(1,
             new KeyValuePair<string, object?>("status_anterior", statusAnterior));
+    }
+
+    public void EventoIntegracaoIgnorado(string evento, string statusAtual)
+    {
+        _eventoIntegracaoIgnorado.Add(1,
+            new KeyValuePair<string, object?>("evento", evento),
+            new KeyValuePair<string, object?>("status_atual", statusAtual));
     }
 }

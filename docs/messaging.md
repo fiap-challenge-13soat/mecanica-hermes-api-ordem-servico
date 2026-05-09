@@ -284,3 +284,65 @@ Os três transports são empacotados juntos no assembly de Infrastructure
 Está planejada (não executada) a extração dos contratos de mensageria para
 `Mecanica.Hermes.Contracts.OrdemDeServico`. Critério para extrair: aparição do **primeiro
 consumidor externo** (outro serviço, BFF). Detalhes: [ADR-016](./adrs.md#adr-016).
+
+---
+
+## Integration Events (Cross-Service)
+
+Esta seção documenta os contratos usados para comunicação assíncrona com a **API de Cadastros** e a **API de Pagamentos**. Para o ponto de vista das outras APIs, consulte o `messaging.md` de cada uma.
+
+Todos os contratos usam `[EntityName("kebab-case")]` para roteamento canônico — o MassTransit roteia pelo `EntityName`, não pelo namespace .NET. Cada API redeclara o record localmente com o mesmo decorator.
+
+### Eventos publicados
+
+Publicados pelo `EtapaAvancadaIntegrationPublisher`, que é um `INotificationHandler<DomainEventNotification<OrdemDeServicoEtapaAvancadaEvent>>` na camada Infrastructure. O Domain Event é disparado pelo Outbox após cada `AvancarEtapa()` bem-sucedido.
+
+| EntityName | Classe | Quando publica | Payload |
+| --- | --- | --- | --- |
+| `ordem-de-servico.aguardando-aprovacao.v1` | `OrdemDeServicoAguardandoAprovacaoEvent` | `StatusAtual == AguardandoAprovacao` | `OrdemDeServicoId` |
+| `ordem-de-servico.aguardando-pagamento.v1` | `OrdemDeServicoAguardandoPagamentoEvent` | `StatusAtual == AguardandoPagamento` | `OrdemDeServicoId`, `ClienteId`, `Valor` |
+
+> `OrdemDeServicoAguardandoPagamentoEvent` carrega `ClienteId` e `Valor` para que a API de Pagamentos possa iniciar o pagamento sem consultar a OS de volta.
+
+### Eventos consumidos
+
+Os 4 consumers cross-service vivem em `Application/OrdensDeServico/Consumers/Integration/` e são auto-registrados via `configurator.AddConsumers(typeof(IApplicationAssemblyMarker).Assembly)`. Cada um **apenas traduz** o evento externo para um Request interno, que a SAGA-OS processa normalmente.
+
+| EntityName | Origem | Consumer | Ação na SAGA |
+| --- | --- | --- | --- |
+| `orcamento.aprovado-pelo-cliente.v1` | API de Cadastros | `OrcamentoAprovadoPeloClienteConsumer` | Publica `AprovarOrdemDeServicoRequest` → SAGA executa `ExecuteAprovarOrdemDeServico` |
+| `orcamento.rejeitado-pelo-cliente.v1` | API de Cadastros | `OrcamentoRejeitadoPeloClienteConsumer` | Publica `RejeitarOrdemDeServicoRequest` → SAGA executa `ExecuteRejeitarOrdemDeServico` |
+| `pagamento.confirmado.v1` | API de Pagamentos | `PagamentoConfirmadoConsumer` | Publica `PagamentoAprovadoRequest` → SAGA executa `ExecutePagamentoAprovado` |
+| `pagamento.recusado.v1` | API de Pagamentos | `PagamentoRecusadoConsumer` | Publica `ReverterEtapaRequest` → SAGA executa `ExecuteReverterEtapa` (volta para `ManutencaoFinalizada`) |
+
+### Fluxo bidirecional
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant OS as API OS
+    participant Bus as RabbitMQ
+    participant Cad as API Cadastros
+    participant Pag as API Pagamentos
+    participant Cliente as Cliente
+
+    OS->>Bus: OrdemDeServicoAguardandoAprovacaoEvent
+    Bus->>Cad: OrdemDeServicoAguardandoAprovacaoConsumer
+    Cad->>Cliente: e-mail (link aprovar/rejeitar — HMAC)
+    Cliente->>Cad: GET /webhooks/.../aprovar
+    Cad->>Bus: OrcamentoAprovadoPeloClienteEvent
+    Bus->>OS: OrcamentoAprovadoPeloClienteConsumer → AprovarOrdemDeServicoRequest → SAGA
+
+    Note over OS,Pag: Após execução → AguardandoPagamento
+
+    OS->>Bus: OrdemDeServicoAguardandoPagamentoEvent (com ClienteId e Valor)
+    Bus->>Pag: OrdemDeServicoAguardandoPagamentoConsumer
+    Pag->>Cad: GET /api/clientes/{id} (M2M servico-scope)
+    Cad-->>Pag: ClienteDto
+    Pag->>Bus: GerarPagamentoRequest → SAGA Pagamentos → link MP
+    Pag->>Bus: LinkPagamentoGeradoEvent
+    Bus->>Cad: LinkPagamentoGeradoConsumer → e-mail com link
+    Cliente->>Pag: paga
+    Pag->>Bus: PagamentoConfirmadoEvent
+    Bus->>OS: PagamentoConfirmadoConsumer → PagamentoAprovadoRequest → SAGA
+```

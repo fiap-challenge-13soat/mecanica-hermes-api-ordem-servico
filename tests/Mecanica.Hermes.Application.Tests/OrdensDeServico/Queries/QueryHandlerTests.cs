@@ -1,11 +1,11 @@
 using System.Net;
-using Mecanica.Hermes.Application.Common.Pagination;
 using Mecanica.Hermes.Application.OrdensDeServico.Ports;
 using Mecanica.Hermes.Application.OrdensDeServico.Queries.GetOrdemDeServicoById;
 using Mecanica.Hermes.Application.OrdensDeServico.Queries.ListAllOrdensDeServico;
 using Mecanica.Hermes.Application.OrdensDeServico.Queries.ListOrdemDeServicoByStatus;
 using Mecanica.Hermes.Domain.OrdensDeServico;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
+using Mecanica.Hermes.Shared.Core.Pagination;
 using Mecanica.Hermes.TestUtils.Builders;
 
 namespace Mecanica.Hermes.Application.Tests.OrdensDeServico.Queries;

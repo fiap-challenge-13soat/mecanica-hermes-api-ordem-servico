@@ -3,6 +3,8 @@ using Mecanica.Hermes.Api.Endpoints.OrdensDeServico.Mappings;
 using Mecanica.Hermes.Api.Presenter;
 using Mecanica.Hermes.Application.OrdensDeServico.Queries.GetOrdemDeServicoById;
 using Mecanica.Hermes.Infrastructure.Settings;
+using Mecanica.Hermes.Shared.AspNetCore.Endpoints;
+using Mecanica.Hermes.Shared.AspNetCore.Presenter;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

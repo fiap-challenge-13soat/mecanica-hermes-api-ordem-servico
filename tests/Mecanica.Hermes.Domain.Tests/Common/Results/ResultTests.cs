@@ -1,5 +1,5 @@
 using System.Net;
-using Mecanica.Hermes.Domain.Common.Results;
+using Mecanica.Hermes.Shared.Core.Results;
 
 namespace Mecanica.Hermes.Domain.Tests.Common.Results;
 

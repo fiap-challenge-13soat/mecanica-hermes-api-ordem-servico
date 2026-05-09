@@ -1,9 +1,9 @@
-using Mecanica.Hermes.Domain.Common.Abstractions;
-using Mecanica.Hermes.Domain.Common.Results;
 using Mecanica.Hermes.Domain.OrdensDeServico.Abstractions;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
 using Mecanica.Hermes.Domain.OrdensDeServico.Events;
 using Mecanica.Hermes.Domain.OrdensDeServico.Status;
+using Mecanica.Hermes.Shared.Core.Domain;
+using Mecanica.Hermes.Shared.Core.Results;
 
 namespace Mecanica.Hermes.Domain.OrdensDeServico;
 

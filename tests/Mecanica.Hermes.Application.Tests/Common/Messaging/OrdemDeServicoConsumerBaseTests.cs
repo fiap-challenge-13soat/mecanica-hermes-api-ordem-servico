@@ -1,11 +1,12 @@
 using MassTransit.Testing;
 using Mecanica.Hermes.Application.Common.Messaging;
-using Mecanica.Hermes.Application.Common.Persistence;
 using Mecanica.Hermes.Application.OrdensDeServico.Messages.Commands;
 using Mecanica.Hermes.Application.OrdensDeServico.Messages.Events;
 using Mecanica.Hermes.Application.OrdensDeServico.Ports;
-using Mecanica.Hermes.Domain.Common.Results;
 using Mecanica.Hermes.Domain.OrdensDeServico;
+using Mecanica.Hermes.Shared.Application.Messaging;
+using Mecanica.Hermes.Shared.Core.Persistence;
+using Mecanica.Hermes.Shared.Core.Results;
 using Mecanica.Hermes.TestUtils.Builders;
 
 namespace Mecanica.Hermes.Application.Tests.Common.Messaging;

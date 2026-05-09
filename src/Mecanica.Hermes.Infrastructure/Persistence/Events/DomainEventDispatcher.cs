@@ -1,4 +1,5 @@
 using Mecanica.Hermes.Domain.Common.Abstractions;
+using Mecanica.Hermes.Shared.Core.Domain;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -10,7 +11,7 @@ namespace Mecanica.Hermes.Infrastructure.Persistence.Events;
 ///     para que um evento "tóxico" não impeça os demais — o Result Pattern já capturou os erros
 ///     de domínio antes do dispatch, então qualquer exceção aqui é infra/handler.
 /// </summary>
-internal sealed class DomainEventDispatcher(
+internal sealed partial class DomainEventDispatcher(
     IPublisher publisher,
     ILogger<DomainEventDispatcher> logger) : IDomainEventDispatcher
 {
@@ -25,10 +26,12 @@ internal sealed class DomainEventDispatcher(
             }
             catch (Exception ex)
             {
-                logger.LogError(
-                    ex,
-                    "Falha ao despachar Domain Event {EventType}. Continuando com os demais.",
-                    e.GetType().Name);
+                LogDispatchFailure(logger, ex, e.GetType().Name);
             }
     }
+
+    [LoggerMessage(
+        Level = LogLevel.Error,
+        Message = "Falha ao despachar Domain Event {EventType}. Continuando com os demais.")]
+    private static partial void LogDispatchFailure(ILogger logger, Exception exception, string eventType);
 }

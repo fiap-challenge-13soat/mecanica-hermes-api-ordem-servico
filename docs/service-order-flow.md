@@ -11,11 +11,12 @@ stateDiagram-v2
     [*] --> Recebida
     Recebida --> EmDiagnostico : Avancar
     EmDiagnostico --> AguardandoAprovacao : Avancar
-    AguardandoAprovacao --> EmExecucao : Aprovar (Avancar)
-    AguardandoAprovacao --> Rejeitada : Rejeitar (Cancelar)
+    AguardandoAprovacao --> EmExecucao : Aprovar (Avancar)\nou OrcamentoAprovadoPeloClienteEvent ⬅ Cadastros
+    AguardandoAprovacao --> Rejeitada : Rejeitar\nou OrcamentoRejeitadoPeloClienteEvent ⬅ Cadastros
     EmExecucao --> ManutencaoFinalizada : Avancar
     ManutencaoFinalizada --> AguardandoPagamento : Avancar
-    AguardandoPagamento --> PagamentoConfirmado : Avancar
+    AguardandoPagamento --> PagamentoConfirmado : Avancar\nou PagamentoConfirmadoEvent ⬅ Pagamentos
+    AguardandoPagamento --> ManutencaoFinalizada : ReverterEtapa\nou PagamentoRecusadoEvent ⬅ Pagamentos
     PagamentoConfirmado --> Entregue : Avancar
     Entregue --> [*]
 
@@ -27,8 +28,9 @@ stateDiagram-v2
     PagamentoConfirmado --> Cancelada : Cancelar
 ```
 
-> **Reverter etapa** segue o caminho inverso (`StatusRevertido` em cada classe de status) e
-> não é mostrado para manter o diagrama legível.
+> **Reverter etapa** segue o caminho inverso (`StatusRevertido` em cada classe de status).
+> Transições marcadas com `⬅` são iniciadas por **eventos externos cross-service**
+> (via consumers de integração) — veja a seção [Gatilhos externos](#gatilhos-externos) abaixo.
 
 ## Estados
 
@@ -75,6 +77,27 @@ respostas de query.
 
 Os eventos são gravados no Outbox dentro da mesma transação do `SaveChangesAsync` e
 despachados pelo `OutboxProcessor`. Veja [messaging.md](./messaging.md#outbox).
+
+## Gatilhos externos
+
+Quatro transições de estado podem ser iniciadas por **eventos MassTransit publicados por outras APIs** (em vez de por chamadas HTTP diretas ao OS). Os consumers cross-service vivem em `Application/OrdensDeServico/Consumers/Integration/` e simplesmente traduzem o evento externo para um Request interno, que a SAGA processa normalmente.
+
+| Evento externo | Origem | Consumer | Transição |
+| --- | --- | --- | --- |
+| `orcamento.aprovado-pelo-cliente.v1` | API de Cadastros | `OrcamentoAprovadoPeloClienteConsumer` | `AguardandoAprovacao` → `EmExecucao` |
+| `orcamento.rejeitado-pelo-cliente.v1` | API de Cadastros | `OrcamentoRejeitadoPeloClienteConsumer` | `AguardandoAprovacao` → `Rejeitada` |
+| `pagamento.confirmado.v1` | API de Pagamentos | `PagamentoConfirmadoConsumer` | `AguardandoPagamento` → `PagamentoConfirmado` |
+| `pagamento.recusado.v1` | API de Pagamentos | `PagamentoRecusadoConsumer` | `AguardandoPagamento` → `ManutencaoFinalizada` (reverte) |
+
+O padrão de tradução é sempre o mesmo: o consumer publica o `*Request` correspondente no bus, e a SAGA trata como se fosse um trigger interno.
+
+```csharp
+// Exemplo: PagamentoRecusadoConsumer
+public Task Consume(ConsumeContext<PagamentoRecusadoEvent> context)
+    => context.Publish(new ReverterEtapaRequest(context.Message.OrdemDeServicoId));
+```
+
+Para o contexto completo da integração cross-service, consulte [`messaging.md#integration-events-cross-service`](./messaging.md#integration-events-cross-service).
 
 ## Snapshots de produtos e serviços
 

@@ -1,12 +1,11 @@
 using MassTransit;
-using Mecanica.Hermes.Application.Common.Exceptions;
-using Mecanica.Hermes.Application.Common.Persistence;
 using Mecanica.Hermes.Application.OrdensDeServico.Constants;
 using Mecanica.Hermes.Application.OrdensDeServico.Messages.Commands;
 using Mecanica.Hermes.Application.OrdensDeServico.Messages.Events;
 using Mecanica.Hermes.Application.OrdensDeServico.Ports;
-using Mecanica.Hermes.Domain.Common.Results;
 using Mecanica.Hermes.Domain.OrdensDeServico;
+using Mecanica.Hermes.Shared.Core.Persistence;
+using Mecanica.Hermes.Shared.Core.Results;
 
 namespace Mecanica.Hermes.Application.Common.Messaging;
 
