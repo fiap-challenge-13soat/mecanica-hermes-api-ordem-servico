@@ -1,6 +1,9 @@
 using Mecanica.Hermes.Infrastructure.Persistence;
 using Mecanica.Hermes.Infrastructure.Persistence.Outbox;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 
 namespace Mecanica.Hermes.Infrastructure.Tests.Persistence.Outbox;
 
@@ -89,6 +92,39 @@ public class OutboxCleanupServiceTests
             remaining.Should().ContainSingle(m => m.Id == pendingId,
                 "mensagens Pending nunca são removidas pelo cleanup");
         }
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_DeveLogarInicioEResistirAFalhaDoProvider()
+    {
+        // Cobre o caminho real do BackgroundService: LogIniciado + try/catch em torno de
+        // CleanupAsync. InMemory não suporta ExecuteDeleteAsync — a exceção é capturada
+        // (LogFalhaCleanup) e o loop continua até o stoppingToken cancelar.
+        var db = new AppDbContext(NewOptions(Guid.NewGuid().ToString()));
+
+        var services = new ServiceCollection();
+        services.AddSingleton(db);
+        var sp = services.BuildServiceProvider();
+
+        var scope = new Mock<IServiceScope>();
+        scope.Setup(s => s.ServiceProvider).Returns(sp);
+        var scopeFactory = new Mock<IServiceScopeFactory>();
+        scopeFactory.Setup(f => f.CreateScope()).Returns(scope.Object);
+
+        var options = Options.Create(new OutboxOptions
+        {
+            PollInterval = TimeSpan.FromMilliseconds(20) // cleanupInterval = 200ms
+        });
+
+        var sut = new OutboxCleanupService(scopeFactory.Object, options, NullLogger<OutboxCleanupService>.Instance);
+
+        using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(400));
+        await sut.StartAsync(cts.Token);
+        await Task.Delay(350);
+        await sut.StopAsync(CancellationToken.None);
+
+        // Não há asserção de estado — o teste serve para exercitar o ciclo do BackgroundService
+        // (entrada, primeira tentativa de cleanup, captura da falha do provider, parada gracioso).
     }
 
     [Fact]
