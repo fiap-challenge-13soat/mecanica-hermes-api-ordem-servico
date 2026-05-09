@@ -121,10 +121,14 @@ public class OutboxCleanupServiceTests
         using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(400));
         await sut.StartAsync(cts.Token);
         await Task.Delay(350);
-        await sut.StopAsync(CancellationToken.None);
 
-        // Não há asserção de estado — o teste serve para exercitar o ciclo do BackgroundService
-        // (entrada, primeira tentativa de cleanup, captura da falha do provider, parada gracioso).
+        // Parada graciosa não deve lançar — confirma que o catch absorveu a falha do provider.
+        var stop = async () => await sut.StopAsync(CancellationToken.None);
+        await stop.Should().NotThrowAsync();
+
+        // Pelo menos um ciclo de cleanup foi iniciado (CreateScope só é chamado dentro de CleanupAsync),
+        // provando que o loop de ExecuteAsync executou e tolerou a falha do provider InMemory.
+        scopeFactory.Verify(f => f.CreateScope(), Times.AtLeastOnce);
     }
 
     [Fact]
