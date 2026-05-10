@@ -89,8 +89,9 @@ docker run -d --name hermes-rabbitmq -p 5672:5672 -p 15672:15672 \
 docker run -d --name hermes-mongo -p 27017:27017 mongo:7
 ```
 
-> Não há `docker-compose.yml` versionado no repositório no momento. Se você mantiver um
-> arquivo local, ele deve ficar fora do versionamento até ser padronizado.
+> Os comandos acima são suficientes para rodar **apenas esta API** isoladamente. Para o
+> **ecossistema completo** (3 APIs + WireMock como mock do Mercado Pago + observabilidade),
+> consulte [Stack completa via Docker Compose](#stack-completa-via-docker-compose) abaixo.
 
 ### 2. Rodar a API
 
@@ -133,6 +134,34 @@ just test-unit
 
 Cobertura mínima exigida pelo CI: **≥ 80%** de linhas. Veja
 [`docs/testing.md`](./docs/testing.md) para detalhes.
+
+## Stack completa via Docker Compose
+
+O `docker-compose.yml` da stack inteira do ecossistema Mecânica Hermes — Postgres,
+MongoDB (com replica set), RabbitMQ (com plugin de delayed exchange), WireMock (mock
+do Mercado Pago) e as 3 APIs (`api-ordem-servico`, `api-cadastros`, `api-pagamentos`)
+— **vive no repositório de testes E2E**,
+[`mecanica-hermes-tests-e2e`](https://github.com/fiap-challenge-13soat/mecanica-hermes-tests-e2e).
+É a forma canônica de rodar o ecossistema localmente sem precisar buildar cada API:
+
+```bash
+git clone https://github.com/fiap-challenge-13soat/mecanica-hermes-tests-e2e.git ../mecanica-hermes-tests-e2e
+cd ../mecanica-hermes-tests-e2e
+docker compose \
+  -f docker-compose/docker-compose.yaml \
+  -f docker-compose/docker-compose.e2e.yaml \
+  up -d --wait
+```
+
+A imagem desta API consumida pelo compose vem do Docker Hub
+(`mechermes/mecanica-hermes-api-ordem-servico:latest`), republicada automaticamente
+pelo workflow [`Build and Publish Docker Image`](./.github/workflows/docker-ci.yml) a
+cada merge na `main`. Para apontar para uma tag específica, exporte
+`OS_IMAGE_TAG=<sha-curto-ou-versão>` antes do `compose up`.
+
+A suíte E2E que valida os fluxos cross-service entre as 3 APIs também vive lá. Para
+detalhes operacionais (variáveis, healthchecks, troubleshooting), consulte o README
+e o `CLAUDE.md` do próprio repositório E2E.
 
 ## Endpoints
 
