@@ -28,8 +28,15 @@
     <PackageVersion Include="Serilog.Sinks.OpenTelemetry" Version="4.2.0" />
     <!-- Serilog trace correlation enricher -->
     <PackageVersion Include="Serilog.Enrichers.Span" Version="3.1.0" />
+    <!-- Override transitive: MongoDB.Driver via MassTransit.MongoDb puxa Snappier 1.0.0,
+         vulnerável (GHSA-pggp-6c3x-2xmx, high). Pinar versão patched força a resolução
+         do NuGet a ignorar a transitiva. -->
+    <PackageVersion Include="Snappier" Version="1.3.1" />
+    <!-- Override transitive: Testcontainers.PostgreSql puxa SharpCompress 0.30.1,
+         vulnerável (GHSA-6c8g-7p36-r338, moderate). -->
+    <PackageVersion Include="SharpCompress" Version="0.48.0" />
     <!-- Mass Transit -->
-    <PackageVersion Include="MassTransit" Version="8.5.9" /> 
+    <PackageVersion Include="MassTransit" Version="8.5.9" />
     <PackageVersion Include="MassTransit.Abstractions" Version="8.5.9" /> 
     <PackageVersion Include="MassTransit.RabbitMQ" Version="8.5.9" /> 
     <PackageVersion Include="MassTransit.AmazonSQS" Version="8.5.9" /> 
