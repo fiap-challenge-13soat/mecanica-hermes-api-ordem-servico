@@ -150,8 +150,6 @@ Base path: `/api/ordens-de-servico`.
 | `DELETE` | `/{id}/servicos/{servicoId}` | admin | Remover serviço (assíncrono) |
 | `PATCH` | `/{id}/avancar` | admin | Avançar etapa (assíncrono) |
 | `PATCH` | `/{id}/reverter` | admin | Reverter etapa (assíncrono) |
-| `PATCH` | `/{id}/aprovar` | cliente, admin | Aprovar orçamento (assíncrono — exige `AguardandoAprovacao`) |
-| `PATCH` | `/{id}/rejeitar` | cliente, admin | Rejeitar orçamento (assíncrono — exige `AguardandoAprovacao`) |
 | `PATCH` | `/{id}/pagamento-aprovado` | admin | Confirmar pagamento (assíncrono — exige `AguardandoPagamento`) |
 | `PATCH` | `/{id}/cancelar` | admin | Cancelar OS (assíncrono) |
 

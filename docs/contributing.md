@@ -85,7 +85,7 @@ mudança (ex.: `AddOutboxMessages`, `AlterOrdemDeServicoAddObservacoes`). Ver
 ## Pull Requests
 
 - O nome da PR deve descrever a mudança no infinitivo
-  (ex.: `feat: aprovar OS via novo endpoint`).
+  (ex.: `feat: avançar etapa via novo endpoint`).
 - Inclua: contexto, decisão, alternativas avaliadas (se houver), impacto operacional.
 - O CI roda em todo push em `feature/**`. PRs só mergeiam com:
   - build verde,
