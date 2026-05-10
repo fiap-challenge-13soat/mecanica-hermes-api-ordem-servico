@@ -18,7 +18,13 @@ internal static partial class ServiceCollectionExtensions
     public static void AddEntityFrameworkConfiguration(this IServiceCollection services)
     {
         services.TryAddSingleton(TimeProvider.System);
-        services.AddTransient<IUnitOfWork, EfUnitOfWork>();
+        // Scoped: o EfUnitOfWork mantem _pendingEvents (lista de Domain Events coletados via
+        // CollectEventsFrom). Como Transient, o consumer e o repository recebiam INSTANCIAS
+        // DIFERENTES de IUnitOfWork dentro do mesmo scope - os eventos eram coletados em uma
+        // instancia (a do repository) mas CommitAsync rodava em outra (a do consumer), com
+        // _pendingEvents vazio. Resultado: nenhum OutboxMessage era escrito e os eventos
+        // cross-service (ex.: OrdemDeServicoAguardandoPagamentoEvent) nunca eram publicados.
+        services.AddScoped<IUnitOfWork, EfUnitOfWork>();
         services.AddTransient<IDomainEventDispatcher, DomainEventDispatcher>();
 
         services.Configure<OutboxOptions>(opts =>

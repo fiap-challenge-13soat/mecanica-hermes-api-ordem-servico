@@ -19,8 +19,21 @@ namespace Mecanica.Hermes.Infrastructure.MassTransit.Saga;
 /// </summary>
 public class OrdemDeServicoStateMachine : MassTransitStateMachine<OrdemDeServicoState>
 {
-    /// <summary>Prazo máximo de uma operação antes de ser abortada por timeout. Default: 5 minutos.</summary>
-    public static readonly TimeSpan OperationTimeoutDelay = TimeSpan.FromMinutes(5);
+    /// <summary>
+    ///     Prazo máximo de uma operação antes de ser abortada por timeout.
+    ///     Default: 5 minutos. Override via env var <c>SAGA__OPERATION_TIMEOUT</c>
+    ///     (formato <see cref="TimeSpan" />, ex.: <c>"00:00:30"</c>) — útil em E2E para
+    ///     exercitar o pathway de timeout sem aguardar 5min reais.
+    /// </summary>
+    public static readonly TimeSpan OperationTimeoutDelay = ResolveOperationTimeout();
+
+    private static TimeSpan ResolveOperationTimeout()
+    {
+        var raw = Environment.GetEnvironmentVariable("SAGA__OPERATION_TIMEOUT");
+        if (!string.IsNullOrWhiteSpace(raw) && TimeSpan.TryParse(raw, out var parsed) && parsed > TimeSpan.Zero)
+            return parsed;
+        return TimeSpan.FromMinutes(5);
+    }
 
     public OrdemDeServicoStateMachine()
     {
