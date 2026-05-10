@@ -129,8 +129,6 @@ DELETE /api/ordens-de-servico/{id}/servicos/{servicoId}
 | --- | --- | --- |
 | Avançar etapa | `PATCH /api/ordens-de-servico/{id}/avancar` | Move para `ProximoStatus` |
 | Reverter etapa | `PATCH /api/ordens-de-servico/{id}/reverter` | Volta para `StatusRevertido` |
-| Aprovar | `PATCH /api/ordens-de-servico/{id}/aprovar` | Apenas em `AguardandoAprovacao` (avança) |
-| Rejeitar | `PATCH /api/ordens-de-servico/{id}/rejeitar` | Apenas em `AguardandoAprovacao` (vai para `Rejeitada`) |
 | Pagamento aprovado | `PATCH /api/ordens-de-servico/{id}/pagamento-aprovado` | Apenas em `AguardandoPagamento` (avança para `PagamentoConfirmado`) |
 | Cancelar | `PATCH /api/ordens-de-servico/{id}/cancelar` | Qualquer estado não-terminal |
 

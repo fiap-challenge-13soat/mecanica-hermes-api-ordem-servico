@@ -23,8 +23,6 @@ public static class OrdensDeServicoEndpoints
         group.MapAvancarEtapa();
         group.MapReverterEtapa();
         group.MapCancelarOrdemDeServico();
-        group.MapAprovarOrdemDeServico();
-        group.MapRejeitarOrdemDeServico();
         group.MapPagamentoAprovado();
     }
 }
