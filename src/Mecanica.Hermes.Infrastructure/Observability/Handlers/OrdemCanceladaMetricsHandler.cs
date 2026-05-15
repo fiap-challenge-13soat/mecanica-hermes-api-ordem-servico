@@ -15,6 +15,7 @@ internal sealed class OrdemCanceladaMetricsHandler(IOrdemDeServicoMetrics metric
         CancellationToken cancellationToken)
     {
         metrics.OrdemCancelada(notification.Event.StatusAnterior.ToString());
+        metrics.DistribuicaoAtualizada("Cancelada", notification.Event.StatusAnterior.ToString());
         return Task.CompletedTask;
     }
 }

@@ -1,3 +1,4 @@
+using System.Diagnostics.Metrics;
 using System.Text.Json;
 using Mecanica.Hermes.Domain.Common.Abstractions;
 using Mecanica.Hermes.Domain.OrdensDeServico.Enums;
@@ -54,7 +55,9 @@ public class OutboxProcessorTests
             AllowNonLockingFallback = allowNonLockingFallback
         });
 
-        var metrics = new OutboxHealthMetrics();
+        var metricsFactory = new ServiceCollection().AddMetrics().BuildServiceProvider()
+            .GetRequiredService<IMeterFactory>();
+        var metrics = new OutboxHealthMetrics(metricsFactory);
 
         var sut = new OutboxProcessor(
             scopeFactory.Object,

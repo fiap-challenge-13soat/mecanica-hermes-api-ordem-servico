@@ -18,10 +18,11 @@ internal sealed class OrdemDeServicoMetrics : IOrdemDeServicoMetrics, IDisposabl
     private readonly Meter _meter;
     private readonly Counter<long> _ordemCanceladas;
     private readonly Counter<long> _ordemCriadas;
+    private readonly UpDownCounter<long> _porStatus;
 
-    public OrdemDeServicoMetrics()
+    public OrdemDeServicoMetrics(IMeterFactory meterFactory)
     {
-        _meter = new Meter(MeterName);
+        _meter = meterFactory.Create(MeterName);
         _ordemCriadas = _meter.CreateCounter<long>(
             "ordemdeservico.criadas",
             description: "Número de ordens de serviço criadas");
@@ -42,6 +43,9 @@ internal sealed class OrdemDeServicoMetrics : IOrdemDeServicoMetrics, IDisposabl
             "ordemdeservico.evento_integracao_ignorado",
             description: "Eventos de integração cross-service ignorados por idempotência " +
                          "(OS já em estado-destino quando o evento foi entregue)");
+        _porStatus = _meter.CreateUpDownCounter<long>(
+            "ordemdeservico.por_status",
+            description: "Distribuição atual de OS por status (in-memory; reseta no restart do processo).");
     }
 
     public void Dispose()
@@ -94,5 +98,12 @@ internal sealed class OrdemDeServicoMetrics : IOrdemDeServicoMetrics, IDisposabl
         _eventoIntegracaoIgnorado.Add(1,
             new KeyValuePair<string, object?>("evento", evento),
             new KeyValuePair<string, object?>("status_atual", statusAtual));
+    }
+
+    public void DistribuicaoAtualizada(string statusNovo, string? statusAnterior)
+    {
+        _porStatus.Add(1, new KeyValuePair<string, object?>("status", statusNovo));
+        if (statusAnterior is not null)
+            _porStatus.Add(-1, new KeyValuePair<string, object?>("status", statusAnterior));
     }
 }
