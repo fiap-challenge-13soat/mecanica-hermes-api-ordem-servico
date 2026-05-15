@@ -1,6 +1,7 @@
 using System.Diagnostics.Metrics;
 using MassTransit;
 using Mecanica.Hermes.Infrastructure.MassTransit.Observability;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Mecanica.Hermes.Infrastructure.Tests.MassTransit.Observability;
@@ -15,7 +16,9 @@ public sealed class MessagingFaultObserverTests : IDisposable
 
     public MessagingFaultObserverTests()
     {
-        _metrics = new DlqMetrics();
+        var factory = new ServiceCollection().AddMetrics().BuildServiceProvider()
+            .GetRequiredService<IMeterFactory>();
+        _metrics = new DlqMetrics(factory);
         _sut = new MessagingFaultObserver(_metrics, NullLogger<MessagingFaultObserver>.Instance);
 
         _listener = new MeterListener

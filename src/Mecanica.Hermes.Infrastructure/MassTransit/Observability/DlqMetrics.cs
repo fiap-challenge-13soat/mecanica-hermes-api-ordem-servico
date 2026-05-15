@@ -22,9 +22,9 @@ internal sealed class DlqMetrics : IDisposable
 
     private readonly Meter _meter;
 
-    public DlqMetrics()
+    public DlqMetrics(IMeterFactory meterFactory)
     {
-        _meter = new Meter(MeterName);
+        _meter = meterFactory.Create(MeterName);
         _consumeFaults = _meter.CreateCounter<long>(
             "messaging.consume_faults",
             description: "Mensagens que falharam após retries e foram para o _error queue (DLQ).");

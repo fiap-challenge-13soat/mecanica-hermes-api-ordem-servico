@@ -21,9 +21,9 @@ internal sealed class OutboxHealthMetrics : IDisposable
 
     private readonly Meter _meter;
 
-    public OutboxHealthMetrics()
+    public OutboxHealthMetrics(IMeterFactory meterFactory)
     {
-        _meter = new Meter(MeterName);
+        _meter = meterFactory.Create(MeterName);
         _dispatched = _meter.CreateCounter<long>(
             "outbox.messages.dispatched",
             description: "Mensagens do Outbox despachadas com sucesso.");

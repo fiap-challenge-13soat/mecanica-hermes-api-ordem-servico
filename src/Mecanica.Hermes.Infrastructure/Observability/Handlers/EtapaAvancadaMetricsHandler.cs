@@ -16,6 +16,9 @@ internal sealed class EtapaAvancadaMetricsHandler(IOrdemDeServicoMetrics metrics
     {
         var e = notification.Event;
         metrics.EtapaAvancada(e.StatusAnterior.ToString(), e.StatusAtual.ToString());
+        metrics.DistribuicaoAtualizada(e.StatusAtual.ToString(), e.StatusAnterior.ToString());
+        if (e.DuracaoMinutes.HasValue)
+            metrics.DuracaoEtapaRegistrada(e.StatusAnterior.ToString(), e.DuracaoMinutes.Value);
         return Task.CompletedTask;
     }
 }

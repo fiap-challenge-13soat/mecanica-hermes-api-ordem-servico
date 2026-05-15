@@ -16,6 +16,9 @@ internal sealed class EtapaRevertidaMetricsHandler(IOrdemDeServicoMetrics metric
     {
         var e = notification.Event;
         metrics.EtapaRevertida(e.StatusAnterior.ToString(), e.StatusAtual.ToString());
+        metrics.DistribuicaoAtualizada(e.StatusAtual.ToString(), e.StatusAnterior.ToString());
+        if (e.DuracaoMinutes.HasValue)
+            metrics.DuracaoEtapaRegistrada(e.StatusAnterior.ToString(), e.DuracaoMinutes.Value);
         return Task.CompletedTask;
     }
 }

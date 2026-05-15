@@ -1,5 +1,6 @@
 using System.Diagnostics.Metrics;
 using Mecanica.Hermes.Infrastructure.Observability;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Mecanica.Hermes.Infrastructure.Tests.Observability;
 
@@ -13,10 +14,14 @@ public class OrdemDeServicoMetricsTests : IDisposable
 {
     private readonly List<(string name, object value, KeyValuePair<string, object?>[] tags)> _captured = [];
     private readonly MeterListener _listener;
-    private readonly OrdemDeServicoMetrics _metrics = new();
+    private readonly OrdemDeServicoMetrics _metrics;
 
     public OrdemDeServicoMetricsTests()
     {
+        var factory = new ServiceCollection().AddMetrics().BuildServiceProvider()
+            .GetRequiredService<IMeterFactory>();
+        _metrics = new OrdemDeServicoMetrics(factory);
+
         _listener = new MeterListener
         {
             InstrumentPublished = (instrument, listener) =>
@@ -93,5 +98,29 @@ public class OrdemDeServicoMetricsTests : IDisposable
 
         _captured.Should()
             .ContainSingle(c => c.name == "ordemdeservico.duracao_etapa_minutes" && (double)c.value == 3.5);
+    }
+
+    [Fact]
+    public void DistribuicaoAtualizada_SemStatusAnterior_DeveIncrementarStatusNovo()
+    {
+        _metrics.DistribuicaoAtualizada("Recebida", null);
+
+        var m = _captured.Should().ContainSingle(c => c.name == "ordemdeservico.por_status").Subject;
+        ((long)m.value).Should().Be(1);
+        m.tags.Should().Contain(new KeyValuePair<string, object?>("status", "Recebida"));
+    }
+
+    [Fact]
+    public void DistribuicaoAtualizada_ComStatusAnterior_DeveIncrementarNovoEDecrementarAnterior()
+    {
+        _metrics.DistribuicaoAtualizada("EmDiagnostico", "Recebida");
+
+        _captured.Should().HaveCount(2);
+        _captured.Should().Contain(c =>
+            c.name == "ordemdeservico.por_status" && (long)c.value == 1 &&
+            c.tags.Any(t => t.Key == "status" && (string?)t.Value == "EmDiagnostico"));
+        _captured.Should().Contain(c =>
+            c.name == "ordemdeservico.por_status" && (long)c.value == -1 &&
+            c.tags.Any(t => t.Key == "status" && (string?)t.Value == "Recebida"));
     }
 }

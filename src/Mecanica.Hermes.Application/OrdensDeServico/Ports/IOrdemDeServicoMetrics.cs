@@ -17,4 +17,6 @@ public interface IOrdemDeServicoMetrics
     /// <param name="evento">Nome do EntityName do integration event (ex.: "pagamento.confirmado.v1").</param>
     /// <param name="statusAtual">Status atual da OrdemDeServico no momento da skip.</param>
     void EventoIntegracaoIgnorado(string evento, string statusAtual);
+
+    void DistribuicaoAtualizada(string statusNovo, string? statusAnterior);
 }
