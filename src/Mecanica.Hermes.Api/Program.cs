@@ -141,8 +141,11 @@ app.UseCorrelationId();
 app.UseGlobalExceptionHandler();
 app.UseCors("default");
 app.UseRateLimiter();
-app.MapOpenApi();
-app.MapScalarApiReference("ordem-servico/scalar");
+app.MapOpenApi("/ordem-servico/openapi/v1.json");
+app.MapScalarApiReference("ordem-servico/scalar", options =>
+{
+    options.WithOpenApiRoutePattern("/ordem-servico/openapi/v1.json");
+});
 if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == EnvironmentNames.Testing)
 {
     app.UseDevelopmentAuthentication(new DevelopmentAuthenticationOptions
