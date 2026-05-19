@@ -42,9 +42,8 @@ internal static class ServiceCollectionExtensions
         var mongoConnectionString = Environment.GetEnvironmentVariable(VariableNames.MongoDbConnectionString);
         var mongoDatabaseName = Environment.GetEnvironmentVariable(VariableNames.MongoDbSagaDatabase)
                                 ?? MassTransitOptions.DefaultMongoDbSagaDatabase;
-
         services.AddMassTransit(x =>
-        {
+        {   
             // Registra o health check do bus com as tags "ready" e "messaging" para que seja
             // incluído em /healthz/ready. Usa Degraded (e não Unhealthy) porque o MassTransit
             // tenta reconectar — o pod deve permanecer no pool durante quedas breves do broker
@@ -57,7 +56,10 @@ internal static class ServiceCollectionExtensions
             });
 
             x.ConfigureSaga(mongoConnectionString, mongoDatabaseName);
-            x.UsingRabbitMq((context, cfg) => cfg.ConfigureRabbitMq(context));
+            x.UsingRabbitMq((context, cfg) => 
+            {
+                cfg.ConfigureRabbitMq(context);
+            });
         });
     }
 
