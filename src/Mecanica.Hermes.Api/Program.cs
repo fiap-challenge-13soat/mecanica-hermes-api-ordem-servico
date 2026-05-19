@@ -22,6 +22,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.OpenApi;
 using Scalar.AspNetCore;
 using IPNetwork = System.Net.IPNetwork;
 
@@ -40,7 +41,16 @@ builder.Services.AddSingleton<IValidator<AddOrdemDeServicoServicoRequest>, AddOr
 builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    var publicUrl = Environment.GetEnvironmentVariable("PUBLIC_URL");
+    if (!string.IsNullOrEmpty(publicUrl))
+        options.AddDocumentTransformer((document, context, ct) =>
+        {
+            document.Servers = [new() { Url = publicUrl.TrimEnd('/') }];
+            return Task.CompletedTask;
+        });
+});
 
 // CORS: política nomeada "default". Em DEV/Testing libera Any para acelerar testes manuais
 // no Scalar/Swagger; em Production exige a env var CORS_ALLOWED_ORIGINS (CSV) — sem ela,
