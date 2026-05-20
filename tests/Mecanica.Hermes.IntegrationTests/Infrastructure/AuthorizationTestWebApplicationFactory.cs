@@ -109,13 +109,14 @@ public sealed class AuthorizationTestWebApplicationFactory
 
             services.AddMassTransit(x =>
             {
-                // ConfigureSaga registra AddQuartzConsumers; UseInMemoryScheduler inicia o
-                // scheduler in-process e expõe o MessageSchedulerContext às atividades
-                // .Schedule(...) da SAGA. Sem isso ocorre PayloadNotFoundException.
+                // ConfigureSaga já chama AddDelayedMessageScheduler internamente;
+                // resta apenas habilitar o scheduler no pipe (UseDelayedMessageScheduler)
+                // para que o MessageSchedulerContext fique disponível às atividades
+                // `.Schedule(...)` da SAGA. Sem isso ocorria PayloadNotFoundException.
                 x.ConfigureSaga(null, "test");
                 x.UsingInMemory((context, cfg) =>
                 {
-                    cfg.UseInMemoryScheduler();
+                    cfg.UseDelayedMessageScheduler();
                     cfg.ConfigureEndpoints(context);
                 });
             });
