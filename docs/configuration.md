@@ -31,7 +31,7 @@ de licença e secrets de dev. Use o quadro abaixo como referência das variávei
 | Variável | Default | Notas |
 | --- | --- | --- |
 | `MASSTRANSIT__TRANSPORT_SERVICE` | `AmazonMq` (quando ausente) | `AmazonMq` (broker gerenciado AWS, default), `RabbitMq` (auto-hospedado), `None` (testes), `AmazonSqs`. |
-| `MASSTRANSIT__CONNECTION_STRING` | — | Conexão do transport escolhido. AmazonMq requer `amqps://user:pass@broker-id.mq.<region>.amazonaws.com:5671`. RabbitMq aceita `amqp://user:pass@host:5672/`. |
+| `MASSTRANSIT__CONNECTION_STRING` | — | Conexão do transport escolhido. AmazonMq requer `amqps://<user>:<password>@<broker-id>.mq.<region>.amazonaws.com:5671`. RabbitMq aceita `amqp://<user>:<password>@<host>:5672/`. Credenciais devem vir de Secret Manager / Kubernetes Secret. |
 | `MASSTRANSIT__PREFETCH_COUNT` | `24` | Mensagens em flight por consumer. |
 | `MASSTRANSIT__QUEUE_NAME_PREFIX` | `mecanica-hermes` | Prefixo de filas. |
 
