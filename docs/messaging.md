@@ -272,11 +272,14 @@ Tudo via `OutboxOptions` (env vars com prefixo `OUTBOX__`):
 
 A escolha do transport é feita pela env var `MASSTRANSIT__TRANSPORT_SERVICE`, que pode ser:
 
-- `RabbitMq` (default em `launchSettings`)
-- `AmazonSqs`
-- `MongoDb`
+- `AmazonMq` — **default quando a env var está ausente**. Amazon MQ engine RabbitMQ, AMQPS/TLS porta 5671, heartbeat 60s. Connection string deve ser `amqps://user:pass@broker-id.mq.<region>.amazonaws.com:5671`. Usado em deploy EKS (provisionado por `mecanica-hermes-infra/shared/aws/module-amazonmq.tf`).
+- `RabbitMq` — broker RabbitMQ auto-hospedado (Docker Compose local, container compartilhado).
+- `AmazonSqs` — empacotado mas não exercitado em runtime.
+- `None` — não registra transport (usado em testes de integração que mockam o bus).
 
-Os três transports são empacotados juntos no assembly de Infrastructure
+Ambos `AmazonMq` e `RabbitMq` usam o mesmo transport MassTransit RabbitMQ por baixo (Amazon MQ é RabbitMQ gerenciado); a diferença está na configuração de TLS + heartbeat.
+
+Os transports são empacotados juntos no assembly de Infrastructure
 (ver [ADR-015](./adrs.md#adr-015)) — apenas o configurado em runtime é registrado.
 
 ## Plano: lib de contratos

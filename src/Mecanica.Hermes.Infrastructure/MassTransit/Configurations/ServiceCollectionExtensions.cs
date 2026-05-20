@@ -20,11 +20,31 @@ internal static class ServiceCollectionExtensions
         services.AddMassTransitOptions();
         services.AddSingleton<DlqMetrics>();
         services.AddSingleton<MessagingFaultObserver>();
-        _ = Enum.TryParse<TransportService>(
-            Environment.GetEnvironmentVariable(VariableNames.MassTransitTransportService), out var transportService);
 
-        if (transportService == TransportService.RabbitMq)
-            services.AddMassTransitWithRabbitMq();
+        var transportService = ResolveTransportService();
+
+        switch (transportService)
+        {
+            case TransportService.RabbitMq:
+                services.AddMassTransitWithRabbitMq();
+                break;
+            case TransportService.AmazonMq:
+                services.AddMassTransitWithAmazonMq();
+                break;
+        }
+    }
+
+    // Default = AmazonMq quando a env var está ausente ou inválida. Mantém `None`
+    // explícito como escape hatch para testes de integração que não querem broker.
+    private static TransportService ResolveTransportService()
+    {
+        var raw = Environment.GetEnvironmentVariable(VariableNames.MassTransitTransportService);
+        if (string.IsNullOrWhiteSpace(raw))
+            return TransportService.AmazonMq;
+
+        return Enum.TryParse<TransportService>(raw, ignoreCase: true, out var parsed)
+            ? parsed
+            : TransportService.AmazonMq;
     }
 
     // MongoDB.Driver 3.x exige GuidRepresentation explicito. Sem isto, o MassTransit
@@ -56,9 +76,31 @@ internal static class ServiceCollectionExtensions
             });
 
             x.ConfigureSaga(mongoConnectionString, mongoDatabaseName);
-            x.UsingRabbitMq((context, cfg) => 
+            x.UsingRabbitMq((context, cfg) =>
             {
                 cfg.ConfigureRabbitMq(context);
+            });
+        });
+    }
+
+    private static void AddMassTransitWithAmazonMq(this IServiceCollection services)
+    {
+        var mongoConnectionString = Environment.GetEnvironmentVariable(VariableNames.MongoDbConnectionString);
+        var mongoDatabaseName = Environment.GetEnvironmentVariable(VariableNames.MongoDbSagaDatabase)
+                                ?? MassTransitOptions.DefaultMongoDbSagaDatabase;
+        services.AddMassTransit(x =>
+        {
+            x.ConfigureHealthCheckOptions(options =>
+            {
+                options.MinimalFailureStatus = HealthStatus.Degraded;
+                options.Tags.Add("ready");
+                options.Tags.Add("messaging");
+            });
+
+            x.ConfigureSaga(mongoConnectionString, mongoDatabaseName);
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.ConfigureAmazonMq(context);
             });
         });
     }

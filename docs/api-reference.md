@@ -167,7 +167,7 @@ Para *consumers externos* que queiram reagir a eventos, escutem
 | Nome | Tag(s) | `FailureStatus` | Ativo quando |
 | --- | --- | --- | --- |
 | `postgres` | `ready`, `database` | `Unhealthy` | Sempre (conexão PostgreSQL obrigatória) |
-| `masstransit-bus` | `ready`, `messaging` | `Degraded` | `MASSTRANSIT__TRANSPORT_SERVICE` = `RabbitMq` ou `AmazonSqs` |
+| `masstransit-bus` | `ready`, `messaging` | `Degraded` | `MASSTRANSIT__TRANSPORT_SERVICE` = `AmazonMq` (default), `RabbitMq` ou `AmazonSqs` |
 | `mongodb-saga` | `ready`, `saga` | `Degraded` | `MONGODB__CONNECTION_STRING` definida |
 
 > **`Unhealthy` vs `Degraded`:**  
