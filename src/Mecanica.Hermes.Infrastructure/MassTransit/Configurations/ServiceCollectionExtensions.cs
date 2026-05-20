@@ -98,10 +98,7 @@ internal static class ServiceCollectionExtensions
             });
 
             x.ConfigureSaga(mongoConnectionString, mongoDatabaseName);
-            x.UsingRabbitMq((context, cfg) =>
-            {
-                cfg.ConfigureAmazonMq(context);
-            });
+            x.UsingRabbitMq((context, cfg) => cfg.ConfigureAmazonMq(context));
         });
     }
 
