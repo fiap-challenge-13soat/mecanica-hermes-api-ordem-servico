@@ -11,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
-using Quartz;
 
 namespace Mecanica.Hermes.IntegrationTests.Infrastructure;
 
@@ -108,17 +107,15 @@ public sealed class AuthorizationTestWebApplicationFactory
                 };
             });
 
-            // Quartz com RAMJobStore — o MassTransit precisa do scheduler registrado mesmo
-            // em testes porque ConfigureSaga chama AddQuartzConsumers (que espera IScheduler).
-            services.AddQuartz();
-            services.AddQuartzHostedService(opts => opts.WaitForJobsToComplete = true);
-
             services.AddMassTransit(x =>
             {
+                // ConfigureSaga registra AddQuartzConsumers; UseInMemoryScheduler inicia o
+                // scheduler in-process e expõe o MessageSchedulerContext às atividades
+                // .Schedule(...) da SAGA. Sem isso ocorre PayloadNotFoundException.
                 x.ConfigureSaga(null, "test");
                 x.UsingInMemory((context, cfg) =>
                 {
-                    cfg.UseMessageScheduler(new Uri("queue:quartz"));
+                    cfg.UseInMemoryScheduler();
                     cfg.ConfigureEndpoints(context);
                 });
             });

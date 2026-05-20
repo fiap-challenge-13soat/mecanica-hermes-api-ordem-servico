@@ -7,7 +7,6 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
-using Quartz;
 using static System.Int32;
 
 namespace Mecanica.Hermes.Infrastructure.MassTransit.Configurations;
@@ -26,17 +25,6 @@ internal static class ServiceCollectionExtensions
         services.AddSingleton<MessagingFaultObserver>();
 
         var transportService = ResolveTransportService();
-
-        // RAMJobStore (default do AddQuartz) é não-durável: timeouts da SAGA são perdidos
-        // se o pod morrer com uma operação em andamento. Aceitável em single-replica.
-        // TODO: migrar para JobStore ADO.NET no Postgres para suportar multi-replica.
-        // O Quartz só é necessário quando o bus está ativo (AmazonMq/RabbitMq); em `None`
-        // a SAGA não roda timeouts.
-        if (transportService is TransportService.RabbitMq or TransportService.AmazonMq)
-        {
-            services.AddQuartz();
-            services.AddQuartzHostedService(opts => opts.WaitForJobsToComplete = true);
-        }
 
         switch (transportService)
         {
