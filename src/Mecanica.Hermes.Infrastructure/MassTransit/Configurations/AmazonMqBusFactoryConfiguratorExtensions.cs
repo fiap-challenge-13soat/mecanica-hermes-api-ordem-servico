@@ -24,10 +24,12 @@ internal static class AmazonMqBusFactoryConfiguratorExtensions
                 "Use o endpoint AMQPS do Amazon MQ (esquema amqps com porta 5671).");
 
         // Amazon MQ for RabbitMQ NÃO suporta o plugin `rabbitmq_delayed_message_exchange`,
-        // logo usamos `UseInMemoryScheduler` (Quartz consumers do ConfigureSaga delegam para
-        // ele). Trade-off: timeouts não-duráveis — perdidos no restart. Em multi-replica
-        // futuro, trocar para Quartz com JobStore ADO.NET no Postgres.
-        configurator.UseInMemoryScheduler();
+        // logo usamos Quartz (registrado via services.AddQuartz/AddQuartzHostedService em
+        // ServiceCollectionExtensions). UseMessageScheduler aponta para a fila `quartz`
+        // criada por AddQuartzConsumers em ConfigureSaga. Trade-off: timeouts não-duráveis
+        // (RAMJobStore) — perdidos no restart. Em multi-replica futuro, trocar para
+        // Quartz com JobStore ADO.NET no Postgres.
+        configurator.UseMessageScheduler(new Uri("queue:quartz"));
 
         // SSL é ativado automaticamente pelo MassTransit quando o esquema é `amqps://`.
         // A escolha de protocolo (TLS 1.2/1.3) fica delegada ao .NET runtime / OS.
