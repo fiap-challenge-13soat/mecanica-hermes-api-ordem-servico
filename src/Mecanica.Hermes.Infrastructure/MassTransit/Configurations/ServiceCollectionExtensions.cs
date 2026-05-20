@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using MassTransit;
 using Mecanica.Hermes.Infrastructure.MassTransit.Observability;
 using Mecanica.Hermes.Infrastructure.Settings;
@@ -6,10 +7,13 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
+using Quartz;
 using static System.Int32;
 
 namespace Mecanica.Hermes.Infrastructure.MassTransit.Configurations;
 
+[ExcludeFromCodeCoverage(
+    Justification = "Composition root do MassTransit — escolhe transporte e registra saga + consumers.")]
 internal static class ServiceCollectionExtensions
 {
     private static int _mongoConventionsRegistered;
@@ -20,11 +24,42 @@ internal static class ServiceCollectionExtensions
         services.AddMassTransitOptions();
         services.AddSingleton<DlqMetrics>();
         services.AddSingleton<MessagingFaultObserver>();
-        _ = Enum.TryParse<TransportService>(
-            Environment.GetEnvironmentVariable(VariableNames.MassTransitTransportService), out var transportService);
 
-        if (transportService == TransportService.RabbitMq)
-            services.AddMassTransitWithRabbitMq();
+        var transportService = ResolveTransportService();
+
+        // RAMJobStore (default do AddQuartz) é não-durável: timeouts da SAGA são perdidos
+        // se o pod morrer com uma operação em andamento. Aceitável em single-replica.
+        // TODO: migrar para JobStore ADO.NET no Postgres para suportar multi-replica.
+        // O Quartz só é necessário quando o bus está ativo (AmazonMq/RabbitMq); em `None`
+        // a SAGA não roda timeouts.
+        if (transportService is TransportService.RabbitMq or TransportService.AmazonMq)
+        {
+            services.AddQuartz();
+            services.AddQuartzHostedService(opts => opts.WaitForJobsToComplete = true);
+        }
+
+        switch (transportService)
+        {
+            case TransportService.RabbitMq:
+                services.AddMassTransitWithRabbitMq();
+                break;
+            case TransportService.AmazonMq:
+                services.AddMassTransitWithAmazonMq();
+                break;
+        }
+    }
+
+    // Default = AmazonMq quando a env var está ausente ou inválida. Mantém `None`
+    // explícito como escape hatch para testes de integração que não querem broker.
+    private static TransportService ResolveTransportService()
+    {
+        var raw = Environment.GetEnvironmentVariable(VariableNames.MassTransitTransportService);
+        if (string.IsNullOrWhiteSpace(raw))
+            return TransportService.AmazonMq;
+
+        return Enum.TryParse<TransportService>(raw, ignoreCase: true, out var parsed)
+            ? parsed
+            : TransportService.AmazonMq;
     }
 
     // MongoDB.Driver 3.x exige GuidRepresentation explicito. Sem isto, o MassTransit
@@ -43,7 +78,7 @@ internal static class ServiceCollectionExtensions
         var mongoDatabaseName = Environment.GetEnvironmentVariable(VariableNames.MongoDbSagaDatabase)
                                 ?? MassTransitOptions.DefaultMongoDbSagaDatabase;
         services.AddMassTransit(x =>
-        {   
+        {
             // Registra o health check do bus com as tags "ready" e "messaging" para que seja
             // incluído em /healthz/ready. Usa Degraded (e não Unhealthy) porque o MassTransit
             // tenta reconectar — o pod deve permanecer no pool durante quedas breves do broker
@@ -56,10 +91,31 @@ internal static class ServiceCollectionExtensions
             });
 
             x.ConfigureSaga(mongoConnectionString, mongoDatabaseName);
-            x.UsingRabbitMq((context, cfg) => 
+            x.AddQuartzConsumers();
+            x.UsingRabbitMq((context, cfg) =>
             {
                 cfg.ConfigureRabbitMq(context);
             });
+        });
+    }
+
+    private static void AddMassTransitWithAmazonMq(this IServiceCollection services)
+    {
+        var mongoConnectionString = Environment.GetEnvironmentVariable(VariableNames.MongoDbConnectionString);
+        var mongoDatabaseName = Environment.GetEnvironmentVariable(VariableNames.MongoDbSagaDatabase)
+                                ?? MassTransitOptions.DefaultMongoDbSagaDatabase;
+        services.AddMassTransit(x =>
+        {
+            x.ConfigureHealthCheckOptions(options =>
+            {
+                options.MinimalFailureStatus = HealthStatus.Degraded;
+                options.Tags.Add("ready");
+                options.Tags.Add("messaging");
+            });
+
+            x.ConfigureSaga(mongoConnectionString, mongoDatabaseName);
+            x.AddQuartzConsumers();
+            x.UsingRabbitMq((context, cfg) => cfg.ConfigureAmazonMq(context));
         });
     }
 

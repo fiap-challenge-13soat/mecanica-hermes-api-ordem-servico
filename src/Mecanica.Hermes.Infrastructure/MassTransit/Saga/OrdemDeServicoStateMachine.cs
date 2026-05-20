@@ -176,7 +176,8 @@ public class OrdemDeServicoStateMachine : MassTransitStateMachine<OrdemDeServico
                 .Then(ctx =>
                 {
                     ctx.Saga.UltimoMotivoFalha =
-                        $"Timeout após {OperationTimeoutDelay.TotalMinutes}min na operação '{ctx.Message.Operacao}'.";
+                        $"Timeout após {OperationTimeoutDelay.TotalMinutes}min na operação "
+                        + $"'{ctx.Message.Operacao}'.";
                     ctx.Saga.OperacaoEmAndamento = null;
                     ctx.Saga.OperacaoIniciadaEm = null;
                 })

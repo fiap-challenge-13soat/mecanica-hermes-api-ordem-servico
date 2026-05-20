@@ -84,7 +84,8 @@ internal sealed partial class EfUnitOfWork(
             // permaneça livre do EF Core. A política de retry do MassTransit reentregará a
             // mensagem e o consumer recarregará o agregado com o estado atual antes de tentar novamente.
             throw new ConcurrencyConflictException(
-                "Conflito de concorrência ao salvar a Ordem de Serviço. O registro foi modificado por outra operação.",
+                "Conflito de concorrência ao salvar a Ordem de Serviço. "
+                + "O registro foi modificado por outra operação.",
                 ex);
         }
     }

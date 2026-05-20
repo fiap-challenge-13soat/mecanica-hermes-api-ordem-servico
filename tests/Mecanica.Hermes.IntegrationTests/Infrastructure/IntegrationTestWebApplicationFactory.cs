@@ -75,11 +75,12 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
             // - SAGA com InMemoryRepository (mongoConnectionString = null aciona esse modo)
             // - Todos os Consumers da Application registrados
             // - Transport in-memory (substitui RabbitMq do composition root real)
+            // - UseInMemoryScheduler para expor MessageSchedulerContext às atividades
+            //   .Schedule(...) da SAGA sem precisar registrar Quartz (que tem estática
+            //   Logging.LogProvider e quebra quando múltiplas WebApplicationFactory rodam
+            //   no mesmo processo).
             services.AddMassTransit(x =>
             {
-                // ConfigureSaga registra AddQuartzConsumers; UseInMemoryScheduler inicia o
-                // scheduler Quartz in-process e expõe o MessageSchedulerContext às atividades
-                // .Schedule(...) da SAGA. Sem isso ocorre PayloadNotFoundException.
                 x.ConfigureSaga(null, "test");
                 x.UsingInMemory((context, cfg) =>
                 {

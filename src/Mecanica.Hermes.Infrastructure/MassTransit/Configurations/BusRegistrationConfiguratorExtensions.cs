@@ -30,9 +30,14 @@ internal static class BusRegistrationConfiguratorExtensions
 
         // IEndpointNameFormatter é registrado como singleton em ServiceCollectionExtensions.AddMassTransitOptions,
         // lendo QueueNamePrefix da env var MASSTRANSIT__QUEUE_NAME_PREFIX (default: "mecanica-hermes").
-        // O MassTransit resolve-o automaticamente do container — não é necessário chamar SetEndpointNameFormatter aqui.
+        // O MassTransit resolve-o automaticamente do container — não é necessário chamar
+        // SetEndpointNameFormatter aqui.
 
-        configurator.AddQuartzConsumers();
+        // OBS: AddQuartzConsumers() NÃO entra aqui — é específico do path de produção
+        // (RabbitMq/AmazonMq) em ServiceCollectionExtensions. Os testes de integração
+        // usam UseInMemoryScheduler e não precisam de Quartz; deixar AddQuartzConsumers
+        // aqui forçaria o registro de Quartz nos testes e a estática Quartz.Logging.LogProvider
+        // causaria acoplamento cross-WebApplicationFactory (LoggerFactory disposed).
         return configurator;
     }
 }

@@ -109,14 +109,10 @@ public sealed class AuthorizationTestWebApplicationFactory
 
             services.AddMassTransit(x =>
             {
-                // ConfigureSaga já chama AddDelayedMessageScheduler internamente;
-                // resta apenas habilitar o scheduler no pipe (UseDelayedMessageScheduler)
-                // para que o MessageSchedulerContext fique disponível às atividades
-                // `.Schedule(...)` da SAGA. Sem isso ocorria PayloadNotFoundException.
                 x.ConfigureSaga(null, "test");
                 x.UsingInMemory((context, cfg) =>
                 {
-                    cfg.UseDelayedMessageScheduler();
+                    cfg.UseInMemoryScheduler();
                     cfg.ConfigureEndpoints(context);
                 });
             });

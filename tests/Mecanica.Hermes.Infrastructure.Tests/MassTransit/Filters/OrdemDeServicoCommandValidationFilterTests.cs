@@ -117,7 +117,7 @@ public class OrdemDeServicoCommandValidationFilterTests
         }
     }
 
-    // ── Stubs internos ao teste ──────────────────────────────────────────────
+    // -- Stubs internos ao teste --
 
     private sealed record StubExecuteCommand(Guid OrdemDeServicoId) : IOrdemDeServicoExecuteCommand;
 

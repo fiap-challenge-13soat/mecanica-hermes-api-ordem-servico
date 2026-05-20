@@ -20,7 +20,8 @@ public static class AvancarEtapaRoute
             .ProducesAcceptedCommand()
             .RequireAuthorization(AuthPolicies.OnlyAdminScope)
             .WithDescription(
-                "Solicita avanço da ordem de serviço para a próxima etapa (processado de forma assíncrona via SAGA)");
+                "Solicita avanço da ordem de serviço para a próxima etapa "
+                + "(processado de forma assíncrona via SAGA)");
     }
 
     private static async Task<IResult> AvancarEtapa(
