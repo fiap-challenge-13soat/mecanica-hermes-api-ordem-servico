@@ -77,14 +77,13 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
             // - Transport in-memory (substitui RabbitMq do composition root real)
             services.AddMassTransit(x =>
             {
-                // ConfigureSaga já chama AddDelayedMessageScheduler internamente;
-                // resta apenas habilitar o scheduler no pipe (UseDelayedMessageScheduler)
-                // para que o MessageSchedulerContext fique disponível às atividades
-                // `.Schedule(...)` da SAGA. Sem isso ocorria PayloadNotFoundException.
+                // ConfigureSaga registra AddQuartzConsumers; UseInMemoryScheduler inicia o
+                // scheduler Quartz in-process e expõe o MessageSchedulerContext às atividades
+                // .Schedule(...) da SAGA. Sem isso ocorre PayloadNotFoundException.
                 x.ConfigureSaga(null, "test");
                 x.UsingInMemory((context, cfg) =>
                 {
-                    cfg.UseDelayedMessageScheduler();
+                    cfg.UseInMemoryScheduler();
                     cfg.ConfigureEndpoints(context);
                 });
             });
