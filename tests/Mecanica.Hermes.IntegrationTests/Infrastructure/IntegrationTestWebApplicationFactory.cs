@@ -3,7 +3,6 @@ using Mecanica.Hermes.Infrastructure.MassTransit.Configurations;
 using Mecanica.Hermes.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
-using Quartz;
 using Testcontainers.PostgreSql;
 
 namespace Mecanica.Hermes.IntegrationTests.Infrastructure;
@@ -72,22 +71,20 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
         // Sobrescreve a connection string depois que o container é iniciado.
         builder.ConfigureServices(services =>
         {
-            // Quartz com RAMJobStore — o MassTransit precisa do scheduler registrado mesmo
-            // em testes porque ConfigureSaga chama AddQuartzConsumers (que registra um
-            // IBusObserver dependente de Quartz.ISchedulerFactory).
-            services.AddQuartz();
-            services.AddQuartzHostedService(opts => opts.WaitForJobsToComplete = true);
-
             // MassTransit em modo in-memory para testes:
             // - SAGA com InMemoryRepository (mongoConnectionString = null aciona esse modo)
             // - Todos os Consumers da Application registrados
             // - Transport in-memory (substitui RabbitMq do composition root real)
+            // - UseInMemoryScheduler para expor MessageSchedulerContext às atividades
+            //   .Schedule(...) da SAGA sem precisar registrar Quartz (que tem estática
+            //   Logging.LogProvider e quebra quando múltiplas WebApplicationFactory rodam
+            //   no mesmo processo).
             services.AddMassTransit(x =>
             {
                 x.ConfigureSaga(null, "test");
                 x.UsingInMemory((context, cfg) =>
                 {
-                    cfg.UseMessageScheduler(new Uri("queue:quartz"));
+                    cfg.UseInMemoryScheduler();
                     cfg.ConfigureEndpoints(context);
                 });
             });

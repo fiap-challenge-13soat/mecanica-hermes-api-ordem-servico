@@ -11,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
-using Quartz;
 
 namespace Mecanica.Hermes.IntegrationTests.Infrastructure;
 
@@ -108,18 +107,12 @@ public sealed class AuthorizationTestWebApplicationFactory
                 };
             });
 
-            // Quartz com RAMJobStore — o MassTransit precisa do scheduler registrado mesmo
-            // em testes porque ConfigureSaga chama AddQuartzConsumers (que registra um
-            // IBusObserver dependente de Quartz.ISchedulerFactory).
-            services.AddQuartz();
-            services.AddQuartzHostedService(opts => opts.WaitForJobsToComplete = true);
-
             services.AddMassTransit(x =>
             {
                 x.ConfigureSaga(null, "test");
                 x.UsingInMemory((context, cfg) =>
                 {
-                    cfg.UseMessageScheduler(new Uri("queue:quartz"));
+                    cfg.UseInMemoryScheduler();
                     cfg.ConfigureEndpoints(context);
                 });
             });

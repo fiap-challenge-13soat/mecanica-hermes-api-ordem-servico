@@ -91,6 +91,7 @@ internal static class ServiceCollectionExtensions
             });
 
             x.ConfigureSaga(mongoConnectionString, mongoDatabaseName);
+            x.AddQuartzConsumers();
             x.UsingRabbitMq((context, cfg) =>
             {
                 cfg.ConfigureRabbitMq(context);
@@ -113,6 +114,7 @@ internal static class ServiceCollectionExtensions
             });
 
             x.ConfigureSaga(mongoConnectionString, mongoDatabaseName);
+            x.AddQuartzConsumers();
             x.UsingRabbitMq((context, cfg) => cfg.ConfigureAmazonMq(context));
         });
     }
