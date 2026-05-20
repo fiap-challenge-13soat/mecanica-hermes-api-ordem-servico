@@ -78,7 +78,7 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
             services.AddMassTransit(x =>
             {
                 // ConfigureSaga registra AddQuartzConsumers; UseInMemoryScheduler inicia o
-                // scheduler in-process e expõe o MessageSchedulerContext às atividades
+                // scheduler Quartz in-process e expõe o MessageSchedulerContext às atividades
                 // .Schedule(...) da SAGA. Sem isso ocorre PayloadNotFoundException.
                 x.ConfigureSaga(null, "test");
                 x.UsingInMemory((context, cfg) =>
