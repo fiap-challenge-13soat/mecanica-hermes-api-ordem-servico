@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using MassTransit;
 using Mecanica.Hermes.Infrastructure.MassTransit.Observability;
 using Mecanica.Hermes.Infrastructure.Settings;
@@ -10,6 +11,8 @@ using static System.Int32;
 
 namespace Mecanica.Hermes.Infrastructure.MassTransit.Configurations;
 
+[ExcludeFromCodeCoverage(
+    Justification = "Composition root do MassTransit — escolhe transporte e registra saga + consumers.")]
 internal static class ServiceCollectionExtensions
 {
     private static int _mongoConventionsRegistered;
