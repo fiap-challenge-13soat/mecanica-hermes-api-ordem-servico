@@ -23,7 +23,7 @@ internal static class AmazonMqBusFactoryConfiguratorExtensions
                 "MASSTRANSIT__CONNECTION_STRING é obrigatória quando MASSTRANSIT__TRANSPORT_SERVICE=AmazonMq. " +
                 "Use o endpoint AMQPS do Amazon MQ (esquema amqps com porta 5671).");
 
-        configurator.UseInMemoryScheduler();
+        configurator.UseMessageScheduler(new Uri("queue:quartz"));
 
         // SSL é ativado automaticamente pelo MassTransit quando o esquema é `amqps://`.
         // A escolha de protocolo (TLS 1.2/1.3) fica delegada ao .NET runtime / OS.
