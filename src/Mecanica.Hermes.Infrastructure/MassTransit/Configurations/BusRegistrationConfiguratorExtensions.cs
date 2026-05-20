@@ -30,7 +30,8 @@ internal static class BusRegistrationConfiguratorExtensions
 
         // IEndpointNameFormatter é registrado como singleton em ServiceCollectionExtensions.AddMassTransitOptions,
         // lendo QueueNamePrefix da env var MASSTRANSIT__QUEUE_NAME_PREFIX (default: "mecanica-hermes").
-        // O MassTransit resolve-o automaticamente do container — não é necessário chamar SetEndpointNameFormatter aqui.
+        // O MassTransit resolve-o automaticamente do container — não é necessário chamar
+        // SetEndpointNameFormatter aqui.
 
         configurator.AddQuartzConsumers();
         return configurator;

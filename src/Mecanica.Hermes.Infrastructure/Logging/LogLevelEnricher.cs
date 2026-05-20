@@ -4,7 +4,8 @@ using Serilog.Events;
 
 namespace Mecanica.Hermes.Infrastructure.Logging;
 
-[ExcludeFromCodeCoverage(Justification = "Enricher de Serilog exercitado em produção; teste direto não agrega valor.")]
+[ExcludeFromCodeCoverage(
+    Justification = "Enricher de Serilog exercitado em produção; teste direto não agrega valor.")]
 public class LogLevelEnricher : ILogEventEnricher
 {
     public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
